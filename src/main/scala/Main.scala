@@ -1,6 +1,6 @@
 import scala.util.Random
 
-val Karten = Vector ("Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben", "Acht", "Neun", "Zehn", "Bube", "Dame", "Koenig", "Ass")
+val Karten = Vector ("Zwei", "Drei", "Vier", "Fuenf", "Sechs", "Sieben", "Acht", "Neun", "Zehn", "Bube", "Dame", "Koenig", "Ass")
 
 case class Hand (){
     val random = new Random()

@@ -1,13 +1,13 @@
 import scala.util.Random
 
-val Karten = Vector ("Two", "Three", "Four", "Five", "Six", "Sieben", "Acht", "Neun", "Zehn", "Bube", "Dame", "Koenig", "Ass")
+val Card = Vector ("Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ass")
 
 case class Hand (){
     val random = new Random()
-    val Karte1 = Karten(random.nextInt(Karten.length))
-    val Karte2 = Karten(random.nextInt(Karten.length))
+    val Card1 = Card(random.nextInt(Card.length))
+    val Card2 = Card(random.nextInt(Card.length))
     override def toString(): String = {
-        Karte1 + ", " + Karte2
+        Card1 + ", " + Card2
     }
 }
 
@@ -15,14 +15,14 @@ case class Dealer () {
     val Hand = new Hand
 }
 
-case class Spieler (val Spielername: String) {
+case class Player (val playername: String) {
     val Hand = new Hand
-    val Name = Spielername
+    val Name = playername
 }
 
 @main
 def start = {
-    val s = new Spieler ("Julian")
+    val s = new Player ("Julian")
     val d = new Dealer
     println("Der Dealer zieht: " + d.Hand.toString)
     println(s.Name + " zieht: " + s.Hand.toString)

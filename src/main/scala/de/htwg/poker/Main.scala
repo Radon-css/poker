@@ -1,4 +1,4 @@
-package src;
+package de.htwg.poker;
 import scala.util.Random
 
 val Card = Vector ("Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ass")

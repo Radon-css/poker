@@ -10,6 +10,7 @@ case class Hand (){
     override def toString(): String = {
         Card1 + ", " + Card2
     }
+   
 }
 
 case class Dealer () {

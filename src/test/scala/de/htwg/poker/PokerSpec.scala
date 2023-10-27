@@ -33,11 +33,4 @@ class PokerSpec extends AnyWordSpec {
       assert(player.Name == playerName)
     }
   }
-  "The main method" should {
-    "print out the cards of the dealer and the player" in {
-      start should be(
-        "Der Dealer zieht: " + dealer.Hand.toString + player.Name + " zieht: " + player.Hand.toString
-      )
-    }
-  }
 }

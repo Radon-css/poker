@@ -45,5 +45,4 @@ def start: String = {
   println("Der Dealer zieht: " + d.Hand.toString)
   println(s.Name + " zieht: " + s.Hand.toString)
   "Der Dealer zieht: " + d.Hand.toString + s.Name + " zieht: " + s.Hand.toString
-
 }

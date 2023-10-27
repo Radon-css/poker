@@ -27,20 +27,23 @@ case class Hand() {
 
 }
 
-case class Dealer() {
-  val Hand = new Hand
+case class Dealer(val hand: Hand) {
+  val Hand = hand
 }
 
-case class Player(val playername: String) {
-  val Hand = new Hand
+case class Player(val hand: Hand, val playername: String) {
+  val Hand = hand
   val Name = playername
 }
 
 @main
 def start: String = {
-  val s = new Player("Julian")
-  val d = new Dealer
+  val playerHand = new Hand()
+  val dealerHand = new Hand()
+  val s = new Player(playerHand, "Julian")
+  val d = new Dealer(dealerHand)
   println("Der Dealer zieht: " + d.Hand.toString)
   println(s.Name + " zieht: " + s.Hand.toString)
-  ("Der Dealer zieht: " + d.Hand.toString + s.Name + " zieht: " + s.Hand.toString)
+  "Der Dealer zieht: " + d.Hand.toString + s.Name + " zieht: " + s.Hand.toString
+
 }

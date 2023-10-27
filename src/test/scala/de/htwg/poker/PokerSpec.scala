@@ -4,15 +4,16 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 
 class PokerSpec extends AnyWordSpec {
-  val hand = Hand()
-  val dealer = Dealer()
+  val playerHand = Hand()
+  val dealerHand = Hand()
+  val dealer = Dealer(dealerHand)
   val playerName = "Julian"
-  val player = Player(playerName)
+  val player = Player(playerHand, playerName)
 
   "A Hand" should {
     "have valid cards when created" in {
-      assert(Card.contains(hand.Card1))
-      assert(Card.contains(hand.Card2))
+      assert(Card.contains(playerHand.Card1))
+      assert(Card.contains(playerHand.Card2))
     }
   }
 

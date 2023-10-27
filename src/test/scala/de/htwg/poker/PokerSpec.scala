@@ -33,13 +33,12 @@ class PokerSpec extends AnyWordSpec {
     }
   }
   "The main method" should {
-    "print out the cards of the dealer" in {
+    "print out the cards of the dealer and the player" in {
       val dealer = Dealer()
-      start should be("Der Dealer zieht: " + dealer.Hand.toString)
-    }
-    "print out the cards of the player" in {
       val player = Player("Julian")
-      start should be("Julian zieht: " + player.Hand.toString)
+      start should be(
+        "Der Dealer zieht: " + dealer.Hand.toString + player.Name + " zieht: " + player.Hand.toString
+      )
     }
   }
 }

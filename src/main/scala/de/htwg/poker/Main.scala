@@ -19,6 +19,19 @@ val deck: List[Card] = {
   } yield Card(suit, rank)
 }
 
+// Unicode-Symbols
+/*def assignUnicodeSymbol(element: String): String = {
+      element match {
+        case "Apfel"   => "\uD83C\uDF4E" // Apfel-Symbol
+        case "Banane"  => "\uD83C\uDF4C" // Banane-Symbol
+        case "Kirsche" => "\uD83C\uDF52" // Kirsche-Symbol
+        case "Dattel"  => "\uD83C\uDF50" // Dattel-Symbol
+        case _         => element // Standardwert, falls nicht gefunden
+      }
+    }
+
+    val mappedList = elements.map(assignUnicodeSymbol)*/
+
 val shuffledDeck: List[Card] = Random.shuffle(deck)
 
 case class Hand() {
@@ -39,6 +52,7 @@ case class Player(
 
 @main
 def start: Unit = {
+  println("🂡")
   val playerHand = new Hand()
   val dealerHand = new Hand()
   val s = new Player(playerHand, "Julian")

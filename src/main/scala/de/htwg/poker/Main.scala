@@ -4,12 +4,32 @@ import scala.util.Random
 enum Rank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
     King, Ass
-
+  override def toString: String = this match {
+    case Two   => "2"
+    case Three => "3"
+    case Four  => "4"
+    case Five  => "5"
+    case Six   => "6"
+    case Seven => "7"
+    case Eight => "8"
+    case Nine  => "9"
+    case Ten   => "10"
+    case Jack  => "Jack"
+    case Queen => "Queen"
+    case King  => "King"
+    case Ass   => "Ace"
+  }
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
+  override def toString: String = this match {
+    case Clubs    => "♣"
+    case Spades   => "♠"
+    case Diamonds => "♢"
+    case Hearts   => "♡"
+  }
 
 case class Card(val suit: Suit, val rank: Rank) {
-  override def toString: String = s"${rank.toString} of ${suit.toString}"
+  override def toString: String = rank.toString + suit.toString
 }
 
 val deck: List[Card] = {
@@ -19,30 +39,19 @@ val deck: List[Card] = {
   } yield Card(suit, rank)
 }
 
-// Unicode-Symbols
-/*def assignUnicodeSymbol(element: String): String = {
-      element match {
-        case "Apfel"   => "\uD83C\uDF4E" // Apfel-Symbol
-        case "Banane"  => "\uD83C\uDF4C" // Banane-Symbol
-        case "Kirsche" => "\uD83C\uDF52" // Kirsche-Symbol
-        case "Dattel"  => "\uD83C\uDF50" // Dattel-Symbol
-        case _         => element // Standardwert, falls nicht gefunden
-      }
-    }
-
-    val mappedList = elements.map(assignUnicodeSymbol)*/
-
 val shuffledDeck: List[Card] = Random.shuffle(deck)
 
 case class Hand() {
-  val random = new Random()
+  /*  def draw(): (Card,Card) = {
+
+    (shuffledDeck(0),shuffledDeck(1))
+} */
   val Card1 = shuffledDeck(0)
-  val Card2 = shuffledDeck(2)
+  val Card2 = shuffledDeck(1)
+
 }
 
-case class Dealer(val hand: Hand) {
-  val Hand = hand
-}
+case class Dealer(val hand: Hand) {}
 
 case class Player(
     val hand: Hand,
@@ -52,11 +61,14 @@ case class Player(
 
 @main
 def start: Unit = {
-  println("🂠")
   val playerHand = new Hand()
   val dealerHand = new Hand()
   val s = new Player(playerHand, "Julian")
   val d = new Dealer(dealerHand)
-  println("Der Dealer zieht: " + d.Hand.Card1.toString)
-  println(s.playername + " zieht: " + s.hand.Card2.toString)
+  println(
+    "Der Dealer zieht: " + d.hand.Card1.toString + ", " + d.hand.Card2.toString
+  )
+  println(
+    s.playername + " zieht: " + s.hand.Card1.toString + ", " + s.hand.Card2.toString
+  )
 }

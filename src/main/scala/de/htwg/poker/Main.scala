@@ -52,7 +52,7 @@ case class Player(
 
 @main
 def start: Unit = {
-  println("🂡")
+  println("\u2663")
   val playerHand = new Hand()
   val dealerHand = new Hand()
   val s = new Player(playerHand, "Julian")

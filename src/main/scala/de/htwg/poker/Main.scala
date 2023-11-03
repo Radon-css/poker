@@ -41,30 +41,21 @@ val deck: List[Card] = {
 
 val shuffledDeck: List[Card] = Random.shuffle(deck)
 
-case class Dealer() {
-  def startgame(numPlayers: Int): List[Player] = {
-    // Überprüfe, ob genügend Karten im Deck für die Spieler vorhanden sind
-    require(numPlayers * 2 <= shuffledDeck.length, "Nicht genug Karten im Deck!")
-
-    // Erstelle eine Liste von Spielern und teile ihnen Karten zu
-    val players = (0 until numPlayers).map { playerIndex =>
-      val cardIndex = playerIndex * 2
-      val player = Player(s"Player ${playerIndex + 1}")
-      player.card1 = shuffledDeck(cardIndex)
-      player.card2 = shuffledDeck(cardIndex + 1)
-      player
-    }.toList
-
-    // Entferne die zugeteilten Karten aus dem Deck
-    val remainingDeck = shuffledDeck.drop(numPlayers * 2)
-
-    // Aktualisiere das Deck im Dealer
-    shuffledDeck = remainingDeck
-
-    players
+object Dealer {
+  def startgame(numPlayers: Int): Int = {
+      for(i <- 0 until numPlayers) {
+        val player = new Player(shuffledDeck(i),shuffledDeck(i + 1),"Player" + (i + 1))
+          println(
+      player.playername + " zieht: " + player.card1.toString + ", " + player.card2.toString
+      )
+      }
+      numPlayers
     }
+  def flop(numPlayers: Int): Unit = {
+    println("")
+    println(shuffledDeck(numPlayers * 2 - 1 ).toString + " " + shuffledDeck(numPlayers * 2).toString + " " + shuffledDeck(numPlayers * 2 + 1).toString)
   }
-
+}
 
 case class Player(
     val card1: Card,
@@ -77,8 +68,6 @@ case class Player(
 
 @main
 def start: Unit = {
-  Dealer.startgame(1)
-  println(
-    s.playername + " zieht: " + s.card1.toString + ", " + s.card2.toString
-  )
+  val numPlayers = Dealer.startgame(3)
+  Dealer.flop(numPlayers)
 }

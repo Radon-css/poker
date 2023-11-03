@@ -43,14 +43,13 @@ val shuffledDeck: List[Card] = Random.shuffle(deck)
 
 object Dealer {
 
-  def handout(playerNames: String): List[Player] = {
+
+  def handout(playerNames: String): Unit = {
     val playerNamesList = playerNames.split(" ")
     playerNamesList.foreach { playerName => val deckIndex = playerNamesList.indexOf(playerName) * 2
     val player = new Player(shuffledDeck(deckIndex), shuffledDeck(deckIndex + 1), playerName)
-    playerList :+ player
     print(playerName +  " " + player.card1.toString + " " + player.card2.toString + "     ")}
     println("")
-    playerList
   }
   def flop(numPlayers: Int): Unit = {
     println("")

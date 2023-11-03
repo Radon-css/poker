@@ -42,16 +42,16 @@ val deck: List[Card] = {
 val shuffledDeck: List[Card] = Random.shuffle(deck)
 
 object Dealer {
-  def handout(numPlayers: Int): Int = {
-      for(i <- 0 until numPlayers) {
-        val deckIndex = i * 2
-        val player = new Player(shuffledDeck(deckIndex),shuffledDeck(deckIndex + 1),"Player" + (i + 1))
-          print(
-      player.playername +  " " + player.card1.toString + " " + player.card2.toString + "     "
-      )
-      }
-      numPlayers
-    }
+
+  def handout(playerNames: String): List[Player] = {
+    val playerNamesList = playerNames.split(" ")
+    playerNamesList.foreach { playerName => val deckIndex = playerNamesList.indexOf(playerName) * 2
+    val player = new Player(shuffledDeck(deckIndex), shuffledDeck(deckIndex + 1), playerName)
+    playerList :+ player
+    print(playerName +  " " + player.card1.toString + " " + player.card2.toString + "     ")}
+    println("")
+    playerList
+  }
   def flop(numPlayers: Int): Unit = {
     println("")
     println("")
@@ -70,6 +70,7 @@ case class Player(
 
 @main
 def start: Unit = {
-  val numPlayers = Dealer.handout(3)
-  Dealer.flop(numPlayers)
+  val playerNames = scala.io.StdIn.readLine("Spielernamen eingeben: ")
+  val playerList = Dealer.handout(playerNames)
+ // Dealer.flop(playerList)
 }

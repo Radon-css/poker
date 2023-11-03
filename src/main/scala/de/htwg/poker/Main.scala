@@ -57,6 +57,7 @@ object Dealer {
           playerName + " " + player.card1.toString + " " + player.card2.toString + "     "
         )
         list :+ player
+
     }
     println("All players:" + players.toString())
   }

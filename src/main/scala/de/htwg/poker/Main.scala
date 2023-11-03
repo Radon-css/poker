@@ -43,7 +43,7 @@ val shuffledDeck: List[Card] = Random.shuffle(deck)
 
 object Dealer {
 
-  def handout(playerNames: String): Unit = {
+  def handout(playerNames: String): List[Player] = {
     val playerNamesList = playerNames.split(" ")
     val players = playerNamesList.foldLeft(List.empty[Player]) {
       (list, playerName) =>
@@ -59,7 +59,7 @@ object Dealer {
         list :+ player
 
     }
-    println("All players:" + players.toString())
+    players
   }
   def flop(numPlayers: Int): Unit = {
     println("")
@@ -83,5 +83,5 @@ case class Player(
 def start: Unit = {
   val playerNames = scala.io.StdIn.readLine("Spielernamen eingeben: ")
   val playerList = Dealer.handout(playerNames)
-  // Dealer.flop(playerList)
+  Dealer.flop(playerList.length)
 }

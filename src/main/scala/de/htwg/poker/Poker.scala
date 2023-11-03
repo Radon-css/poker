@@ -6,7 +6,5 @@ import aview.TUI
 def run: Unit = {
   val dealer = new Dealer
   val tui = TUI(dealer)
-  tui.run
-  val playerList = dealer.handout(playerNames)
-  dealer.flop(playerList.length)
+  val x = tui.run
 }

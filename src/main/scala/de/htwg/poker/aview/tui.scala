@@ -9,6 +9,7 @@ class TUI(dealer: Dealer) extends Observer {
     readLine("Spielernamen eingeben: ")
   }
   def run = {
-    val input = readInput
+    val playerNames = readInput
+    val playerList = dealer.game(playerNames)
   }
 }

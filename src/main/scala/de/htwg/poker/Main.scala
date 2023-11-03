@@ -14,10 +14,10 @@ enum Rank:
     case Eight => "8"
     case Nine  => "9"
     case Ten   => "10"
-    case Jack  => "Jack"
-    case Queen => "Queen"
-    case King  => "King"
-    case Ass   => "Ace"
+    case Jack  => "J"
+    case Queen => "Q"
+    case King  => "K"
+    case Ass   => "A"
   }
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
@@ -41,34 +41,44 @@ val deck: List[Card] = {
 
 val shuffledDeck: List[Card] = Random.shuffle(deck)
 
-case class Hand() {
-  /*  def draw(): (Card,Card) = {
+case class Dealer() {
+  def startgame(numPlayers: Int): List[Player] = {
+    // Überprüfe, ob genügend Karten im Deck für die Spieler vorhanden sind
+    require(numPlayers * 2 <= shuffledDeck.length, "Nicht genug Karten im Deck!")
 
-    (shuffledDeck(0),shuffledDeck(1))
-} */
-  val Card1 = shuffledDeck(0)
-  val Card2 = shuffledDeck(1)
+    // Erstelle eine Liste von Spielern und teile ihnen Karten zu
+    val players = (0 until numPlayers).map { playerIndex =>
+      val cardIndex = playerIndex * 2
+      val player = Player(s"Player ${playerIndex + 1}")
+      player.card1 = shuffledDeck(cardIndex)
+      player.card2 = shuffledDeck(cardIndex + 1)
+      player
+    }.toList
 
-}
+    // Entferne die zugeteilten Karten aus dem Deck
+    val remainingDeck = shuffledDeck.drop(numPlayers * 2)
 
-case class Dealer(val hand: Hand) {}
+    // Aktualisiere das Deck im Dealer
+    shuffledDeck = remainingDeck
+
+    players
+    }
+  }
+
 
 case class Player(
-    val hand: Hand,
+    val card1: Card,
+    val card2: Card,
     val playername: String,
     val coins: Int = 1000
-) {}
+) {
+     
+}
 
 @main
 def start: Unit = {
-  val playerHand = new Hand()
-  val dealerHand = new Hand()
-  val s = new Player(playerHand, "Julian")
-  val d = new Dealer(dealerHand)
+  Dealer.startgame(1)
   println(
-    "Der Dealer zieht: " + d.hand.Card1.toString + ", " + d.hand.Card2.toString
-  )
-  println(
-    s.playername + " zieht: " + s.hand.Card1.toString + ", " + s.hand.Card2.toString
+    s.playername + " zieht: " + s.card1.toString + ", " + s.card2.toString
   )
 }

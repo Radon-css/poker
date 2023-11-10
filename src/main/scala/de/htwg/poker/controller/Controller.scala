@@ -6,7 +6,7 @@ import model.Dealer
 import model.GameState
 import util.Observable
 
-class Controller(var gameState: GameState) extends Observable{
+class Controller(var gameState: GameState) extends Observable {
 
   def startGame(playerNameList: List[String]) = {
     gameState = Dealer.createGame(playerNameList)

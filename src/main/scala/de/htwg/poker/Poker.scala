@@ -7,7 +7,7 @@ import model.shuffledDeck
 
 @main
 def run: Unit = {
-  val controller = new Controller(new GameState(None))
+  val controller = new Controller(new GameState(None, None))
   val tui = new TUI(controller)
   val input = readLine()
   tui.processInput(input)

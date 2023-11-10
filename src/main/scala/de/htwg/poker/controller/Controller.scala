@@ -12,5 +12,11 @@ class Controller(var gameState: GameState) extends Observable {
     gameState = Dealer.createGame(playerNameList)
     this.notifyObservers
   }
+
+  def bet(amount: Int): Unit = {
+    gameState = gameState.bet(amount)
+    this.notifyObservers
+  }
+
   override def toString(): String = gameState.toString()
 }

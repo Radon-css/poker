@@ -8,15 +8,30 @@ class TUI(controller: Controller) extends Observer {
   controller.add(this)
 
   override def update: Unit = {
-  println(controller.toString)
+    println(controller.toString)
   }
 
+  def gameLoop(): Unit = {
+
+    while (true) {
+
+      val input = readLine()
+      if (!processInput(input))
+        println("ungültiger Befehl")
+    }
+  }
 
   def processInput(input: String): Boolean = {
     val inputList = input.split(" ").toList
     inputList(0) match {
-      case "start" => controller.startGame(inputList.tail)
-      true
+      case "start" =>
+        controller.startGame(inputList.tail)
+        true
+      case "bet" =>
+        controller.bet(inputList(1).toInt)
+        true
+      case _ =>
+        false
     }
   }
 }

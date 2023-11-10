@@ -1,15 +1,22 @@
 package de.htwg.poker
 package aview
-import controller.Dealer
+import controller.Controller
 import util.Observer
 import scala.io.StdIn.readLine
 
-class TUI(dealer: Dealer) extends Observer {
-  def readInput: String = {
-    readLine("Spielernamen eingeben: ")
+class TUI(controller: Controller) extends Observer {
+  controller.add(this)
+
+  override def update: Unit = {
+  println(controller.toString)
   }
-  def run = {
-    val playerNames = readInput
-    val playerList = dealer.game(playerNames)
+
+
+  def processInput(input: String): Boolean = {
+    val inputList = input.split(" ").toList
+    inputList(0) match {
+      case "start" => controller.startGame(inputList.tail)
+      true
+    }
   }
 }

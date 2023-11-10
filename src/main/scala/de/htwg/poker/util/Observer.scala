@@ -1,7 +1,7 @@
 package de.htwg.poker.util
 
 trait Observer {
-  def update: Unit = {}
+  def update: Unit
 }
 
 class Observable {

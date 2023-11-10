@@ -1,10 +1,12 @@
 package de.htwg.poker;
-import controller.Dealer
+import controller.Controller
 import aview.TUI
+import scala.io.StdIn.readLine
 
 @main
 def run: Unit = {
-  val dealer = new Dealer
-  val tui = TUI(dealer)
-  val x = tui.run
+  val controller = new Controller
+  val tui = new TUI(controller)
+  val input = readLine();
+  tui.processInput(input)
 }

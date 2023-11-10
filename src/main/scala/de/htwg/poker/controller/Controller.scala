@@ -6,11 +6,11 @@ import model.Dealer
 import model.GameState
 import util.Observable
 
-class Controller extends Observable{
+class Controller(var gameState: GameState) extends Observable{
 
   def startGame(playerNameList: List[String]) = {
-    val gameState = Dealer.createGame(playerNameList)
+    gameState = Dealer.createGame(playerNameList)
     this.notifyObservers
   }
-  override def toString(): String = GameState.toString()
+  override def toString(): String = gameState.toString()
 }

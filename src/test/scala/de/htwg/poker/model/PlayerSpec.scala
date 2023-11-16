@@ -13,13 +13,13 @@ import org.scalatest.matchers.should._
 class PlayerSpec extends AnyWordSpec with Matchers {
 
   "A Player" when {
-    val card1 = Card(Suit.Hearts, Rank.Ass)
+    val card1 = Card(Suit.Hearts, Rank.Ace)
     val card2 = Card(Suit.Clubs, Rank.King)
-    val player = Player(card1, card2, "Alice", 1000)
+    val player = Player(card1, card2, "Julian", 1000)
 
     "created" should {
       "have a name" in {
-        player.playername should be("Alice")
+        player.playername should be("Julian")
       }
       "have two cards" in {
         player.card1 should be(card1)
@@ -32,7 +32,7 @@ class PlayerSpec extends AnyWordSpec with Matchers {
 
     "converted to a string" should {
       "include the player's name, number of coins, and cards" in {
-        player.toString should be("Alice(1000) A♡,K♣    ")
+        player.toString should be("Julian(1000) A♡,K♣    ")
       }
     }
   }

@@ -2,7 +2,7 @@ package de.htwg.poker.model
 
 enum Rank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
-    King, Ass
+    King, Ace
   override def toString: String = this match {
     case Two   => "2"
     case Three => "3"
@@ -16,7 +16,7 @@ enum Rank:
     case Jack  => "J"
     case Queen => "Q"
     case King  => "K"
-    case Ass   => "A"
+    case Ace   => "A"
   }
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts

@@ -18,6 +18,8 @@ jobs:
         run: sbt compile
       - name: run tests
         run: sbt test
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v2.2.3
 
   run_tests:
     runs-on: ubuntu-latest

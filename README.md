@@ -1,4 +1,5 @@
-[![Scala CI](https://github.com/Radon-css/poker/actions/workflows/scala.yml/badge.svg)](https://github.com/Radon-css/poker/actions/workflows/scala.yml) [![Coverage Status](https://coveralls.io/repos/github/Radon-css/poker/badge.svg)](https://coveralls.io/github/Radon-css/poker)
+[![Scala CI](https://github.com/Radon-css/poker/actions/workflows/scala.yml/badge.svg)](https://github.com/Radon-css/poker/actions/workflows/scala.yml)
+[![Coverage Status](https://coveralls.io/repos/github/Radon-css/poker/badge.svg?branch=main)](https://coveralls.io/github/Radon-css/poker?branch=main)
 
 ## sbt project compiled with Scala 3
 

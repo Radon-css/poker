@@ -30,6 +30,12 @@ class TUI(controller: Controller) extends Observer {
       case "bet" =>
         controller.bet(inputList(1).toInt)
         true
+      case "fold" =>
+        controller.fold()
+        true
+      case "call" =>
+        controller.call()
+        true
       case _ =>
         false
     }

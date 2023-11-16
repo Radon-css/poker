@@ -18,5 +18,15 @@ class Controller(var gameState: GameState) extends Observable {
     this.notifyObservers
   }
 
+  def fold(): Unit = {
+    gameState = gameState.fold()
+    this.notifyObservers
+  }
+
+  def call(): Unit = {
+    gameState = gameState.call()
+    this.notifyObservers
+  }
+
   override def toString(): String = gameState.toString()
 }

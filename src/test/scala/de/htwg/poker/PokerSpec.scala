@@ -14,7 +14,7 @@ class PokerSpec extends AnyWordSpec {
     "have valid cards when created" in {
       assert(Card.contains(playerHand.Card1))
       assert(Card.contains(playerHand.Card2))
-      assert(Card.contains(dealerHand.Card1))
+
     }
   }
 

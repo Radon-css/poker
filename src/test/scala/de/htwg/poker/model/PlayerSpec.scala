@@ -32,7 +32,7 @@ class PlayerSpec extends AnyWordSpec with Matchers {
 
     "converted to a string" should {
       "include the player's name, number of coins, and cards" in {
-        player.toString should be("Alice(1000) AH,CK    ")
+        player.toString should be("Alice(1000) A♡,K♣    ")
       }
     }
   }

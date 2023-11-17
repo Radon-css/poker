@@ -25,20 +25,39 @@ class TUI(controller: Controller) extends Observer {
       case "start" =>
         controller.startGame(inputList.tail)
         true
-
-      case "bet" =>
-      val (isValid, errorMessage) = controller.bet(inputList(1).toInt)
-      if(!isValid) {
-        println(errorMessage)
-        return false
-      }
+      case "x" =>
+        controller.startGame(List("Henrik","Julian","Till"))
         true
-
+      case "bet" =>
+        val (isValid, errorMessage) = controller.bet(inputList(1).toInt)
+        if(!isValid) {
+          println(errorMessage)
+          return false
+        }
+        true
       case "fold" =>
-        controller.fold()
+        val (isValid, errorMessage) = controller.fold()
+        if(!isValid) {
+          println(errorMessage)
+          return false
+        }
         true
       case "call" =>
-        controller.call()
+        val (isValid, errorMessage) = controller.call()
+        if(!isValid) {
+          println(errorMessage)
+          return false
+        }
+        true
+      case "check" =>
+        val (isValid, errorMessage) = controller.check()
+        if(!isValid) {
+          println(errorMessage)
+          return false
+        }
+          true
+      case "q" =>
+        sys.exit()
         true
       case _ =>
         println("invalid command")

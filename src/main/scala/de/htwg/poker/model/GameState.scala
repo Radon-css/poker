@@ -28,17 +28,13 @@ case class GameState(
       getPlayers(playerAtTurn).coins - amount
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    val nextPlayer = (playerAtTurn + 1)
-    val gameState =
-      GameState(Some(newPlayerList), Some(getDeck), nextPlayer, amount)
-    gameState
+    val nextPlayer = getNextPlayer(playerAtTurn)
+    GameState(Some(newPlayerList), Some(getDeck), nextPlayer, amount)
   }
 
   def fold(): GameState = {
     val newPlayerList = getPlayers.patch(getPlayerAtTurn, Nil, 1)
-    val gameState =
       GameState(Some(newPlayerList), Some(getDeck), getPlayerAtTurn, getBetSize)
-    gameState
   }
 
   def call(): GameState = {
@@ -49,8 +45,14 @@ case class GameState(
       getPlayers(playerAtTurn).coins - getBetSize
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    val gameState =
-      GameState(Some(newPlayerList), Some(getDeck), getPlayerAtTurn, getBetSize)
-    gameState
+    val nextPlayer = getNextPlayer(playerAtTurn)
+    GameState(Some(newPlayerList), Some(getDeck), nextPlayer, getBetSize)
+  }
+  // Hilfsfunktionen
+  def getNextPlayer(currentPlayer : Int): Int = {
+    if(getPlayers.length - 1 == currentPlayer) {
+      return 0
+    }
+    return currentPlayer + 1
   }
 }

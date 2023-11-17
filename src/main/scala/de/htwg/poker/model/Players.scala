@@ -9,3 +9,4 @@ case class Player(
   override def toString(): String =
     playername + "(" + coins + ") " + card1 + "," + card2 + "    "
 }
+

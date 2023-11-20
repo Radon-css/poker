@@ -44,8 +44,14 @@ case class GameState(
       getPlayers(playerAtTurn).card1,
       getPlayers(playerAtTurn).card2,
       getPlayers(playerAtTurn).playername,
-      getPlayers(playerAtTurn).coins - (getHighestBetSize - getPlayers(playerAtTurn).currentAmountBetted),
-      getPlayers(playerAtTurn).currentAmountBetted + (getHighestBetSize - getPlayers(playerAtTurn).currentAmountBetted)
+      getPlayers(playerAtTurn).coins - (getHighestBetSize - getPlayers(
+        playerAtTurn
+      ).currentAmountBetted),
+      getPlayers(
+        playerAtTurn
+      ).currentAmountBetted + (getHighestBetSize - getPlayers(
+        playerAtTurn
+      ).currentAmountBetted)
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
     val nextPlayer = getNextPlayer(playerAtTurn)
@@ -58,10 +64,23 @@ case class GameState(
   }
 
   // Hilfsfunktionen
-  def getNextPlayer(currentPlayer : Int): Int = {
-    if(getPlayers.length - 1 == currentPlayer) {
+  def getNextPlayer(currentPlayer: Int): Int = {
+    if (getPlayers.length - 1 == currentPlayer) {
       return 0
     }
     return currentPlayer + 1
+  }
+}
+
+object GameStage {
+  var gamestage = "preflop"
+  def continue(): Unit = {
+    if (gamestage == "preflop") {
+      gamestage = "flop"
+    } else if (gamestage == "flop") {
+      gamestage = "turn"
+    } else if (gamestage == "turn") {
+      gamestage = "river"
+    }
   }
 }

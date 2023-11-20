@@ -16,3 +16,12 @@ object Dealer {
     gameState
   }
 }
+
+object context {
+  var strategy =
+    if (GameStage.gamestage == "preflop") flop
+    else if (GameStage.gamestage == "flop") turn
+    else if (GameStage.gamestage == "turn") river
+
+    def flop = 
+}

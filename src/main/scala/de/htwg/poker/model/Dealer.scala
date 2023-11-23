@@ -11,17 +11,9 @@ object Dealer {
           playerName
         )
       )
-    val newShuffledDeck = removeCards(shuffledDeck, playerList.size)
+    val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
     val gameState = GameState(Some(playerList), Some(newShuffledDeck))
     gameState
   }
 }
 
-object context {
-  var strategy =
-    if (GameStage.gamestage == "preflop") flop
-    else if (GameStage.gamestage == "flop") turn
-    else if (GameStage.gamestage == "turn") river
-
-    def flop = 
-}

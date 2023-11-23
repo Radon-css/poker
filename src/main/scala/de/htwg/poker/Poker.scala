@@ -7,7 +7,7 @@ import model.shuffledDeck
 
 @main
 def run: Unit = {
-  val controller = new Controller(new GameState(None, None, 0, 0))
+  val controller = new Controller(new GameState(None, None, 0, 0, Nil))
   val tui = new TUI(controller)
   tui.gameLoop()
 }

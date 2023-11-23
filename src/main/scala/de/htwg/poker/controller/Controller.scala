@@ -5,6 +5,7 @@ import model.Player
 import model.Dealer
 import model.GameState
 import util.Observable
+import de.htwg.poker.model.boardState
 
 class Controller(var gameState: GameState) extends Observable {
 
@@ -32,11 +33,12 @@ class Controller(var gameState: GameState) extends Observable {
       return (false, "start a game first")
     }
     gameState = gameState.fold()
+    if (handout_required()) {
+      gameState = gameState.updateBoard.strategy
+      boardState.continue()
+    }
     this.notifyObservers
     gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
-    if (handout_required()) {
-      println("austeilen") // austeilen
-    }
     (true, "")
   }
 
@@ -47,11 +49,12 @@ class Controller(var gameState: GameState) extends Observable {
       return (false, "invalid call before bet")
     }
     gameState = gameState.call()
+    if (handout_required()) {
+      gameState = gameState.updateBoard.strategy
+      boardState.continue()
+    }
     this.notifyObservers
     gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
-    if (handout_required()) {
-      println("austeilen") // austeilen
-    }
     (true, "")
   }
 
@@ -62,10 +65,12 @@ class Controller(var gameState: GameState) extends Observable {
       return (false, "cannot check")
     }
     gameState = gameState.check()
-    this.notifyObservers
     if (handout_required()) {
-      println("austeilen") // austeilen
+      gameState = gameState.updateBoard.strategy
+      boardState.continue()
     }
+    this.notifyObservers
+    gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
     (true, "")
   }
 

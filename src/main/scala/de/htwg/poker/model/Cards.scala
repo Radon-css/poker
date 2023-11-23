@@ -18,6 +18,7 @@ enum Rank:
     case King  => "K"
     case Ace   => "A"
   }
+
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
   override def toString: String = this match {
@@ -27,6 +28,31 @@ enum Suit:
     case Hearts   => "♡"
   }
 
-case class Card(val suit: Suit, val rank: Rank) {
+class Card private (val suit: Suit, val rank: Rank) {
   override def toString: String = rank.toString + suit.toString
+}
+
+object Card {
+  class CardBuilder {
+    private var suit: Suit = _
+    private var rank: Rank = _
+
+    def setSuit(suit: Suit): CardBuilder = {
+      this.suit = suit
+      this
+    }
+
+    def setRank(rank: Rank): CardBuilder = {
+      this.rank = rank
+      this
+    }
+
+    def build(): Card = {
+      new Card(suit, rank)
+    }
+  }
+
+  def create(): CardBuilder = {
+    new CardBuilder
+  }
 }

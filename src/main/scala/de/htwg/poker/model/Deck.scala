@@ -5,7 +5,7 @@ val deck: List[Card] = {
   for {
     rank <- Rank.values.toList
     suit <- Suit.values.toList
-  } yield Card(suit, rank)
+  } yield Card.create().setRank(rank).setSuit(suit).build()
 }
 
 val shuffledDeck: List[Card] = Random.shuffle(deck)

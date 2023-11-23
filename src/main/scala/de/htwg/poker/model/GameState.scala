@@ -5,7 +5,9 @@ case class GameState(
     deck: Option[List[Card]],
     playerAtTurn: Int = 0,
     currentHighestBetSize: Int = 0,
-    board: List[Card] = Nil
+    board: List[Card] = Nil,
+    smallBlind: Int = 10,
+    bigBlind: Int = 20,
   ) {
 
   def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
@@ -13,6 +15,8 @@ case class GameState(
   def getPlayerAtTurn: Int = playerAtTurn
   def getHighestBetSize: Int = currentHighestBetSize
   def getBoard: List[Card] = board
+  def getSmallBlind: Int = smallBlind
+  def getBigBlind: Int = bigBlind
 
   override def toString(): String = {
     val stringBuilder = new StringBuilder

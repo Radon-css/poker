@@ -22,7 +22,13 @@ class Controller(var gameState: GameState) extends Observable {
     } else if (gameState.getHighestBetSize >= amount) {
       return (false, "bet Size is too low")
     }
-    gameState = gameState.bet(amount)
+    if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
+      gameState = gameState.bet(gameState.getSmallBlind)
+    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
+      gameState = gameState.bet(gameState.getBigBlind) }
+      else {
+        gameState = gameState.bet(amount)
+      }
     this.notifyObservers
     gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
     (true, "")
@@ -32,7 +38,13 @@ class Controller(var gameState: GameState) extends Observable {
     if (gameState.getPlayers.isEmpty) {
       return (false, "start a game first")
     }
-    gameState = gameState.fold()
+    if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
+      gameState = gameState.bet(gameState.getSmallBlind)
+    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
+      gameState = gameState.bet(gameState.getBigBlind) 
+    } else { gameState = gameState.fold()
+      }
+    
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
       boardState.continue()
@@ -48,7 +60,12 @@ class Controller(var gameState: GameState) extends Observable {
     } else if (gameState.getHighestBetSize == 0) {
       return (false, "invalid call before bet")
     }
-    gameState = gameState.call()
+     if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
+      gameState = gameState.bet(gameState.getSmallBlind)
+    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
+      gameState = gameState.bet(gameState.getBigBlind) 
+    } else { gameState = gameState.call()
+      }
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
       boardState.continue()
@@ -64,7 +81,12 @@ class Controller(var gameState: GameState) extends Observable {
     } else if (gameState.getHighestBetSize != 0) {
       return (false, "cannot check")
     }
-    gameState = gameState.check()
+     if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
+      gameState = gameState.bet(gameState.getSmallBlind)
+    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
+      gameState = gameState.bet(gameState.getBigBlind) 
+    } else { gameState = gameState.check()
+      }
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
       boardState.continue()

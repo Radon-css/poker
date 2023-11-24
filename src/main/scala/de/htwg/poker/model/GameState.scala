@@ -78,8 +78,6 @@ case class GameState(
 
     def flop: GameState = {
       val newBoard = getDeck.take(3)
-      print(newBoard)
-      print(getBoard)
       GameState(Some(getPlayers), Some(getDeck.drop(3)), 0, getHighestBetSize, getBoard ::: newBoard)
     }
     def turn: GameState = {

@@ -11,8 +11,9 @@ object Dealer {
           playerName
         )
       )
-    val newShuffledDeck = removeCards(shuffledDeck, playerList.size)
+    val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
     val gameState = GameState(Some(playerList), Some(newShuffledDeck))
     gameState
   }
 }
+

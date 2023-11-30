@@ -29,7 +29,7 @@ enum Suit:
   }
 
 class Card private (val suit: Suit, val rank: Rank) {
-  override def toString: String = rank.toString + suit.toString
+  override def toString: String = "[" + rank.toString + suit.toString + "]"
 }
 
 object Card {

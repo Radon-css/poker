@@ -14,8 +14,8 @@ class TUI(controller: Controller) extends Observer {
   def gameLoop(): Unit = {
 
     while (true) {
-        val input = readLine()
-        processInput(input)
+      val input = readLine()
+      processInput(input)
     }
   }
 
@@ -26,38 +26,44 @@ class TUI(controller: Controller) extends Observer {
         controller.startGame(inputList.tail)
         true
       case "x" =>
-        controller.startGame(List("Henrik","Julian","Till"))
+        controller.startGame(List("Henrik", "Julian", "Till"))
         true
       case "bet" =>
         val (isValid, errorMessage) = controller.bet(inputList(1).toInt)
-        if(!isValid) {
+        if (!isValid) {
           println(errorMessage)
           return false
         }
         true
       case "fold" =>
         val (isValid, errorMessage) = controller.fold()
-        if(!isValid) {
+        if (!isValid) {
           println(errorMessage)
           return false
         }
         true
       case "call" =>
         val (isValid, errorMessage) = controller.call()
-        if(!isValid) {
+        if (!isValid) {
           println(errorMessage)
           return false
         }
         true
       case "check" =>
         val (isValid, errorMessage) = controller.check()
-        if(!isValid) {
+        if (!isValid) {
           println(errorMessage)
           return false
         }
-          true
+        true
       case "q" =>
         sys.exit()
+        true
+      case "u" =>
+        controller.undo
+        true
+      case "r" =>
+        controller.redo
         true
       case _ =>
         println("invalid command")

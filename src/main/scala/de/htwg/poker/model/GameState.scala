@@ -7,8 +7,8 @@ case class GameState(
     currentHighestBetSize: Int = 0,
     board: List[Card] = Nil,
     smallBlind: Int = 10,
-    bigBlind: Int = 20,
-  ) {
+    bigBlind: Int = 20
+) {
 
   def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
   def getDeck: List[Card] = deck.getOrElse(List.empty[Card])
@@ -19,14 +19,25 @@ case class GameState(
   def getBigBlind: Int = bigBlind
 
   override def toString(): String = {
+    val ANSI_UNDERLINE = "\u001b[34m"
+    val ANSI_RESET = "\u001b[0m"
     val stringBuilder = new StringBuilder
-    for (player <- getPlayers) {
-      stringBuilder.append(player.toString())
+    val indexedPlayerList = getPlayers.zipWithIndex
+    for (playerWithIndex <- indexedPlayerList) {
+      if (playerWithIndex._2 == getPlayerAtTurn) {
+        val boldPlayer = playerWithIndex._1.toString()
+        stringBuilder.append(
+          s"$ANSI_UNDERLINE$boldPlayer$ANSI_RESET"
+        )
+      } else {
+        stringBuilder.append(playerWithIndex._1.toString())
+      }
     }
-    stringBuilder.append("\n")
+    stringBuilder.append("\n\n")
     for (card <- getBoard) {
       stringBuilder.append(card.toString() + " ")
     }
+    stringBuilder.append("\n")
     stringBuilder.toString()
   }
 
@@ -39,14 +50,26 @@ case class GameState(
       getPlayers(playerAtTurn).currentAmountBetted + amount
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    val nextPlayer = getNextPlayer(playerAtTurn)
-    GameState(Some(newPlayerList), Some(getDeck), nextPlayer, amount, getBoard)
+    GameState(
+      Some(newPlayerList),
+      Some(getDeck),
+      getNextPlayer,
+      amount,
+      getBoard
+    )
+
   }
 
   def fold(): GameState = {
     val newPlayerList = getPlayers.patch(getPlayerAtTurn, Nil, 1)
-    val nextPlayer = getNextPlayer(playerAtTurn)
-    GameState(Some(newPlayerList), Some(getDeck), nextPlayer, getHighestBetSize, getBoard)
+    val nextPlayer = getNextPlayer
+    GameState(
+      Some(newPlayerList),
+      Some(getDeck),
+      nextPlayer,
+      getHighestBetSize,
+      getBoard
+    )
   }
 
   def call(): GameState = {
@@ -64,52 +87,83 @@ case class GameState(
       ).currentAmountBetted)
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    val nextPlayer = getNextPlayer(playerAtTurn)
-    GameState(Some(newPlayerList), Some(getDeck), nextPlayer, getHighestBetSize, getBoard)
+    val nextPlayer = getNextPlayer
+    GameState(
+      Some(newPlayerList),
+      Some(getDeck),
+      nextPlayer,
+      getHighestBetSize,
+      getBoard
+    )
   }
 
   def check(): GameState = {
-    val nextPlayer = getNextPlayer(playerAtTurn)
-    GameState(Some(getPlayers), Some(getDeck), nextPlayer, getHighestBetSize, getBoard)
+    val nextPlayer = getNextPlayer
+    GameState(
+      Some(getPlayers),
+      Some(getDeck),
+      nextPlayer,
+      getHighestBetSize,
+      getBoard
+    )
   }
 
   object updateBoard {
-  var strategy: GameState = if (boardState.state == "preflop") flop else if (boardState.state == "flop") turn else river
+    var strategy: GameState =
+      if (getBoard.size == 0) flop
+      else if (getBoard.size == 3) turn
+      else river
 
     def flop: GameState = {
       val newBoard = getDeck.take(3)
-      GameState(Some(getPlayers), Some(getDeck.drop(3)), 0, getHighestBetSize, getBoard ::: newBoard)
+      val newPlayerList =
+        getPlayers.map(player => player.copy(currentAmountBetted = 0))
+      GameState(
+        Some(newPlayerList),
+        Some(getDeck.drop(3)),
+        0,
+        0,
+        getBoard ::: newBoard
+      )
     }
     def turn: GameState = {
       val newBoard = getDeck.take(1)
-      GameState(Some(getPlayers), Some(getDeck.drop(1)), 0, getHighestBetSize, getBoard ::: newBoard)
+      val newPlayerList =
+        getPlayers.map(player => player.copy(currentAmountBetted = 0))
+      GameState(
+        Some(newPlayerList),
+        Some(getDeck.drop(1)),
+        0,
+        0,
+        getBoard ::: newBoard
+      )
     }
     def river: GameState = {
       val newBoard = getDeck.take(1)
-      GameState(Some(getPlayers), Some(getDeck.drop(1)), 0, getHighestBetSize, getBoard ::: newBoard)
+      val newPlayerList =
+        getPlayers.map(player => player.copy(currentAmountBetted = 0))
+      GameState(
+        Some(newPlayerList),
+        Some(getDeck.drop(1)),
+        0,
+        0,
+        getBoard ::: newBoard
+      )
     }
-}
-
+  }
 
   // Hilfsfunktionen
-  def getNextPlayer(currentPlayer: Int): Int = {
-    if (getPlayers.length - 1 == currentPlayer) {
+  def getNextPlayer: Int = {
+    if (getPlayers.length - 1 == getPlayerAtTurn) {
       return 0
     }
-    return currentPlayer + 1
+    return getPlayerAtTurn + 1
   }
-}
 
-object boardState {
-  var state = "preflop"
-  def continue(): Unit = {
-    if (state == "preflop") {
-      state = "flop"
-    } else if (state == "flop") {
-      state = "turn"
-    } else if (state == "turn") {
-      state = "river"
+  def getPreviousPlayer: Int = {
+    if (getPlayerAtTurn == 0) {
+      return getPlayers.length - 1
     }
+    return getPlayerAtTurn - 1
   }
 }
-

@@ -27,7 +27,9 @@ class TUI(controller: Controller) extends Observer {
         controller.startGame(inputList.tail)
         true
       case "x" =>
-        controller.startGame(List("Henrik", "Julian", "Till"))
+        controller.startGame(
+          List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luke")
+        )
         true
       case "bet" =>
         val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))

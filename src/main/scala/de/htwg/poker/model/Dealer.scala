@@ -37,9 +37,7 @@ object Dealer {
       Some(newShuffledDeck),
       2,
       20,
-      Nil,
-      10,
-      20
+      Nil
     )
     gameState
   }

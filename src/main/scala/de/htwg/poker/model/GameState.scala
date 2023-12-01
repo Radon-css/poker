@@ -92,12 +92,7 @@ case class GameState(
 
 
   // Hilfsfunktionen
-  def getNextPlayer(currentPlayer: Int): Int = {
-    if (getPlayers.length - 1 == currentPlayer) {
-      return 0
-    }
-    return currentPlayer + 1
-  }
+  def getNextPlayer(currentPlayer: Int): Int = if (getPlayers.length - 1 == currentPlayer) then 0 else currentPlayer + 1
 }
 
 object boardState {

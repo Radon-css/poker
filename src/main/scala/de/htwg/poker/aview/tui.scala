@@ -29,28 +29,32 @@ class TUI(controller: Controller) extends Observer {
         controller.startGame(List("Henrik","Julian","Till"))
         true
       case "bet" =>
-        val (isValid, errorMessage) = controller.bet(inputList(1).toInt)
+        val bet = new controller.bet(inputList(1).toInt)
+        val (isValid, errorMessage) = bet.execute()
         if(!isValid) {
           println(errorMessage)
           return false
         }
         true
       case "fold" =>
-        val (isValid, errorMessage) = controller.fold()
+        val fold = new controller.fold()
+        val (isValid, errorMessage) = fold.execute()
         if(!isValid) {
           println(errorMessage)
           return false
         }
         true
       case "call" =>
-        val (isValid, errorMessage) = controller.call()
+        val call = new controller.call()
+        val (isValid, errorMessage) = call.execute()
         if(!isValid) {
           println(errorMessage)
           return false
         }
         true
       case "check" =>
-        val (isValid, errorMessage) = controller.check()
+        val check = new controller.check()
+        val (isValid, errorMessage) = check.execute()
         if(!isValid) {
           println(errorMessage)
           return false

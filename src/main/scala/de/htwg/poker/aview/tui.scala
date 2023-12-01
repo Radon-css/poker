@@ -3,6 +3,7 @@ package aview
 import controller.Controller
 import util.Observer
 import scala.io.StdIn.readLine
+import scala.util.{Try, Success, Failure}
 
 class TUI(controller: Controller) extends Observer {
   controller.add(this)
@@ -14,8 +15,8 @@ class TUI(controller: Controller) extends Observer {
   def gameLoop(): Unit = {
 
     while (true) {
-        val input = readLine()
-        processInput(input)
+      val input = readLine()
+      processInput(input)
     }
   }
 
@@ -26,38 +27,44 @@ class TUI(controller: Controller) extends Observer {
         controller.startGame(inputList.tail)
         true
       case "x" =>
-        controller.startGame(List("Henrik","Julian","Till"))
+        controller.startGame(List("Henrik", "Julian", "Till"))
         true
       case "bet" =>
-        val (isValid, errorMessage) = controller.bet(inputList(1).toInt)
-        if(!isValid) {
-          println(errorMessage)
-          return false
+        val result : Try[Boolean] = Try(controller.bet(inputList(1).toInt))
+        result match {
+          case Success(value) => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
-        true
+        false
       case "fold" =>
-        val (isValid, errorMessage) = controller.fold()
-        if(!isValid) {
-          println(errorMessage)
-          return false
+        val result : Try[Boolean] = Try(controller.fold())
+        result match {
+          case Success(value) => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
-        true
+        false
       case "call" =>
-        val (isValid, errorMessage) = controller.call()
-        if(!isValid) {
-          println(errorMessage)
-          return false
+        val result : Try[Boolean] = Try(controller.call())
+        result match {
+          case Success(value) => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
-        true
+        false
       case "check" =>
-        val (isValid, errorMessage) = controller.check()
-        if(!isValid) {
-          println(errorMessage)
-          return false
+        val result : Try[Boolean] = Try(controller.check())
+        result match {
+          case Success(value) => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
-          true
+        false
       case "q" =>
         sys.exit()
+        true
+      case "u" =>
+        controller.undo
+        true
+      case "r" =>
+        controller.redo
         true
       case _ =>
         println("invalid command")

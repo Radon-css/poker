@@ -5,95 +5,83 @@ import model.Player
 import model.Dealer
 import model.GameState
 import util.Observable
-import de.htwg.poker.model.boardState
+import util.UndoManager
 
 class Controller(var gameState: GameState) extends Observable {
+
+  private val undoManager = new UndoManager
 
   def startGame(playerNameList: List[String]) = {
     gameState = Dealer.createGame(playerNameList)
     this.notifyObservers
   }
 
-  def bet(amount: Int): (Boolean, String) = {
+  def undo: Unit = {
+    undoManager.undoStep(this, this.gameState)
+    notifyObservers
+  }
+
+  def redo: Unit = {
+    undoManager.redoStep(this)
+    notifyObservers
+  }
+
+  def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
-    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).coins < amount) {
-      return (false, "insufficient balance")
+      throw new Exception("start a game first")
+    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
+      throw new Exception("insufficient balance")
     } else if (gameState.getHighestBetSize >= amount) {
-      return (false, "bet Size is too low")
+      throw new Exception("bet Size is too low")
     }
-    if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
-      gameState = gameState.bet(gameState.getSmallBlind)
-    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
-      gameState = gameState.bet(gameState.getBigBlind) }
-      else {
-        gameState = gameState.bet(amount)
-      }
+    undoManager.doStep(gameState)
+    gameState = gameState.bet(amount)
     this.notifyObservers
-    gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
-    (true, "")
+    true
   }
 
-  def fold(): (Boolean, String) = {
+  def fold(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     }
-    if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
-      gameState = gameState.bet(gameState.getSmallBlind)
-    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
-      gameState = gameState.bet(gameState.getBigBlind) 
-    } else { gameState = gameState.fold()
-      }
-    
+    undoManager.doStep(gameState)
+    gameState = gameState.fold()
+
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
-      boardState.continue()
     }
     this.notifyObservers
-    gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
-    (true, "")
+    true
   }
 
-  def call(): (Boolean, String) = {
+  def call(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     } else if (gameState.getHighestBetSize == 0) {
-      return (false, "invalid call before bet")
+      throw new Exception("invalid call before bet")
     }
-     if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
-      gameState = gameState.bet(gameState.getSmallBlind)
-    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
-      gameState = gameState.bet(gameState.getBigBlind) 
-    } else { gameState = gameState.call()
-      }
+    undoManager.doStep(gameState)
+    gameState = gameState.call()
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
-      boardState.continue()
     }
     this.notifyObservers
-    gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
-    (true, "")
+    true
   }
 
-  def check(): (Boolean, String) = {
+  def check(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     } else if (gameState.getHighestBetSize != 0) {
-      return (false, "cannot check")
+      throw new Exception("cannot check")
     }
-     if(boardState.state == "preflop" && gameState.playerAtTurn == 0) {
-      gameState = gameState.bet(gameState.getSmallBlind)
-    } else if(boardState.state == "preflop" && gameState.playerAtTurn == 1) {
-      gameState = gameState.bet(gameState.getBigBlind) 
-    } else { gameState = gameState.check()
-      }
+    undoManager.doStep(gameState)
+    gameState = gameState.check()
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
-      boardState.continue()
     }
     this.notifyObservers
-    gameState.getPlayers.foreach(player => println(player.currentAmountBetted))
-    (true, "")
+    true
   }
 
   override def toString(): String = gameState.toString()

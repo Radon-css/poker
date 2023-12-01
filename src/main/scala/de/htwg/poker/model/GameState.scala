@@ -1,4 +1,5 @@
 package de.htwg.poker.model
+import scala.math
 
 case class GameState(
     players: Option[List[Player]],
@@ -23,41 +24,40 @@ case class GameState(
     val ANSI_RESET = "\u001b[0m"
     val stringBuilder = new StringBuilder
     val indexedPlayerList = getPlayers.zipWithIndex
-    // print balance
-    for (player <- getPlayers) {
-      stringBuilder.append(f"${player.balanceToString()}%-12s")
-    }
-    stringBuilder.append("\n")
-    // print playerNames
-    for (playerWithIndex <- indexedPlayerList) {
-      if (playerWithIndex._2 == getPlayerAtTurn) {
-        val boldPlayer = playerWithIndex._1.playername
-        stringBuilder.append(
-          f"$ANSI_COLORED$boldPlayer$ANSI_RESET%-10s"
-        )
-      } else {
-        stringBuilder.append(f"${playerWithIndex._1.playername}%-12s")
-      }
-    }
-    // print playerCards
-      stringBuilder.append("\n")
-      for(player <- getPlayers) {
-        stringBuilder.append(f"${player.card1.toString}${player.card2.toString}%-8s")
-      }
-      stringBuilder.append("\n")
-    // print playerBet
-      for(player <- getPlayers) {
-        stringBuilder.append(f"${player.currentAmountBetted.toString}%-12s")
-      }
-    // print boardCards
-    stringBuilder.append("\n\n")
-    for (card <- getBoard) {
-      stringBuilder.append(card.toString() + " ")
-    }
-    stringBuilder.append("\n")
-    stringBuilder.toString()
-  }
 
+    // clear console
+    print("\u001b[2J\u001b[H")
+    // case mehr als 3 Spieler
+    if (getPlayers.size > 3) {
+      val TopRowPlayerList =
+        getPlayers.take(scala.math.ceil(getPlayers.size / 2).toInt)
+      val BottomRowPlayerList =
+        getPlayers.drop(scala.math.ceil(getPlayers.size / 2).toInt)
+
+      val sb = new StringBuilder
+      sb.append(Print.printBalances(TopRowPlayerList))
+      sb.append(Print.printPlayerNames(TopRowPlayerList))
+      sb.append(Print.printPlayerCards(TopRowPlayerList))
+      sb.append(Print.printPlayerBets(TopRowPlayerList))
+      sb.append(Print.printBoard(getBoard))
+      sb.append(Print.printPlayerBets(BottomRowPlayerList))
+      sb.append(Print.printPlayerCards(BottomRowPlayerList))
+      sb.append(Print.printPlayerNames(BottomRowPlayerList))
+      sb.append(Print.printBalances(BottomRowPlayerList))
+      sb.toString
+      // case weniger als 3 Spieler
+    } else {
+      val TopRowPlayerList = getPlayers
+
+      val sb = new StringBuilder
+      sb.append(Print.printBalances(TopRowPlayerList))
+      sb.append(Print.printPlayerNames(TopRowPlayerList))
+      sb.append(Print.printPlayerCards(TopRowPlayerList))
+      sb.append(Print.printPlayerBets(TopRowPlayerList))
+      sb.append(Print.printBoard(getBoard))
+      sb.toString
+    }
+  }
   def bet(amount: Int): GameState = {
     val updatedPlayer = new Player(
       getPlayers(playerAtTurn).card1,
@@ -201,5 +201,73 @@ case class GameState(
       return getPlayers.length - 1
     }
     return getPlayerAtTurn - 1
+  }
+
+  object Print {
+    def printBalances(playerList: List[Player]): String = {
+      val sb = new StringBuilder
+      for (player <- playerList) {
+        val spaces = " " * (14 - player.balanceToString().length)
+        sb.append(s"${player.balanceToString()}$spaces")
+      }
+      sb.append("\n")
+      sb.toString
+    }
+
+    def printPlayerNames(playerList: List[Player]): String = {
+      val sb = new StringBuilder
+      val indexedPlayerList = playerList.zipWithIndex
+      val ANSI_COLORED = "\u001b[34m"
+      val ANSI_RESET = "\u001b[0m"
+
+      for (playerWithIndex <- indexedPlayerList) {
+        if (playerWithIndex._2 == getPlayerAtTurn) {
+          val spaces =
+            " " * (14 - playerWithIndex._1.playername.length)
+          val boldPlayer = playerWithIndex._1.playername
+          sb.append(
+            s"$ANSI_COLORED$boldPlayer$ANSI_RESET$spaces"
+          )
+        } else {
+          val spaces =
+            " " * (14 - playerWithIndex._1.playername.length)
+          sb.append(s"${playerWithIndex._1.playername}$spaces")
+        }
+      }
+      sb.append("\n")
+      sb.toString
+    }
+    def printPlayerCards(playerList: List[Player]): String = {
+      val sb = new StringBuilder
+      for (player <- playerList) {
+        val spaces =
+          " " * (14 - player.card1.toString.length - player.card2.toString.length)
+        sb.append(
+          s"${player.card1.toString}${player.card2.toString}$spaces"
+        )
+      }
+      sb.append("\n")
+      sb.toString
+    }
+
+    def printPlayerBets(playerList: List[Player]): String = {
+      val sb = new StringBuilder
+      for (player <- playerList) {
+        val spaces =
+          " " * (14 - player.currentAmountBetted.toString().length - 1)
+        sb.append(s"${player.currentAmountBetted.toString}$$$spaces")
+      }
+      sb.append("\n")
+      sb.toString
+    }
+    def printBoard(cardList: List[Card]): String = {
+      val sb = new StringBuilder
+      sb.append("\n")
+      for (card <- cardList) {
+        sb.append(card.toString() + " ")
+      }
+      sb.append("\n\n")
+      sb.toString
+    }
   }
 }

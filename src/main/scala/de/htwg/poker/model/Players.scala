@@ -7,8 +7,5 @@ case class Player(
     val balance: Int = 1000,
     val currentAmountBetted: Int = 0
 ) {
-   def balanceToString() =  "(" + balance + "$)"
-   def currrentAmountBettedToString() = currentAmountBetted.toString()
+  def balanceToString() = "(" + balance + "$)"
 }
-
-

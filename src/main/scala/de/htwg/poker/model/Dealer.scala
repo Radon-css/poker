@@ -17,7 +17,7 @@ object Dealer {
       playerList(0).card1,
       playerList(0).card2,
       playerList(0).playername,
-      playerList(0).coins - 10,
+      playerList(0).balance - 10,
       playerList(0).currentAmountBetted + 10
     )
 
@@ -25,7 +25,7 @@ object Dealer {
       playerList(1).card1,
       playerList(1).card2,
       playerList(1).playername,
-      playerList(1).coins - 20,
+      playerList(1).balance - 20,
       playerList(1).currentAmountBetted + 20
     )
 

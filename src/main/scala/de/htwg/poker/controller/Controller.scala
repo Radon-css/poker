@@ -29,7 +29,7 @@ class Controller(var gameState: GameState) extends Observable {
   def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("start a game first")
-    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).coins < amount) {
+    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
       throw new Exception("insufficient balance")
     } else if (gameState.getHighestBetSize >= amount) {
       throw new Exception("bet Size is too low")

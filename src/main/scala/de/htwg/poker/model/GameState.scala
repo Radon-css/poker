@@ -23,10 +23,12 @@ case class GameState(
     val ANSI_RESET = "\u001b[0m"
     val stringBuilder = new StringBuilder
     val indexedPlayerList = getPlayers.zipWithIndex
+    // print balance
     for (player <- getPlayers) {
-      stringBuilder.append("(" + player.coins + "$)     ")
+      stringBuilder.append("(" + player.balance + "$)     ")
     }
     stringBuilder.append("\n")
+    // print playerNames
     for (playerWithIndex <- indexedPlayerList) {
       if (playerWithIndex._2 == getPlayerAtTurn) {
         val boldPlayer = playerWithIndex._1.playername
@@ -37,10 +39,17 @@ case class GameState(
         stringBuilder.append(playerWithIndex._1.playername + "     ")
       }
     }
+    // print playerCards
       stringBuilder.append("\n")
       for(player <- getPlayers) {
         stringBuilder.append(player.card1.toString + player.card2.toString + "     ")
       }
+      stringBuilder.append("\n")
+    // print playerBet
+      for(player <- getPlayers) {
+        stringBuilder.append(player.currentAmountBetted + "    ")
+      }
+    // print boardCards
     stringBuilder.append("\n\n")
     for (card <- getBoard) {
       stringBuilder.append(card.toString() + " ")
@@ -54,7 +63,7 @@ case class GameState(
       getPlayers(playerAtTurn).card1,
       getPlayers(playerAtTurn).card2,
       getPlayers(playerAtTurn).playername,
-      getPlayers(playerAtTurn).coins - amount,
+      getPlayers(playerAtTurn).balance - amount,
       getPlayers(playerAtTurn).currentAmountBetted + amount
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
@@ -85,7 +94,7 @@ case class GameState(
       getPlayers(playerAtTurn).card1,
       getPlayers(playerAtTurn).card2,
       getPlayers(playerAtTurn).playername,
-      getPlayers(playerAtTurn).coins - (getHighestBetSize - getPlayers(
+      getPlayers(playerAtTurn).balance - (getHighestBetSize - getPlayers(
         playerAtTurn
       ).currentAmountBetted),
       getPlayers(

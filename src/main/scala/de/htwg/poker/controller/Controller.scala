@@ -29,13 +29,25 @@ class Controller(var gameState: GameState) extends Observable {
   def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("start a game first")
-    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
+    } else if (
+      gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount
+    ) {
       throw new Exception("insufficient balance")
     } else if (gameState.getHighestBetSize >= amount) {
       throw new Exception("bet Size is too low")
     }
     undoManager.doStep(gameState)
     gameState = gameState.bet(amount)
+    this.notifyObservers
+    true
+  }
+
+  def allin(): Boolean = {
+    if (gameState.getPlayers.isEmpty) {
+      throw new Exception("start a game first")
+    }
+    undoManager.doStep(gameState)
+    gameState = gameState.allIn()
     this.notifyObservers
     true
   }

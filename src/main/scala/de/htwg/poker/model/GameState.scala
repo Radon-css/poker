@@ -40,15 +40,17 @@ case class GameState(
       }
     }
     // print playerCards
-      stringBuilder.append("\n")
-      for(player <- getPlayers) {
-        stringBuilder.append(player.card1.toString + player.card2.toString + "     ")
-      }
-      stringBuilder.append("\n")
+    stringBuilder.append("\n")
+    for (player <- getPlayers) {
+      stringBuilder.append(
+        player.card1.toString + player.card2.toString + "     "
+      )
+    }
+    stringBuilder.append("\n")
     // print playerBet
-      for(player <- getPlayers) {
-        stringBuilder.append(player.currentAmountBetted + "    ")
-      }
+    for (player <- getPlayers) {
+      stringBuilder.append(player.currentAmountBetted + "    ")
+    }
     // print boardCards
     stringBuilder.append("\n\n")
     for (card <- getBoard) {
@@ -74,7 +76,26 @@ case class GameState(
       amount,
       getBoard
     )
+  }
 
+  def allIn(): GameState = {
+    val updatedPlayer = new Player(
+      getPlayers(playerAtTurn).card1,
+      getPlayers(playerAtTurn).card2,
+      getPlayers(playerAtTurn).playername,
+      0,
+      getPlayers(playerAtTurn).currentAmountBetted + getPlayers(
+        playerAtTurn
+      ).balance
+    )
+    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
+    GameState(
+      Some(newPlayerList),
+      Some(getDeck),
+      getNextPlayer,
+      getPlayers(playerAtTurn).balance,
+      getBoard
+    )
   }
 
   def fold(): GameState = {

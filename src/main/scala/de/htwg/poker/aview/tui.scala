@@ -30,30 +30,37 @@ class TUI(controller: Controller) extends Observer {
         controller.startGame(List("Henrik", "Julian", "Till"))
         true
       case "bet" =>
-        val result : Try[Boolean] = Try(controller.bet(inputList(1).toInt))
+        val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))
         result match {
-          case Success(value) => return true
+          case Success(value)     => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+        }
+        false
+      case "allin" =>
+        val result: Try[Boolean] = Try(controller.allin())
+        result match {
+          case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
       case "fold" =>
-        val result : Try[Boolean] = Try(controller.fold())
+        val result: Try[Boolean] = Try(controller.fold())
         result match {
-          case Success(value) => return true
+          case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
       case "call" =>
-        val result : Try[Boolean] = Try(controller.call())
+        val result: Try[Boolean] = Try(controller.call())
         result match {
-          case Success(value) => return true
+          case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
       case "check" =>
-        val result : Try[Boolean] = Try(controller.check())
+        val result: Try[Boolean] = Try(controller.check())
         result match {
-          case Success(value) => return true
+          case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false

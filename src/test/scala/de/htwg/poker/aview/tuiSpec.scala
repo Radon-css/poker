@@ -24,4 +24,37 @@ class TUISpec extends AnyWordSpec with Matchers {
       }
     }
   }
+
+  "A TUI" when {
+    "update is called" should {
+      "print the controller's string representation" in {
+        val controller = new Controller(new GameState(None, None, 0))
+        val tui = new TUI(controller)
+        val outputStream = new java.io.ByteArrayOutputStream()
+        Console.withOut(outputStream) {
+          tui.update
+        }
+        val expectedOutput = controller.toString + "\n"
+        outputStream.toString should be(expectedOutput)
+      }
+    }
+  }
+
+  "A TUI" when {
+    "gameLoop is called" should {
+      "process input until the program is exited" in {
+        val controller = new Controller(new GameState(None, None, 0))
+        val tui = new TUI(controller)
+        val input = "q"
+        val outputStream = new java.io.ByteArrayOutputStream()
+        Console.withIn(new java.io.StringReader(input + "\n")) {
+          Console.withOut(outputStream) {
+            tui.gameLoop()
+          }
+        }
+        val expectedOutput = "invalid command\n"
+        outputStream.toString should be(expectedOutput)
+      }
+    }
+  }
 }

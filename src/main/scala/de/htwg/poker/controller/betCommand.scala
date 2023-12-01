@@ -1,4 +1,4 @@
-package de.htwg.poker.controller
+//package de.htwg.poker.controller
 //import de.htwg.poker.util.Command
 
 /*class betCommand(amount: Int, controller: Controller) extends Command {

@@ -19,20 +19,28 @@ case class GameState(
   def getBigBlind: Int = bigBlind
 
   override def toString(): String = {
-    val ANSI_UNDERLINE = "\u001b[34m"
+    val ANSI_COLORED = "\u001b[34m"
     val ANSI_RESET = "\u001b[0m"
     val stringBuilder = new StringBuilder
     val indexedPlayerList = getPlayers.zipWithIndex
+    for (player <- getPlayers) {
+      stringBuilder.append("(" + player.coins + "$)     ")
+    }
+    stringBuilder.append("\n")
     for (playerWithIndex <- indexedPlayerList) {
       if (playerWithIndex._2 == getPlayerAtTurn) {
-        val boldPlayer = playerWithIndex._1.toString()
+        val boldPlayer = playerWithIndex._1.playername
         stringBuilder.append(
-          s"$ANSI_UNDERLINE$boldPlayer$ANSI_RESET"
+          s"$ANSI_COLORED$boldPlayer$ANSI_RESET" + "     "
         )
       } else {
-        stringBuilder.append(playerWithIndex._1.toString())
+        stringBuilder.append(playerWithIndex._1.playername + "     ")
       }
     }
+      stringBuilder.append("\n")
+      for(player <- getPlayers) {
+        stringBuilder.append(player.card1.toString + player.card2.toString + "     ")
+      }
     stringBuilder.append("\n\n")
     for (card <- getBoard) {
       stringBuilder.append(card.toString() + " ")

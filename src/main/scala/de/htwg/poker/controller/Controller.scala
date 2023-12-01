@@ -26,23 +26,23 @@ class Controller(var gameState: GameState) extends Observable {
     notifyObservers
   }
 
-  def bet(amount: Int): (Boolean, String) = {
+  def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     } else if (gameState.getPlayers(gameState.getPlayerAtTurn).coins < amount) {
-      return (false, "insufficient balance")
+      throw new Exception("insufficient balance")
     } else if (gameState.getHighestBetSize >= amount) {
-      return (false, "bet Size is too low")
+      throw new Exception("bet Size is too low")
     }
     undoManager.doStep(gameState)
     gameState = gameState.bet(amount)
     this.notifyObservers
-    (true, "")
+    true
   }
 
-  def fold(): (Boolean, String) = {
+  def fold(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     }
     undoManager.doStep(gameState)
     gameState = gameState.fold()
@@ -51,14 +51,14 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.updateBoard.strategy
     }
     this.notifyObservers
-    (true, "")
+    true
   }
 
-  def call(): (Boolean, String) = {
+  def call(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     } else if (gameState.getHighestBetSize == 0) {
-      return (false, "invalid call before bet")
+      throw new Exception("invalid call before bet")
     }
     undoManager.doStep(gameState)
     gameState = gameState.call()
@@ -66,14 +66,14 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.updateBoard.strategy
     }
     this.notifyObservers
-    (true, "")
+    true
   }
 
-  def check(): (Boolean, String) = {
+  def check(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      return (false, "start a game first")
+      throw new Exception("start a game first")
     } else if (gameState.getHighestBetSize != 0) {
-      return (false, "cannot check")
+      throw new Exception("cannot check")
     }
     undoManager.doStep(gameState)
     gameState = gameState.check()
@@ -81,7 +81,7 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.updateBoard.strategy
     }
     this.notifyObservers
-    (true, "")
+    true
   }
 
   override def toString(): String = gameState.toString()

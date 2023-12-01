@@ -8,5 +8,5 @@ case class Player(
     val currentAmountBetted: Int = 0
 ) {
   override def toString(): String =
-    playername + "(" + coins + ") " + "[" + card1 + "] [" + card2 + "]" + " " + currentAmountBetted + "    "
+    playername + "(" + coins + ") " + card1 + card2 + " " + currentAmountBetted + "    "
 }

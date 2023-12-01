@@ -1,4 +1,4 @@
-package de.htwg.poker.util
+//package de.htwg.poker.util
 
 /*trait Command {
   def doStep: Unit

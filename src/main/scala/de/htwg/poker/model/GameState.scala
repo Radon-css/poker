@@ -74,7 +74,26 @@ case class GameState(
       amount,
       getBoard
     )
+  }
 
+  def allIn(): GameState = {
+    val updatedPlayer = new Player(
+      getPlayers(playerAtTurn).card1,
+      getPlayers(playerAtTurn).card2,
+      getPlayers(playerAtTurn).playername,
+      0,
+      getPlayers(playerAtTurn).currentAmountBetted + getPlayers(
+        playerAtTurn
+      ).balance
+    )
+    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
+    GameState(
+      Some(newPlayerList),
+      Some(getDeck),
+      getNextPlayer,
+      getPlayers(playerAtTurn).balance,
+      getBoard
+    )
   }
 
   def fold(): GameState = {

@@ -39,14 +39,16 @@ case class GameState(
       val BottomRowIndexedPlayerList = BottomRowPlayerList.zipWithIndex.map {
         case (element, index) => (element, index + TopRowPlayerList.size)
       }
+      val TopRowPlayerListApproxLength =
+        (TopRowIndexedPlayerList.size - 1) * 14 + 7
 
       val sb = new StringBuilder
       sb.append(Print.printBalances(TopRowPlayerList))
       sb.append(Print.printPlayerNames(TopRowIndexedPlayerList))
       sb.append(Print.printPlayerCards(TopRowPlayerList))
       sb.append(Print.printPlayerBets(TopRowPlayerList))
-      sb.append(Print.printPot(TopRowIndexedPlayerList))
-      sb.append(Print.printBoard(getBoard, TopRowIndexedPlayerList))
+      sb.append(Print.printPot(TopRowPlayerListApproxLength))
+      sb.append(Print.printBoard(getBoard, TopRowPlayerListApproxLength))
       sb.append(Print.printPlayerBets(BottomRowPlayerList))
       sb.append(Print.printPlayerCards(BottomRowPlayerList))
       sb.append(Print.printPlayerNames(BottomRowIndexedPlayerList))
@@ -56,14 +58,16 @@ case class GameState(
     } else {
       val TopRowPlayerList = getPlayers
       val TopRowIndexedPlayerList = TopRowPlayerList.zipWithIndex
+      val TopRowPlayerListApproxLength =
+        (TopRowIndexedPlayerList.size - 1) * 14 + 7
 
       val sb = new StringBuilder
       sb.append(Print.printBalances(TopRowPlayerList))
       sb.append(Print.printPlayerNames(TopRowIndexedPlayerList))
       sb.append(Print.printPlayerCards(TopRowPlayerList))
       sb.append(Print.printPlayerBets(TopRowPlayerList))
-      sb.append(Print.printPot(TopRowIndexedPlayerList))
-      sb.append(Print.printBoard(getBoard, TopRowIndexedPlayerList))
+      sb.append(Print.printPot(TopRowPlayerListApproxLength))
+      sb.append(Print.printBoard(getBoard, TopRowPlayerListApproxLength))
       sb.toString
     }
   }
@@ -109,11 +113,10 @@ case class GameState(
 
   def fold(): GameState = {
     val newPlayerList = getPlayers.patch(getPlayerAtTurn, Nil, 1)
-    val nextPlayer = getNextPlayer
     GameState(
       Some(newPlayerList),
       Some(getDeck),
-      nextPlayer,
+      getNextPlayerWhenFold,
       getHighestBetSize,
       getBoard,
       getPot
@@ -164,8 +167,19 @@ case class GameState(
     var strategy: GameState =
       if (getBoard.size == 0) flop
       else if (getBoard.size == 3) turn
-      else river
+      else if (getBoard.size == 4) river
+      else restartGame
 
+    def restartGame: GameState = {
+      GameState(
+        Some(getPlayers),
+        Some(getDeck),
+        0,
+        0,
+        getBoard,
+        getPot
+      )
+    }
     def flop: GameState = {
       val newBoard = getDeck.take(3)
       val newPlayerList =
@@ -213,6 +227,13 @@ case class GameState(
       return 0
     }
     return getPlayerAtTurn + 1
+  }
+
+  def getNextPlayerWhenFold: Int = {
+    if (getPlayers.length - 1 == getPlayerAtTurn) {
+      return 0
+    }
+    return getPlayerAtTurn
   }
 
   def getPreviousPlayer: Int = {
@@ -288,9 +309,8 @@ case class GameState(
       sb.toString
     }
 
-    def printPot(TopRowIndexedPlayerList: List[(Player, Int)]): String = {
+    def printPot(playerLengthApprox: Int): String = {
       val sb = new StringBuilder
-      val playerLengthApprox = (TopRowIndexedPlayerList.size - 1) * 14 + 7
       val potLength = getPot.toString.length + 3
       val padding =
         math.max(0, playerLengthApprox - potLength) / 2
@@ -302,7 +322,7 @@ case class GameState(
     }
     def printBoard(
         cardList: List[Card],
-        TopRowIndexedPlayerList: List[(Player, Int)]
+        playerLengthApprox: Int
     ): String = {
       val sb = new StringBuilder
 
@@ -324,7 +344,6 @@ case class GameState(
         }
       }
 
-      val playerLengthApprox = (TopRowIndexedPlayerList.size - 1) * 14 + 7
       val boardLength = sb.toString.length
       val padding =
         math.max(0, playerLengthApprox - boardLength) / 2

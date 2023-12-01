@@ -59,7 +59,7 @@ class Controller(var gameState: GameState) extends Observable {
     undoManager.doStep(gameState)
     gameState = gameState.fold()
 
-    if (handout_required()) {
+    if (handout_required_fold()) {
       gameState = gameState.updateBoard.strategy
     }
     this.notifyObservers
@@ -71,6 +71,12 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("start a game first")
     } else if (gameState.getHighestBetSize == 0) {
       throw new Exception("invalid call before bet")
+    } else if (
+      gameState
+        .getPlayers(gameState.getPlayerAtTurn)
+        .currentAmountBetted == gameState.getHighestBetSize
+    ) {
+      throw new Exception("cannot call")
     }
     undoManager.doStep(gameState)
     gameState = gameState.call()
@@ -84,7 +90,11 @@ class Controller(var gameState: GameState) extends Observable {
   def check(): Boolean = {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("start a game first")
-    } else if (gameState.getHighestBetSize != 0) {
+    } else if (
+      gameState
+        .getPlayers(gameState.getPlayerAtTurn)
+        .currentAmountBetted != gameState.getHighestBetSize
+    ) {
       throw new Exception("cannot check")
     }
     undoManager.doStep(gameState)
@@ -100,11 +110,18 @@ class Controller(var gameState: GameState) extends Observable {
 
   // Hilfsfunktion
   def handout_required(): Boolean = {
+    // handout_preflop
     gameState.getPlayers.forall(player =>
-      player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
-    ) && gameState.getPlayers.head.currentAmountBetted != 0 || gameState.getPlayers
-      .forall(player =>
+      gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted && gameState.getPlayers.head.currentAmountBetted != 0 && gameState.getPlayerAtTurn == 2
+    ) ||
+    // handout_not_preflop
+    gameState.getPlayers.forall(player =>
+      gameState.getBoard.size != 0 &&
         player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
-      ) && gameState.playerAtTurn == 0
+    ) && gameState.playerAtTurn == 0
+  }
+
+  def handout_required_fold(): Boolean = {
+    gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required()
   }
 }

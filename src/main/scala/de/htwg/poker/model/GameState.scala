@@ -25,7 +25,7 @@ case class GameState(
     val indexedPlayerList = getPlayers.zipWithIndex
     // print balance
     for (player <- getPlayers) {
-      stringBuilder.append("(" + player.balance + "$)     ")
+      stringBuilder.append(f"${player.balanceToString()}%-12s")
     }
     stringBuilder.append("\n")
     // print playerNames
@@ -33,21 +33,21 @@ case class GameState(
       if (playerWithIndex._2 == getPlayerAtTurn) {
         val boldPlayer = playerWithIndex._1.playername
         stringBuilder.append(
-          s"$ANSI_COLORED$boldPlayer$ANSI_RESET" + "     "
+          f"$ANSI_COLORED$boldPlayer$ANSI_RESET%-10s"
         )
       } else {
-        stringBuilder.append(playerWithIndex._1.playername + "     ")
+        stringBuilder.append(f"${playerWithIndex._1.playername}%-12s")
       }
     }
     // print playerCards
       stringBuilder.append("\n")
       for(player <- getPlayers) {
-        stringBuilder.append(player.card1.toString + player.card2.toString + "     ")
+        stringBuilder.append(f"${player.card1.toString}${player.card2.toString}%-8s")
       }
       stringBuilder.append("\n")
     // print playerBet
       for(player <- getPlayers) {
-        stringBuilder.append(player.currentAmountBetted + "    ")
+        stringBuilder.append(f"${player.currentAmountBetted.toString}%-12s")
       }
     // print boardCards
     stringBuilder.append("\n\n")

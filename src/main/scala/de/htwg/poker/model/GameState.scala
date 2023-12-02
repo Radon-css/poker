@@ -39,7 +39,7 @@ case class GameState(
       val BottomRowIndexedPlayerList = BottomRowPlayerList.zipWithIndex.map {
         case (element, index) => (element, index + TopRowPlayerList.size)
       }
-      val TopRowPlayerListApproxLength =
+      val TopRowApproxLength =
         (TopRowIndexedPlayerList.size - 1) * 14 + 7
 
       val sb = new StringBuilder
@@ -47,8 +47,8 @@ case class GameState(
       sb.append(Print.printPlayerNames(TopRowIndexedPlayerList))
       sb.append(Print.printPlayerCards(TopRowPlayerList))
       sb.append(Print.printPlayerBets(TopRowPlayerList))
-      sb.append(Print.printPot(TopRowPlayerListApproxLength))
-      sb.append(Print.printBoard(getBoard, TopRowPlayerListApproxLength))
+      sb.append(Print.printPot(TopRowApproxLength))
+      sb.append(Print.printBoard(getBoard, TopRowApproxLength))
       sb.append(Print.printPlayerBets(BottomRowPlayerList))
       sb.append(Print.printPlayerCards(BottomRowPlayerList))
       sb.append(Print.printPlayerNames(BottomRowIndexedPlayerList))
@@ -58,7 +58,7 @@ case class GameState(
     } else {
       val TopRowPlayerList = getPlayers
       val TopRowIndexedPlayerList = TopRowPlayerList.zipWithIndex
-      val TopRowPlayerListApproxLength =
+      val TopRowApproxLength =
         (TopRowIndexedPlayerList.size - 1) * 14 + 7
 
       val sb = new StringBuilder
@@ -66,8 +66,8 @@ case class GameState(
       sb.append(Print.printPlayerNames(TopRowIndexedPlayerList))
       sb.append(Print.printPlayerCards(TopRowPlayerList))
       sb.append(Print.printPlayerBets(TopRowPlayerList))
-      sb.append(Print.printPot(TopRowPlayerListApproxLength))
-      sb.append(Print.printBoard(getBoard, TopRowPlayerListApproxLength))
+      sb.append(Print.printPot(TopRowApproxLength))
+      sb.append(Print.printBoard(getBoard, TopRowApproxLength))
       sb.toString
     }
   }
@@ -328,34 +328,38 @@ case class GameState(
 
       if (cardList.size == 0) {
         sb.append("[*] " * 5)
+        val boardLength = 19
+        val padding =
+          math.floor((playerLengthApprox - boardLength) / 2).toInt
+        sb.insert(0, " " * padding)
       } else if (cardList.size == 3) {
         for (card <- cardList) {
           sb.append(card.toString() + " ")
         }
         sb.append("[*] " * 2)
-        val boardLength: Int =
-          cardList.map(_.toString.length).sum - 9 * cardList.size
+        val boardLength =
+          22 + cardList.count(card => card.rank.toString() == "TEN")
         val padding =
-          math.max(0, playerLengthApprox - boardLength) / 2
+          math.floor((playerLengthApprox - boardLength) / 2).toInt
         sb.insert(0, " " * padding)
       } else if (cardList.size == 4) {
         for (card <- cardList) {
           sb.append(card.toString() + " ")
         }
         sb.append("[*] ")
-        val boardLength: Int =
-          cardList.map(_.toString.length).sum + 9 * (cardList.size - 1)
+        val boardLength =
+          23 + cardList.count(card => card.rank.toString() == "TEN")
         val padding =
-          math.max(0, playerLengthApprox - boardLength) / 2
+          math.floor((playerLengthApprox - boardLength) / 2).toInt
         sb.insert(0, " " * padding)
       } else {
         for (card <- cardList) {
           sb.append(card.toString() + " ")
         }
-        val boardLength: Int =
-          cardList.map(_.toString.length).sum + 9 * cardList.size
+        val boardLength =
+          24 + cardList.count(card => card.rank.toString() == "TEN")
         val padding =
-          math.max(0, playerLengthApprox - boardLength) / 2
+          math.floor((playerLengthApprox - boardLength) / 2).toInt
         sb.insert(0, " " * padding)
       }
       sb.append("\n\n")

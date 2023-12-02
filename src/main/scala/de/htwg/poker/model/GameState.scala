@@ -289,7 +289,7 @@ case class GameState(
       val sb = new StringBuilder
       for (player <- playerList) {
         val spaces =
-          " " * (14 - player.card1.toString.length - player.card2.toString.length)
+          " " * (14 - (player.card1.toString.length - 9) - (player.card2.toString.length - 9))
         sb.append(
           s"${player.card1.toString}${player.card2.toString}$spaces"
         )
@@ -333,22 +333,31 @@ case class GameState(
           sb.append(card.toString() + " ")
         }
         sb.append("[*] " * 2)
+        val boardLength: Int =
+          cardList.map(_.toString.length).sum - 9 * cardList.size
+        val padding =
+          math.max(0, playerLengthApprox - boardLength) / 2
+        sb.insert(0, " " * padding)
       } else if (cardList.size == 4) {
         for (card <- cardList) {
           sb.append(card.toString() + " ")
         }
         sb.append("[*] ")
+        val boardLength: Int =
+          cardList.map(_.toString.length).sum + 9 * (cardList.size - 1)
+        val padding =
+          math.max(0, playerLengthApprox - boardLength) / 2
+        sb.insert(0, " " * padding)
       } else {
         for (card <- cardList) {
           sb.append(card.toString() + " ")
         }
+        val boardLength: Int =
+          cardList.map(_.toString.length).sum + 9 * cardList.size
+        val padding =
+          math.max(0, playerLengthApprox - boardLength) / 2
+        sb.insert(0, " " * padding)
       }
-
-      val boardLength = sb.toString.length
-      val padding =
-        math.max(0, playerLengthApprox - boardLength) / 2
-
-      sb.insert(0, " " * padding)
       sb.append("\n\n")
       sb.toString
     }

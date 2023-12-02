@@ -1,5 +1,9 @@
 package de.htwg.poker.model
 
+val ANSI_BLACK = "\u001b[30m"
+val ANSI_RED = "\u001b[31m"
+val ANSI_RESET = "\u001b[0m"
+
 enum Rank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
     King, Ace
@@ -22,10 +26,10 @@ enum Rank:
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
   override def toString: String = this match {
-    case Clubs    => "♣"
-    case Spades   => "♠"
-    case Diamonds => "♢"
-    case Hearts   => "♡"
+    case Clubs    => s"$ANSI_BLACK♣$ANSI_RESET"
+    case Spades   => s"$ANSI_BLACK♠$ANSI_RESET"
+    case Diamonds => s"$ANSI_RED♢$ANSI_RESET"
+    case Hearts   => s"$ANSI_RED♡$ANSI_RESET"
   }
 
 class Card private (val suit: Suit, val rank: Rank) {

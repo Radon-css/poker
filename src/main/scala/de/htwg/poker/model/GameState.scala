@@ -10,7 +10,8 @@ case class GameState(
     board: List[Card] = Nil,
     pot: Int = 30,
     smallBlind: Int = 10,
-    bigBlind: Int = 20
+    bigBlind: Int = 20,
+    smallBlindPointer: Int = 0
 ) {
 
   def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
@@ -22,6 +23,7 @@ case class GameState(
   def getBigBlind: Int = bigBlind
   def getPot: Int = pot
   def getOriginalPlayers: List[Player] = originalPlayers
+  def getSmallBlindPointer = smallBlindPointer
 
   override def toString(): String = {
     val ANSI_COLORED = "\u001b[34m"
@@ -91,7 +93,8 @@ case class GameState(
       getBoard,
       getPot + amount,
       getSmallBlind,
-      getBigBlind
+      getBigBlind,
+      getSmallBlindPointer
     )
   }
 
@@ -115,7 +118,8 @@ case class GameState(
       getBoard,
       getPot + getPlayers(playerAtTurn).balance,
       getSmallBlind,
-      getBigBlind
+      getBigBlind,
+      getSmallBlindPointer
     )
   }
 
@@ -130,7 +134,8 @@ case class GameState(
       getBoard,
       getPot,
       getSmallBlind,
-      getBigBlind
+      getBigBlind,
+      getSmallBlindPointer
     )
   }
 
@@ -161,7 +166,8 @@ case class GameState(
         playerAtTurn
       ).currentAmountBetted,
       getSmallBlind,
-      getBigBlind
+      getBigBlind,
+      getSmallBlindPointer
     )
   }
 
@@ -176,7 +182,8 @@ case class GameState(
       getBoard,
       getPot,
       getSmallBlind,
-      getBigBlind
+      getBigBlind,
+      getSmallBlindPointer
     )
   }
 
@@ -232,7 +239,8 @@ case class GameState(
         Nil,
         getSmallBlind + getBigBlind,
         getSmallBlind,
-        getBigBlind
+        getBigBlind,
+        getSmallBlindPointer
       )
     }
     def flop: GameState = {
@@ -248,7 +256,8 @@ case class GameState(
         getBoard ::: newBoard,
         getPot,
         getSmallBlind,
-        getBigBlind
+        getBigBlind,
+        getSmallBlindPointer
       )
     }
     def turn: GameState = {
@@ -264,7 +273,8 @@ case class GameState(
         getBoard ::: newBoard,
         getPot,
         getSmallBlind,
-        getBigBlind
+        getBigBlind,
+        getSmallBlindPointer
       )
     }
     def river: GameState = {
@@ -280,7 +290,8 @@ case class GameState(
         getBoard ::: newBoard,
         getPot,
         getSmallBlind,
-        getBigBlind
+        getBigBlind,
+        getSmallBlindPointer
       )
     }
   }

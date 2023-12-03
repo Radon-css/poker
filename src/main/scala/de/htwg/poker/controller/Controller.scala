@@ -1,6 +1,5 @@
 package de.htwg.poker
 package controller
-import model.shuffledDeck
 import model.Player
 import model.Dealer
 import model.GameState
@@ -11,9 +10,39 @@ class Controller(var gameState: GameState) extends Observable {
 
   private val undoManager = new UndoManager
 
-  def startGame(playerNameList: List[String]) = {
-    gameState = Dealer.createGame(playerNameList)
+  def createGame(
+      playerNameList: List[String],
+      smallBlind: String,
+      bigBlind: String
+  ): Boolean = {
+    if (playerNameList.size < 1) {
+      throw new Exception("minimum two players")
+    }
+    try {
+      smallBlind.toInt
+      bigBlind.toInt
+    } catch {
+      case _: NumberFormatException =>
+        throw new Exception("last 2 inputs must be integers")
+    }
+    val smallBlindInt = smallBlind.toInt
+    val bigBlindInt = bigBlind.toInt
+
+    if (smallBlindInt > 100 || bigBlindInt > 200) {
+      throw new Exception(
+        "small blind must be smaller than 101 and big blind must be smaller than 201"
+      )
+    }
+
+    if (bigBlindInt <= smallBlindInt) {
+      throw new Exception(
+        "small blind must be smaller than big blind"
+      )
+    }
+
+    gameState = Dealer.createGame(playerNameList, smallBlindInt, bigBlindInt)
     this.notifyObservers
+    true
   }
 
   def undo: Unit = {
@@ -33,6 +62,8 @@ class Controller(var gameState: GameState) extends Observable {
       gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount
     ) {
       throw new Exception("insufficient balance")
+    } else if (gameState.getBigBlind >= amount) {
+      throw new Exception("bet Size is too low")
     } else if (gameState.getHighestBetSize >= amount) {
       throw new Exception("bet Size is too low")
     }
@@ -112,7 +143,7 @@ class Controller(var gameState: GameState) extends Observable {
   def handout_required(): Boolean = {
     // handout_preflop
     gameState.getPlayers.forall(player =>
-      gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted && gameState.getPlayers.head.currentAmountBetted != 0 && gameState.getPlayerAtTurn == 2
+      gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted && gameState.getPlayers.head.currentAmountBetted != 0 && (gameState.getPlayers.size > 2 && gameState.getPlayerAtTurn == 2 || gameState.getPlayers.size < 3 && gameState.getPlayerAtTurn == 0)
     ) ||
     // handout_not_preflop
     gameState.getPlayers.forall(player =>

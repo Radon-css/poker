@@ -8,7 +8,10 @@ val deck: List[Card] = {
   } yield Card.create().setRank(rank).setSuit(suit).build()
 }
 
-val shuffledDeck: List[Card] = Random.shuffle(deck)
+def shuffleDeck: List[Card] = {
+  val random = new Random
+  random.shuffle(deck)
+}
 
 def removeCards(deck: List[Card], n: Int): List[Card] = {
   val newCardList = deck.drop(n);

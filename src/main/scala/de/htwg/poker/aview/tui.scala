@@ -24,13 +24,31 @@ class TUI(controller: Controller) extends Observer {
     val inputList = input.split(" ").toList
     inputList(0) match {
       case "start" =>
-        controller.startGame(inputList.tail)
-        true
-      case "x" =>
-        controller.startGame(
-          List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luke")
+        val result: Try[Boolean] = Try(
+          controller.createGame(
+            inputList.tail.dropRight(2),
+            inputList.init.last,
+            inputList.last
+          )
         )
-        true
+        result match {
+          case Success(value)     => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+        }
+        false
+      case "x" =>
+        val result: Try[Boolean] = Try(
+          controller.createGame(
+            List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luke"),
+            "10",
+            "20"
+          )
+        )
+        result match {
+          case Success(value)     => return true
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+        }
+        false
       case "bet" =>
         val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))
         result match {

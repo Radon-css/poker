@@ -17,18 +17,16 @@ import util.Observer
 class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
 
-  override def update: Unit = {
-    main(Array())
-  }
+  override def update: Unit = {}
 
   def externalFunction(): Unit = {
     println("Externe Funktion aufgerufen!")
-    // Hier können Sie den Code für die externe Funktion hinzufügen
+    test0 = "fetterCock"
   }
-
+  var test0 = "Cock"
   override def start(): Unit = {
     val gameState = controller.gameState
-    val test0 = "Cock"
+
     val button = new Button("Cock")
 
     val stage = new JFXApp3.PrimaryStage {

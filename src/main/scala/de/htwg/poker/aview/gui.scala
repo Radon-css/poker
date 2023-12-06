@@ -9,8 +9,11 @@ import scalafx.scene.paint.Color._
 import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
+import controller.Controller
+import model.GameState
 
-object ScalaFXHelloWorld extends JFXApp3 {
+class ScalaFXHelloWorld(test: String) extends JFXApp3 {
+
   override def start(): Unit = {
     stage = new JFXApp3.PrimaryStage {
       title = "ScalaFX Hello World"
@@ -25,17 +28,9 @@ object ScalaFXHelloWorld extends JFXApp3 {
               fill = new LinearGradient(endX = 0, stops = Stops(Red, DarkRed))
             },
             new WebView {
-              engine.loadContent("""
-                  <html>
-                    <head>
-                      <link rel="stylesheet" type="text/css" href="https://unpkg.com/tailwindcss@%5E1.0/dist/tailwind.min.css">
-                    </head>
-                    <body>
-                      <h1 class="text-3xl font-bold hover:underline text-red-600">Hello, HTML in ScalaFX!</h1>
-                  <Button> Cock </Button>
-                    </body>
-                  </html>
-                  """.stripMargin)
+              engine.loadContent(
+                s"<html><body><h1>$test</h1></body></html>"
+              )
               prefWidth = 400
               prefHeight = 200
             }

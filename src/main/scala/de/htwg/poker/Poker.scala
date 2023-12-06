@@ -11,6 +11,7 @@ def run: Unit = {
     new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
   val tui = new TUI(controller)
-  ScalaFXHelloWorld.start()
+  val gui = new ScalaFXHelloWorld("test")
+  gui.main(Array())
   tui.gameLoop()
 }

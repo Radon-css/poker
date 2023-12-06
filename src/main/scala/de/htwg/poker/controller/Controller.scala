@@ -5,9 +5,8 @@ import model.Dealer
 import model.GameState
 import util.Observable
 import util.UndoManager
-import scala.swing.Publisher
 
-class Controller(var gameState: GameState) extends Publisher {
+class Controller(var gameState: GameState) extends Observable {
 
   private val undoManager = new UndoManager
 
@@ -42,18 +41,18 @@ class Controller(var gameState: GameState) extends Publisher {
     }
 
     gameState = Dealer.createGame(playerNameList, smallBlindInt, bigBlindInt)
-    publish(new Update)
+    this.notifyObservers
     true
   }
 
   def undo: Unit = {
     undoManager.undoStep(this, this.gameState)
-    publish(new Update)
+    notifyObservers
   }
 
   def redo: Unit = {
     undoManager.redoStep(this)
-    publish(new Update)
+    notifyObservers
   }
 
   def bet(amount: Int): Boolean = {
@@ -70,7 +69,7 @@ class Controller(var gameState: GameState) extends Publisher {
     }
     undoManager.doStep(gameState)
     gameState = gameState.bet(amount)
-    publish(new Update)
+    this.notifyObservers
     true
   }
 
@@ -80,7 +79,7 @@ class Controller(var gameState: GameState) extends Publisher {
     }
     undoManager.doStep(gameState)
     gameState = gameState.allIn()
-    publish(new Update)
+    this.notifyObservers
     true
   }
 
@@ -94,7 +93,7 @@ class Controller(var gameState: GameState) extends Publisher {
     if (handout_required_fold()) {
       gameState = gameState.updateBoard.strategy
     }
-    publish(new Update)
+    this.notifyObservers
     true
   }
 
@@ -115,7 +114,7 @@ class Controller(var gameState: GameState) extends Publisher {
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
     }
-    publish(new Update)
+    this.notifyObservers
     true
   }
 
@@ -134,7 +133,7 @@ class Controller(var gameState: GameState) extends Publisher {
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
     }
-    publish(new Update)
+    this.notifyObservers
     true
   }
 

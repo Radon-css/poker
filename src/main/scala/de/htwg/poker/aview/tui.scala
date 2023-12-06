@@ -1,15 +1,20 @@
 package de.htwg.poker
 package aview
-import controller.Controller
 import util.Observer
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}
+import controller._
+import scala.swing.Reactor
 
-class TUI(controller: Controller) extends Observer {
-  controller.add(this)
+class TUI(controller: Controller) extends Reactor {
+  listenTo(controller)
 
-  override def update: Unit = {
+  def update: Unit = {
     println(controller.toString)
+  }
+
+  reactions += { case event: Update =>
+    update
   }
 
   def gameLoop(): Unit = {
@@ -23,9 +28,6 @@ class TUI(controller: Controller) extends Observer {
   def processInput(input: String): Boolean = {
     val inputList = input.split(" ").toList
     inputList(0) match {
-      case "t" =>
-        val test = new ScalaFXHelloWorld("fetter Cock")
-        true
       case "start" =>
         val result: Try[Boolean] = Try(
           controller.createGame(

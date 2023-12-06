@@ -21,21 +21,15 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
     main(Array())
   }
 
-  def changeColor(button: Button): Unit = {
-    if (button.styleClass.contains("bg-blue-500")) {
-      button.styleClass = List("bg-red-500")
-    } else {
-      button.styleClass = List("bg-blue-500")
-    }
+  def externalFunction(): Unit = {
+    println("Externe Funktion aufgerufen!")
+    // Hier können Sie den Code für die externe Funktion hinzufügen
   }
 
   override def start(): Unit = {
     val gameState = controller.gameState
     val test0 = "Cock"
     val button = new Button("Cock")
-    button.styleClass = List("bg-blue-500")
-
-    button.onAction = _ => changeColor(button)
 
     val stage = new JFXApp3.PrimaryStage {
       scene = new Scene {
@@ -54,11 +48,7 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
                       <script>
                         var button = document.getElementById('colorButton');
                         button.addEventListener('click', function() {
-                          if (button.classList.contains('bg-blue-500')) {
-                            button.classList = ['bg-red-500'];
-                          } else {
-                            button.classList = ['bg-blue-500'];
-                          }
+                          javafxBridge.externalFunction();
                         });
                       </script>
                     </body>
@@ -67,6 +57,9 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
               )
               prefWidth = 400
               prefHeight = 200
+              engine.executeScript(
+                "window.javafxBridge = { externalFunction: function() { javafxBridge.externalFunction(); } }"
+              )
             }
           )
         }

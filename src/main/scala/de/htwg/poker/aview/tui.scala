@@ -23,9 +23,6 @@ class TUI(controller: Controller) extends Observer {
   def processInput(input: String): Boolean = {
     val inputList = input.split(" ").toList
     inputList(0) match {
-      case "t" =>
-        val test = new ScalaFXHelloWorld("fetter Cock")
-        true
       case "start" =>
         val result: Try[Boolean] = Try(
           controller.createGame(

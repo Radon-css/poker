@@ -14,6 +14,7 @@ import scalafx.scene.control.Button
 import controller.Controller
 import model.GameState
 import util.Observer
+import scalafx.application.Platform
 
 import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
@@ -23,20 +24,25 @@ import netscape.javascript.JSObject
 class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
 
-  override def update: Unit = {}
+  override def update: Unit = {
+    Platform.runLater(() => start())
+  }
 
   // Scala-Funktion, die von JavaScript aufgerufen wird
   class External {
-    def externalFunction(): Unit = {
+    def startGame(): Unit = {
       println("Externe Funktion aufgerufen!")
-      test = "Clicked"
+      controller.createGame(
+            List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
+            "10",
+            "20"
+          )
     }
   }
 
-  var test = "Click me"
-
   override def start(): Unit = {
     val gameState = controller.gameState
+    println("updated")
 
     val webView = new WebView {
       engine.loadContent(
@@ -52,13 +58,13 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
               <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700">
                 <div class="rounded-full bg-teal-600 h-1/3 w-1/2 border-8 border-teal-400">
                 </div>
-                 <button class="my-5 text-slate-100 rounded outline outline-offset-4 outline-slate-100"onclick="callScalaFunction()">start</button>
+                 <button class="font-semibold h-6 w-10 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="startGame()">start</button>
               </div>
               <script>
                 // JavaScript-Funktion, um Scala-Funktion direkt aufzurufen
-                function callScalaFunction() {
+                function startGame() {
                   // Rufen Sie die Scala-Funktion direkt auf
-                  invoke.externalFunction();
+                  invoke.startGame();
                 }
               </script>
             </body>

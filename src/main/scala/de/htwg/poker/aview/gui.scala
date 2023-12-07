@@ -1,6 +1,5 @@
 package de.htwg.poker
 package aview
-
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
@@ -15,26 +14,16 @@ import controller.Controller
 import model.GameState
 import util.Observer
 
-import javafx.concurrent.Worker.State
-import netscape.javascript.JSObject
-
-// ... (Ihre vorhandenen Importe)
-
 class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
 
   override def update: Unit = {}
 
-  // Scala-Funktion, die von JavaScript aufgerufen wird
-  class External {
   def externalFunction(): Unit = {
     println("Externe Funktion aufgerufen!")
-    test = "Clicked"
+    test0 = "fetterCock"
   }
-}
-
-  var test = "Click me"
-
+  var test0 = "Cock"
   override def start(): Unit = {
     val gameState = controller.gameState
 
@@ -52,7 +41,7 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
               <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700">
                 <div class="rounded-full bg-teal-600 h-1/3 w-1/2 border-8 border-teal-400">
                 </div>
-                 <button class="my-5 text-slate-100 rounded outline outline-offset-4 outline-slate-100"onclick="callScalaFunction()">start</button>
+                 <button class="space-y-3 text-slate-100 rounded-lg outline outline-slate-100"onclick="callScalaFunction()">$test</button>
               </div>
               <script>
                 // JavaScript-Funktion, um Scala-Funktion direkt aufzurufen

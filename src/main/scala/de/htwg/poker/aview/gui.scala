@@ -47,6 +47,12 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     def fold(): Unit = {
       controller.fold()
     }
+    def undo(): Unit = {
+      controller.undo
+    }
+    def redo(): Unit = {
+      controller.redo
+    }
   }
 
   def updatePlayerListHtml(gameState: GameState): List[String] = {
@@ -78,11 +84,23 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     newCardListHtml
   }
 
+  def updateBoardListHtml(gameState: GameState): List[String] = {
+    val boardList = gameState.getBoard
+
+    val newBoardList = boardList.map(card => getCardHtml(card))
+    val hiddenBoardList = List.fill(5)("<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>")
+    val newBoardListHtml = hiddenBoardList.patch(0, newBoardList, newBoardList.size)
+    newBoardListHtml
+  }
+
   var playerListHtml: List[String] =
     List.fill(6)("<div class=\"hidden\"></div>")
 
   var cardListHtml: List[(String, String)] =
     List.fill(6)(("<div class=\"hidden\"> </div>","<div class=\"hidden\"> </div>"))
+
+  var boardListHtml: List[String] =
+    List.fill(5)("<div class=\"hidden\"></div>")
 
   def getCardHtml(card: Card): String =
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${card.suit.toHtml}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
@@ -118,6 +136,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     if (gameState.getPlayers != Nil)
       playerListHtml = updatePlayerListHtml(gameState)
       cardListHtml = updateCardListHtml(gameState)
+      boardListHtml = updateBoardListHtml(gameState)
 
     val webView = new WebView {
       engine.loadContent(
@@ -148,10 +167,17 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                             ${cardListHtml(1)._2}
                     </div>
                     </div>
-                    <div class = "flex mt-8 space-x-64">
+                    <div class = "flex mt-6">
                     <div class="flex h-10 w-12">
                             ${cardListHtml(5)._1}   
                             ${cardListHtml(5)._2}
+                    </div>
+                    <div class="flex px-16">
+                    ${boardListHtml(0)}   
+                    ${boardListHtml(1)}
+                    ${boardListHtml(2)}
+                    ${boardListHtml(3)}
+                    ${boardListHtml(4)}
                     </div>
                     <div class="flex h-10 w-12">
                             ${cardListHtml(2)._1}   
@@ -181,6 +207,8 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="call()">call</button>
               <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="check()">check</button>
               <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="fold()">fold</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="undo()">undo</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="redo()">redo</button>
               </div>
               </div>
               <script>
@@ -195,6 +223,12 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 }
                 function fold()  {
                   invoke.fold();
+                }
+                function undo() {
+                  invoke.undo();
+                }
+                function redo() {
+                  invoke.redo();
                 }
               </script>
             </body>

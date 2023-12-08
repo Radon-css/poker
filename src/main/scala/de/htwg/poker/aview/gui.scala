@@ -103,49 +103,51 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               ""
             }
           }
-              <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700">
+              <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
                 <div class="flex space-x-56">
                 ${playerListHtml(0)}
                 ${playerListHtml(1)}
               </div>
               <div class="flex justify-center items-center h-64 w-full">
                 ${playerListHtml(5)}
-                <div class="flex flex-col items-center rounded-full bg-teal-600 h-52 w-96 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
-                    <div class="flex mt-4 space-x-24">
-                    <div class="flex h-10 w-12">
-                            ${cardListHtml(0)._1}
-                            ${cardListHtml(0)._2}
-                        </div>
-                        <div class="flex h-10 w-12">
-                            ${cardListHtml(1)._1}   
-                            ${cardListHtml(1)._2}
+                <div class="flex flex-col space-y-12 items-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
+                    <div class="flex mt-4 space-x-56">
+                      <div class="flex h-10 w-12">
+                        ${cardListHtml(0)._1}
+                        ${cardListHtml(0)._2}
+                      </div>
+                      <div class="flex h-10 w-12">
+                        ${cardListHtml(1)._1}   
+                        ${cardListHtml(1)._2}
+                      </div>
                     </div>
-                    </div>
-                    <div class = "flex mt-6 justify-center">
-                    <div class="flex h-10 w-12">
-                            ${cardListHtml(5)._1}   
-                            ${cardListHtml(5)._2}
-                    </div>
-                    <div class="flex flex-col justify-center items-center">
-                    <p class="rounded-full bg-slate-100 px-2">${
+
+                    <div class = "flex justify-center items-center space-x-24">
+                      <div class="flex h-10 w-12">
+                        ${cardListHtml(5)._1}   
+                        ${cardListHtml(5)._2}
+                      </div>
+                      <div class="flex flex-col items-center">
+                        <p class="rounded-full bg-slate-100 px-2">${
             if (gameStarted) { gameState.getPot + "$" }
             else { "" }
           }
-                      </p>
-                      <div class="flex px-16">
-                      ${boardListHtml(0)}
-                      ${boardListHtml(1)}
-                      ${boardListHtml(2)}
-                      ${boardListHtml(3)}
-                      ${boardListHtml(4)}
+                        </p>
+                        <div class="flex px-16">
+                        ${boardListHtml(0)}
+                        ${boardListHtml(1)}
+                        ${boardListHtml(2)}
+                        ${boardListHtml(3)}
+                        ${boardListHtml(4)}
+                        </div>
+                      </div>
+                      <div class="flex h-10 w-12">
+                        ${cardListHtml(2)._1}   
+                        ${cardListHtml(2)._2}
                       </div>
                     </div>
-                    <div class="flex h-10 w-12">
-                            ${cardListHtml(2)._1}   
-                            ${cardListHtml(2)._2}
-                    </div>
-                    </div>
-                    <div class = "flex mt-8 space-x-24">
+                    
+                    <div class = "flex mb-4 space-x-56">
                     <div class="flex h-10 w-12">
                             ${cardListHtml(4)._1}   
                             ${cardListHtml(4)._2}
@@ -175,12 +177,12 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
             </button>
             """
             } else
-              """
+              s"""
               <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
               <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-md  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
-              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL</button>
+              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL:${gameState.getHighestBetSize + "$"}</button>
               <form onsubmit="bet()" class="flex flex-row items-center">
                 <input type="submit" value="BET" class="w-28 h-12 font-bold my-5 bg-yellow-600 text-slate-100 rounded-l-md hover:text-gray-700 hover:bg-slate-100">
                 <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class=" h-12 w-28 bg-slate-600 rounded-r-md px-2 py-1 focus:none text-white">

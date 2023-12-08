@@ -8,4 +8,15 @@ case class Player(
     val currentAmountBetted: Int = 0
 ) {
   def balanceToString() = "(" + balance + "$)"
+
+  def toHtml = {
+    "<div class=\"player\">" +
+      "<div class=\"player-name\">" +
+      playername +
+      "</div>" +
+      "<div class=\"player-balance\">" +
+      balanceToString() +
+      "</div>"
+    "</div>"
+  }
 }

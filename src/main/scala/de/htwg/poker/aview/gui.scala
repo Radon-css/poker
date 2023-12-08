@@ -22,7 +22,7 @@ import netscape.javascript.JSObject
 
 // ... (Ihre vorhandenen Importe)
 
-class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
+class GUI(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
 
   override def update: Unit = {
@@ -47,7 +47,9 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
       getPlayerHtml(
         player.playername,
         player.balance,
-        player.currentAmountBetted
+        player.currentAmountBetted,
+        player.card1,
+        player.card2
       )
     )
     playerListHtml.patch(0, newPlayerList, newPlayerList.size)
@@ -56,13 +58,22 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
   var playerListHtml: List[String] =
     List.fill(6)("<div class=\"hidden\"></div>")
 
-  def getCardHtml(card: Card): String =
-    s""
+  var cardListHtml: List[String] =
+    List.fill(6)("<div class=\"hidden\"></div>")
 
-  def getPlayerHtml(name: String, balance: Int, betSize: Int): String =
+  def getCardHtml(card: Card): String =
+    s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${card.suit.toHtml}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
+
+  def getPlayerHtml(
+      name: String,
+      balance: Int,
+      betSize: Int,
+      card1: Card,
+      card2: Card
+  ): String =
     s"<div class=\"text-slate-100 px-24 py-8\"><h1>(${balance}$$)</h1><h1>$name</h1><h1>$betSize</h1></div>"
 
-  val rank =
+  val suit =
     "<svg class=\"mt-1\"xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-suit-club-fill\" viewBox=\"0 0 16 16\"><path d=\"M11.5 12.5a3.493 3.493 0 0 1-2.684-1.254 19.92 19.92 0 0 0 1.582 2.907c.231.35-.02.847-.438.847H6.04c-.419 0-.67-.497-.438-.847a19.919 19.919 0 0 0 1.582-2.907 3.5 3.5 0 1 1-2.538-5.743 3.5 3.5 0 1 1 6.708 0A3.5 3.5 0 1 1 11.5 12.5\"/></svg>"
 
   override def start(): Unit = {
@@ -88,27 +99,115 @@ class ScalaFXHelloWorld(controller: Controller) extends JFXApp3 with Observer {
               </div>
               <div class="flex justify-center items-center h-64 w-full">
                 ${playerListHtml(2)}
-                <div class="flex flex-col items-center rounded-full bg-teal-600 h-52 w-96 border-8 border-teal-400">
+                <div class="flex flex-col items-center rounded-full bg-teal-600 h-52 w-96 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
                     <div class="flex mt-4 space-x-24">
                     <div class="flex h-10 w-12">
-                            <div class="rounded-lg bg-slate-100 w-6 h-9 flex flex-col justify-center items-center shadow-xl shadow-black/50"> 
-                            <img class="h-3 w-3 mt-1"src="suit-club-fill.svg">
-                            <h1 class="font-bold ">K</h1>
-                          </div>
-                          <div class="rounded-lg bg-slate-100 w-6 h-9 flex flex-col justify-center items-center shadow-xl shadow-black/50"> 
-                            $rank
-                            <h1 class="font-bold ">K</h1>
-                          </div>
+                            ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Hearts)
+              .setRank(model.Rank.Queen)
+              .build()
+          )}
+          
+                          ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Clubs)
+              .setRank(model.Rank.King)
+              .build()
+          )}
+          
                         </div>
-                    <div class="bg-red-700 h-8 w-8"></div>
+                        <div class="flex h-10 w-12">
+                    ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Diamonds)
+              .setRank(model.Rank.Ten)
+              .build()
+          )}
+          
+                          ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Spades)
+              .setRank(model.Rank.Jack)
+              .build()
+          )}
+                    </div>
                     </div>
                     <div class = "flex mt-8 space-x-64">
-                    <div class="bg-red-700 h-8 w-8"></div>
-                    <div class="bg-red-700 h-8 w-8"></div>
+                    <div class="flex h-10 w-12">
+                    ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Diamonds)
+              .setRank(model.Rank.Seven)
+              .build()
+          )}
+          
+                          ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Hearts)
+              .setRank(model.Rank.Eight)
+              .build()
+          )}
+                    </div>
+                    <div class="flex h-10 w-12">
+                    ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Diamonds)
+              .setRank(model.Rank.Four)
+              .build()
+          )}
+          
+                          ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Spades)
+              .setRank(model.Rank.Two)
+              .build()
+          )}
+                    </div>
                     </div>
                     <div class = "flex mt-8 space-x-24">
-                    <div class="bg-red-700 h-8 w-8"></div>
-                    <div class="bg-red-700 h-8 w-8"></div>
+                    <div class="flex h-10 w-12">
+                    ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Spades)
+              .setRank(model.Rank.Ace)
+              .build()
+          )}
+          
+                          ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Hearts)
+              .setRank(model.Rank.Ace)
+              .build()
+          )}
+                    </div>
+                    <div class="flex h-10 w-12">
+                    ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Diamonds)
+              .setRank(model.Rank.Five)
+              .build()
+          )}
+          
+                          ${getCardHtml(
+            Card
+              .create()
+              .setSuit(model.Suit.Hearts)
+              .setRank(model.Rank.Five)
+              .build()
+          )}
+                    </div>
                     </div>
                 </div>
                 ${playerListHtml(3)}

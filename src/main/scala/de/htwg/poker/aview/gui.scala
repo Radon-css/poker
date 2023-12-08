@@ -53,11 +53,11 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     }
     def redo(): Unit = {
       controller.redo
+    }
     def bet(amount: Int): Unit = {
       controller.bet(amount)
     }
   }
-
   def updatePlayerListHtml(gameState: GameState): List[String] = {
     val playerList = gameState.getPlayers
     val newPlayerList = playerList.map(player =>
@@ -210,20 +210,13 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${playerListHtml(4)}
                 ${playerListHtml(3)}
               </div>
-              
-              <div class =" flex space-x-8 items-center">
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="startGame()">start</button>
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="call()">call</button>
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="check()">check</button>
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="fold()">fold</button>
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="undo()">undo</button>
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="redo()">redo</button>
-              </div>
               <div class="flex space-x-8 items-center">
                 <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">start</button>
                 <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="call()">call</button>
                 <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="check()">check</button>
                 <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="fold()">fold</button>
+                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="undo()">undo</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="redo()">redo</button>
                 <form onsubmit="bet()" class="flex flex-row items-center">
                   <input type="numer" id="betInput" name="fname" placeholder="Enter betsize" class="bg-transparent rounded-l-md ring ring-slate-100 px-2 py-1 focus:none text-white">
                   <input type="submit" value="Bet" class="font-bold h-8 w-6 my-5 text-slate-100 rounded-r-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 px-4">
@@ -247,6 +240,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 }
                 function redo() {
                   invoke.redo();
+                }
                 function bet() {
                   invoke.bet(document.getElementById("betInput").value);
                 }

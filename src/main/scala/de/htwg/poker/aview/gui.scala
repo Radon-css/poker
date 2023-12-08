@@ -32,12 +32,20 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   // Scala-Funktion, die von JavaScript aufgerufen wird
   class External {
     def startGame(): Unit = {
-      println("Externe Funktion aufgerufen!")
       controller.createGame(
         List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
         "10",
         "20"
       )
+    }
+    def call(): Unit = {
+      controller.call()
+    }
+    def check(): Unit = {
+      controller.check()
+    }
+    def fold(): Unit = {
+      controller.fold()
     }
   }
 
@@ -48,30 +56,59 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         player.playername,
         player.balance,
         player.currentAmountBetted,
-        player.card1,
-        player.card2
       )
     )
-    playerListHtml.patch(0, newPlayerList, newPlayerList.size)
+    val defaultPlayerListHtml = List.fill(6)("<div class=\"hidden\"></div>")
+    val newPlayerListHtml = defaultPlayerListHtml.patch(0, newPlayerList, newPlayerList.size)
+    newPlayerListHtml
+  }
+
+  def updateCardListHtml(gameState: GameState):List[(String,String)] = {
+    val playerList = gameState.getPlayers.zipWithIndex
+    val playerAtTurn = gameState.getPlayerAtTurn
+
+    val newCardList = playerList.collect {
+  case (player, index) if index == playerAtTurn =>
+    (getCardHtml(player.card1), getCardHtml(player.card2))
+  case (player, index) =>
+    (getHiddenCardHtml,getHiddenCardHtml)
+}
+    val defaultCardListHtml = List.fill(6)(("<div class=\"hidden\"> </div>","<div class=\"hidden\"> </div>"))
+    val newCardListHtml = defaultCardListHtml.toList.patch(0, newCardList, newCardList.size)
+    newCardListHtml
   }
 
   var playerListHtml: List[String] =
     List.fill(6)("<div class=\"hidden\"></div>")
 
-  var cardListHtml: List[String] =
-    List.fill(6)("<div class=\"hidden\"></div>")
+  var cardListHtml: List[(String, String)] =
+    List.fill(6)(("<div class=\"hidden\"> </div>","<div class=\"hidden\"> </div>"))
 
   def getCardHtml(card: Card): String =
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${card.suit.toHtml}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
+
+  def getHiddenCardHtml: String =
+    "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
 
   def getPlayerHtml(
       name: String,
       balance: Int,
       betSize: Int,
-      card1: Card,
-      card2: Card
   ): String =
-    s"<div class=\"text-slate-100 px-24 py-8\"><h1>(${balance}$$)</h1><h1>$name</h1><h1>$betSize</h1></div>"
+    s"""<div class=\"flex flex-col items-center justify-center space-x-2\">
+                <div class=\"rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white\">
+                  <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\" fill=\"currentColor\" class=\"bi bi-person-fill\" viewBox=\"0 0 16 16\">
+                    <path d=\"M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6\"/>
+                  </svg>
+                </div>
+                <div class=\"flex flex-col justify-center items-center text-slate-100\">
+                    <p class=\"p-1\">$name</p>
+                    <div class=\"rounded-full bg-slate-100 text-gray-400\">
+                      <p class=\"p-1\">$balance</p>
+                    </div>
+                    <div>$betSize</div>
+                </div>
+              </div>"""
 
   val suit =
     "<svg class=\"mt-1\"xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-suit-club-fill\" viewBox=\"0 0 16 16\"><path d=\"M11.5 12.5a3.493 3.493 0 0 1-2.684-1.254 19.92 19.92 0 0 0 1.582 2.907c.231.35-.02.847-.438.847H6.04c-.419 0-.67-.497-.438-.847a19.919 19.919 0 0 0 1.582-2.907 3.5 3.5 0 1 1-2.538-5.743 3.5 3.5 0 1 1 6.708 0A3.5 3.5 0 1 1 11.5 12.5\"/></svg>"
@@ -80,6 +117,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     val gameState = controller.gameState
     if (gameState.getPlayers != Nil)
       playerListHtml = updatePlayerListHtml(gameState)
+      cardListHtml = updateCardListHtml(gameState)
 
     val webView = new WebView {
       engine.loadContent(
@@ -93,133 +131,70 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
             </head>
             <body>
               <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700">
-                <div class="flex">
+                <div class="flex space-x-56">
                 ${playerListHtml(0)}
                 ${playerListHtml(1)}
               </div>
               <div class="flex justify-center items-center h-64 w-full">
-                ${playerListHtml(2)}
+                ${playerListHtml(5)}
                 <div class="flex flex-col items-center rounded-full bg-teal-600 h-52 w-96 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
                     <div class="flex mt-4 space-x-24">
                     <div class="flex h-10 w-12">
-                            ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Hearts)
-              .setRank(model.Rank.Queen)
-              .build()
-          )}
-          
-                          ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Clubs)
-              .setRank(model.Rank.King)
-              .build()
-          )}
-          
+                            ${cardListHtml(0)._1}
+                            ${cardListHtml(0)._2}
                         </div>
                         <div class="flex h-10 w-12">
-                    ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Diamonds)
-              .setRank(model.Rank.Ten)
-              .build()
-          )}
-          
-                          ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Spades)
-              .setRank(model.Rank.Jack)
-              .build()
-          )}
+                            ${cardListHtml(1)._1}   
+                            ${cardListHtml(1)._2}
                     </div>
                     </div>
                     <div class = "flex mt-8 space-x-64">
                     <div class="flex h-10 w-12">
-                    ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Diamonds)
-              .setRank(model.Rank.Seven)
-              .build()
-          )}
-          
-                          ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Hearts)
-              .setRank(model.Rank.Eight)
-              .build()
-          )}
+                            ${cardListHtml(5)._1}   
+                            ${cardListHtml(5)._2}
                     </div>
                     <div class="flex h-10 w-12">
-                    ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Diamonds)
-              .setRank(model.Rank.Four)
-              .build()
-          )}
-          
-                          ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Spades)
-              .setRank(model.Rank.Two)
-              .build()
-          )}
+                            ${cardListHtml(2)._1}   
+                            ${cardListHtml(2)._2}
                     </div>
                     </div>
                     <div class = "flex mt-8 space-x-24">
                     <div class="flex h-10 w-12">
-                    ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Spades)
-              .setRank(model.Rank.Ace)
-              .build()
-          )}
-          
-                          ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Hearts)
-              .setRank(model.Rank.Ace)
-              .build()
-          )}
+                            ${cardListHtml(4)._1}   
+                            ${cardListHtml(4)._2}
                     </div>
                     <div class="flex h-10 w-12">
-                    ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Diamonds)
-              .setRank(model.Rank.Five)
-              .build()
-          )}
-          
-                          ${getCardHtml(
-            Card
-              .create()
-              .setSuit(model.Suit.Hearts)
-              .setRank(model.Rank.Five)
-              .build()
-          )}
+                            ${cardListHtml(3)._1}   
+                            ${cardListHtml(3)._2}
                     </div>
                     </div>
                 </div>
-                ${playerListHtml(3)}
-                </div>
-              <div class="flex">
-                ${playerListHtml(4)}
-                ${playerListHtml(5)}
+                ${playerListHtml(2)}
               </div>
-              <button class="font-bold h-6 w-10 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="startGame()">start</button>
+              <div class="flex space-x-56">
+                ${playerListHtml(4)}
+                ${playerListHtml(3)}
+              </div>
+              
+              <div class =" flex space-x-8 items-center">
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="startGame()">start</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="call()">call</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="check()">check</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="fold()">fold</button>
+              </div>
+              </div>
               <script>
                 function startGame() {
                   invoke.startGame();
+                }
+                function call() {
+                  invoke.call();
+                }
+                function check() {
+                  invoke.check();
+                }
+                function fold()  {
+                  invoke.fold();
                 }
               </script>
             </body>

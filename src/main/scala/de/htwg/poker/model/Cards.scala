@@ -44,6 +44,9 @@ enum Suit:
 
 class Card private (val suit: Suit, val rank: Rank) {
   override def toString: String = "[" + rank.toString + suit.toString + "]"
+  def toHtml: String = {
+    s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suit.toHtml}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
+  }
 }
 
 object Card {
@@ -69,4 +72,5 @@ object Card {
   def create(): CardBuilder = {
     new CardBuilder
   }
+
 }

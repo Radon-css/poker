@@ -21,8 +21,6 @@ import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 
-// ... (Ihre vorhandenen Importe)
-
 class GUI(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
 
@@ -30,7 +28,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     Platform.runLater(() => start())
   }
 
-  // Scala-Funktion, die von JavaScript aufgerufen wird
   class External {
     def startGame(): Unit = {
       controller.createGame(
@@ -58,6 +55,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       controller.bet(amount)
     }
   }
+
   def updatePlayerListHtml(gameState: GameState): List[String] = {
     val playerList = gameState.getPlayers
     val newPlayerList = playerList.map(player =>
@@ -68,9 +66,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       )
     )
     val defaultPlayerListHtml = List.fill(6)("<div class=\"hidden\"></div>")
-    val newPlayerListHtml =
-      defaultPlayerListHtml.patch(0, newPlayerList, newPlayerList.size)
-    newPlayerListHtml
+    defaultPlayerListHtml.patch(0, newPlayerList, newPlayerList.size)
   }
 
   def updateCardListHtml(gameState: GameState): List[(String, String)] = {
@@ -86,30 +82,17 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     val defaultCardListHtml = List.fill(6)(
       ("<div class=\"hidden\"> </div>", "<div class=\"hidden\"> </div>")
     )
-    val newCardListHtml =
-      defaultCardListHtml.toList.patch(0, newCardList, newCardList.size)
-    newCardListHtml
+    defaultCardListHtml.toList.patch(0, newCardList, newCardList.size)
   }
 
   def updateBoardListHtml(gameState: GameState): List[String] = {
     val boardList = gameState.getBoard
 
     val newBoardList = boardList.map(card => getCardHtml(card))
-    val hiddenBoardList = List.fill(5)("<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>")
-    val newBoardListHtml = hiddenBoardList.patch(0, newBoardList, newBoardList.size)
-    newBoardListHtml
+    val hiddenBoardList =
+      List.fill(5)("<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>")
+    hiddenBoardList.patch(0, newBoardList, newBoardList.size)
   }
-
-  var playerListHtml: List[String] =
-    List.fill(6)("<div class=\"hidden\"></div>")
-
-  var cardListHtml: List[(String, String)] =
-    List.fill(6)(
-      ("<div class=\"hidden\"> </div>", "<div class=\"hidden\"> </div>")
-    )
-
-  var boardListHtml: List[String] =
-    List.fill(5)("<div class=\"hidden\"></div>")
 
   def getCardHtml(card: Card): String =
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${card.suit.toHtml}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
@@ -137,15 +120,11 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 </div>
               </div>"""
 
-  val suit =
-    "<svg class=\"mt-1\"xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-suit-club-fill\" viewBox=\"0 0 16 16\"><path d=\"M11.5 12.5a3.493 3.493 0 0 1-2.684-1.254 19.92 19.92 0 0 0 1.582 2.907c.231.35-.02.847-.438.847H6.04c-.419 0-.67-.497-.438-.847a19.919 19.919 0 0 0 1.582-2.907 3.5 3.5 0 1 1-2.538-5.743 3.5 3.5 0 1 1 6.708 0A3.5 3.5 0 1 1 11.5 12.5\"/></svg>"
-
   override def start(): Unit = {
     val gameState = controller.gameState
-    if (gameState.getPlayers != Nil)
-      playerListHtml = updatePlayerListHtml(gameState)
-      cardListHtml = updateCardListHtml(gameState)
-      boardListHtml = updateBoardListHtml(gameState)
+    val playerListHtml = updatePlayerListHtml(gameState)
+    val cardListHtml = updateCardListHtml(gameState)
+    val boardListHtml = updateBoardListHtml(gameState)
 
     val webView = new WebView {
       engine.loadContent(
@@ -211,17 +190,24 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${playerListHtml(3)}
               </div>
               <div class="flex space-x-8 items-center">
-                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">start</button>
-                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="call()">call</button>
-                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="check()">check</button>
-                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="fold()">fold</button>
-                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="undo()">undo</button>
-              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="redo()">redo</button>
-                <form onsubmit="bet()" class="flex flex-row items-center">
-                  <input type="numer" id="betInput" name="fname" placeholder="Enter betsize" class="bg-transparent rounded-l-md ring ring-slate-100 px-2 py-1 focus:none text-white">
-                  <input type="submit" value="Bet" class="font-bold h-8 w-6 my-5 text-slate-100 rounded-r-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 px-4">
-                </form>
+                ${
+            if (gameState.getPlayers.size == 0)
+              "<button class=\"font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100\" onclick=\"startGame()\">start</button>"
+            else
+              """
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">start</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="call()">call</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="check()">check</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="fold()">fold</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="undo()">undo</button>
+              <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="redo()">redo</button>
+              <form onsubmit="bet()" class="flex flex-row items-center">
+                <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class="bg-transparent rounded-l-md ring w-16 ring-slate-100 px-2 py-1 focus:none text-white">
+                <input type="submit" value="Bet" class="font-bold h-8 w-6 my-5 text-slate-100 rounded-r-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 px-4">
+              </form>
               </div>
+                """
+          }
               <script>
                 function startGame() {
                   invoke.startGame();
@@ -249,8 +235,8 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
           </html>
         """
       )
-      prefWidth = 800
-      prefHeight = 600
+      prefWidth = 1000
+      prefHeight = 800
       engine.getLoadWorker
         .stateProperty()
         .addListener((_, _, newValue) => {
@@ -261,7 +247,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         })
     }
 
-    // Fügen Sie den WebView der Szene hinzu
     val stage = new JFXApp3.PrimaryStage {
       scene = new Scene {
         content = new HBox {

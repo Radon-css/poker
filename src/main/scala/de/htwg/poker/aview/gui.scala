@@ -19,6 +19,7 @@ import scalafx.application.Platform
 
 import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
+import javafx.scene.web.WebEngine
 
 // ... (Ihre vorhandenen Importe)
 
@@ -47,11 +48,16 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     def fold(): Unit = {
       controller.fold()
     }
+<<<<<<< Updated upstream
     def undo(): Unit = {
       controller.undo
     }
     def redo(): Unit = {
       controller.redo
+=======
+    def bet(amount: Int): Unit = {
+      controller.bet(amount)
+>>>>>>> Stashed changes
     }
   }
 
@@ -61,26 +67,30 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       getPlayerHtml(
         player.playername,
         player.balance,
-        player.currentAmountBetted,
+        player.currentAmountBetted
       )
     )
     val defaultPlayerListHtml = List.fill(6)("<div class=\"hidden\"></div>")
-    val newPlayerListHtml = defaultPlayerListHtml.patch(0, newPlayerList, newPlayerList.size)
+    val newPlayerListHtml =
+      defaultPlayerListHtml.patch(0, newPlayerList, newPlayerList.size)
     newPlayerListHtml
   }
 
-  def updateCardListHtml(gameState: GameState):List[(String,String)] = {
+  def updateCardListHtml(gameState: GameState): List[(String, String)] = {
     val playerList = gameState.getPlayers.zipWithIndex
     val playerAtTurn = gameState.getPlayerAtTurn
 
     val newCardList = playerList.collect {
-  case (player, index) if index == playerAtTurn =>
-    (getCardHtml(player.card1), getCardHtml(player.card2))
-  case (player, index) =>
-    (getHiddenCardHtml,getHiddenCardHtml)
-}
-    val defaultCardListHtml = List.fill(6)(("<div class=\"hidden\"> </div>","<div class=\"hidden\"> </div>"))
-    val newCardListHtml = defaultCardListHtml.toList.patch(0, newCardList, newCardList.size)
+      case (player, index) if index == playerAtTurn =>
+        (getCardHtml(player.card1), getCardHtml(player.card2))
+      case (player, index) =>
+        (getHiddenCardHtml, getHiddenCardHtml)
+    }
+    val defaultCardListHtml = List.fill(6)(
+      ("<div class=\"hidden\"> </div>", "<div class=\"hidden\"> </div>")
+    )
+    val newCardListHtml =
+      defaultCardListHtml.toList.patch(0, newCardList, newCardList.size)
     newCardListHtml
   }
 
@@ -97,7 +107,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     List.fill(6)("<div class=\"hidden\"></div>")
 
   var cardListHtml: List[(String, String)] =
-    List.fill(6)(("<div class=\"hidden\"> </div>","<div class=\"hidden\"> </div>"))
+    List.fill(6)(
+      ("<div class=\"hidden\"> </div>", "<div class=\"hidden\"> </div>")
+    )
 
   var boardListHtml: List[String] =
     List.fill(5)("<div class=\"hidden\"></div>")
@@ -111,7 +123,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   def getPlayerHtml(
       name: String,
       balance: Int,
-      betSize: Int,
+      betSize: Int
   ): String =
     s"""<div class=\"flex flex-col items-center justify-center space-x-2\">
                 <div class=\"rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white\">
@@ -201,6 +213,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${playerListHtml(4)}
                 ${playerListHtml(3)}
               </div>
+<<<<<<< Updated upstream
               
               <div class =" flex space-x-8 items-center">
               <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="startGame()">start</button>
@@ -210,6 +223,17 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="undo()">undo</button>
               <button class="font-bold h-6 w-12 my-5 text-slate-100 outline outline-slate-100 hover:text-gray-700 hover:bg-slate-100 "onclick="redo()">redo</button>
               </div>
+=======
+              <div class="flex space-x-8 items-center">
+                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">start</button>
+                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="call()">call</button>
+                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="check()">check</button>
+                <button class="font-bold h-6 w-12 my-5 text-slate-100 rounded-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100" onclick="fold()">fold</button>
+                <form onsubmit="bet()" class="flex flex-row items-center">
+                  <input type="numer" id="betInput" name="fname" placeholder="Enter betsize" class="bg-transparent rounded-l-md ring ring-slate-100 px-2 py-1 focus:none text-white">
+                  <input type="submit" value="Bet" class="font-bold h-8 w-6 my-5 text-slate-100 rounded-r-md ring ring-slate-100 hover:text-gray-700 hover:bg-slate-100 px-4">
+                </form>
+>>>>>>> Stashed changes
               </div>
               <script>
                 function startGame() {
@@ -224,11 +248,16 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 function fold()  {
                   invoke.fold();
                 }
+<<<<<<< Updated upstream
                 function undo() {
                   invoke.undo();
                 }
                 function redo() {
                   invoke.redo();
+=======
+                function bet() {
+                  invoke.bet(document.getElementById("betInput").value);
+>>>>>>> Stashed changes
                 }
               </script>
             </body>

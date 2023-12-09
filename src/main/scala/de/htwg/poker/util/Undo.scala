@@ -1,6 +1,6 @@
 package de.htwg.poker.util
-import de.htwg.poker.controller.Controller
-import de.htwg.poker.model.GameState
+import de.htwg.poker.controller.ControllerBaseImpl.Controller
+import de.htwg.poker.model.GameStateComponent.GameStateBaseImpl.GameState
 
 class UndoManager {
   private var undoStack: List[GameState] = Nil

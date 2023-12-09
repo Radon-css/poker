@@ -1,4 +1,7 @@
 package de.htwg.poker.model
+package CardsComponent.CardsBaseImpl
+
+import scala.util.Random
 
 val ANSI_BLACK = "\u001b[30m"
 val ANSI_RED = "\u001b[31m"
@@ -42,35 +45,29 @@ enum Suit:
       "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\" class=\"bi bi-suit-heart-fill\" viewBox=\"0 0 16 16\"><path d=\"M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1\"/></svg>"
   }
 
-class Card private (val suit: Suit, val rank: Rank) {
+class Card(val suit: Suit, val rank: Rank) {
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def toHtml: String = {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suit.toHtml}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
   }
 }
 
-object Card {
-  class CardBuilder {
-    private var suit: Suit = _
-    private var rank: Rank = _
+object Deck {
 
-    def setSuit(suit: Suit): CardBuilder = {
-      this.suit = suit
-      this
-    }
-
-    def setRank(rank: Rank): CardBuilder = {
-      this.rank = rank
-      this
-    }
-
-    def build(): Card = {
-      new Card(suit, rank)
-    }
+  val deck: List[Card] = {
+    for {
+      rank <- Rank.values.toList
+      suit <- Suit.values.toList
+    } yield new Card(suit, rank)
   }
 
-  def create(): CardBuilder = {
-    new CardBuilder
+  def shuffleDeck: List[Card] = {
+    val random = new Random
+    random.shuffle(deck)
   }
 
+  def removeCards(deck: List[Card], n: Int): List[Card] = {
+    val newCardList = deck.drop(n);
+    newCardList
+  }
 }

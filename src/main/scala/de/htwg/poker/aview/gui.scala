@@ -11,9 +11,10 @@ import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
 import scalafx.scene.control.Button
-import controller.Controller
-import model.GameState
-import model.Card
+import controller.ControllerBaseImpl.Controller
+import controller.ControllerInterface
+import model.GameStateComponent.GameStateBaseImpl.GameState
+import model.CardsComponent.CardsBaseImpl.Card
 import util.Observer
 import scalafx.application.Platform
 
@@ -21,7 +22,7 @@ import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 
-class GUI(controller: Controller) extends JFXApp3 with Observer {
+class GUI(controller: ControllerInterface) extends JFXApp3 with Observer {
   controller.add(this)
 
   override def update: Unit = {
@@ -60,7 +61,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
 
   override def start(): Unit = {
-    val gameState = controller.gameState
+    val gameState = controller.getGameState()
     val playerListHtml = updatePlayerListHtml(gameState)
     val cardListHtml = updateCardListHtml(gameState)
     val boardListHtml = updateBoardListHtml(gameState)
@@ -95,7 +96,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 </button>
               </div>
               <div class="mr-5">
-                <button class="font-semibold h-8 w-20 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
+                <button class="font-bold h-8 w-20 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
               </div>
             </div>
               """
@@ -127,7 +128,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                         ${cardListHtml(5)._1}   
                         ${cardListHtml(5)._2}
                       </div>
-                      <div class="flex flex-col items-center">
+                      <div class="flex flex-col items-center space-y-1">
                         <p class="rounded-full bg-slate-100 px-2">${
             if (gameStarted) { gameState.getPot + "$" }
             else { "" }
@@ -182,7 +183,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
               <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-md  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
-              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL:${gameState.getHighestBetSize + "$"}</button>
+              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL ${gameState.getHighestBetSize + "$"}</button>
               <form onsubmit="bet()" class="flex flex-row items-center">
                 <input type="submit" value="BET" class="w-28 h-12 font-bold my-5 bg-yellow-600 text-slate-100 rounded-l-md hover:text-gray-700 hover:bg-slate-100">
                 <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class=" h-12 w-28 bg-slate-600 rounded-r-md px-2 py-1 focus:none text-white">

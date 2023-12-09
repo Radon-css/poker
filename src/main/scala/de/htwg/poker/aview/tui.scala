@@ -1,11 +1,12 @@
 package de.htwg.poker
 package aview
-import controller.Controller
+import controller.ControllerBaseImpl.Controller
 import util.Observer
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}
+import controller.ControllerInterface
 
-class TUI(controller: Controller) extends Observer {
+class TUI(controller: ControllerInterface) extends Observer {
   controller.add(this)
 
   override def update: Unit = {

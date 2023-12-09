@@ -1,8 +1,8 @@
 package de.htwg.poker;
-import controller.Controller
+import controller.ControllerBaseImpl.Controller
 import aview.TUI
 import scala.io.StdIn.readLine
-import model.GameState
+import model.GameStateComponent.GameStateBaseImpl.GameState
 import aview.GUI
 
 import scala.concurrent.Await

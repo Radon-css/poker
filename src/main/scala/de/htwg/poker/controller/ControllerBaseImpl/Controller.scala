@@ -1,15 +1,18 @@
 package de.htwg.poker
-package controller
-import model.Player
-import model.Dealer
-import model.GameState
+package controller.ControllerBaseImpl
+import model.PlayersComponent.playersBaseImpl.Player
+import model.GameStateComponent.GameStateBaseImpl.GameState
 import util.Observable
 import util.UndoManager
+import controller.ControllerInterface
 
-class Controller(var gameState: GameState) extends Observable {
+class Controller(var gameState: GameState)
+    extends Observable
+    with ControllerInterface {
 
   private val undoManager = new UndoManager
 
+  def getGameState(): GameState = gameState
   def createGame(
       playerNameList: List[String],
       smallBlind: String,
@@ -40,7 +43,7 @@ class Controller(var gameState: GameState) extends Observable {
       )
     }
 
-    gameState = Dealer.createGame(playerNameList, smallBlindInt, bigBlindInt)
+    gameState = gameState.createGame(playerNameList, smallBlindInt, bigBlindInt)
     this.notifyObservers
     true
   }

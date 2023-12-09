@@ -1,4 +1,5 @@
-package de.htwg.poker.model
+package de.htwg.poker.model.PlayersComponent.playersBaseImpl
+import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
 
 case class Player(
     val card1: Card,

@@ -64,6 +64,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     val playerListHtml = updatePlayerListHtml(gameState)
     val cardListHtml = updateCardListHtml(gameState)
     val boardListHtml = updateBoardListHtml(gameState)
+    val betListHtml = updateBetListHtml(gameState)
     val gameStarted = gameState.getPlayers.size != 0
 
     val webView = new WebView {
@@ -76,42 +77,36 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <script src="https://cdn.tailwindcss.com"></script>
             </head>
-            <body class="flex flex-col">${
+            <body class="flex flex-col">
+            <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
+            ${
             if (gameStarted) {
               """
-              <div class="bg-gray-600 flex items-center justify-between mx-auto w-full h-14">
-              <div class="flex space-x-2 ml-2">
-                <button class="font-bold h-8 w-16 my-5 text-slate-100 bg-gray-700 rounded-md hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/>
-                  </svg>
+              <div class="flex items-center justify-between w-full h-14">
+              <div class="flex space-x-2 ml-2 ">
+                <button class="mt-4 ml-4 font-extrabold h-12 w-28 my-5 text-slate-100 bg-gray-600 rounded-full hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
-                <button class="font-bold h-8 w-16 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="redo()">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-                  </svg>
+                <button class="mt-4 font-extrabold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="redo()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-redo"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
                 </button>
               </div>
-              <div class="mr-5">
-                <button class="font-bold h-8 w-20 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
-              </div>
+                <button class="mt-4 mr-4 font-bold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
             </div>
               """
             } else {
               ""
             }
           }
-              <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
+              
                 <div class="flex space-x-56">
                 ${playerListHtml(0)}
                 ${playerListHtml(1)}
               </div>
               <div class="flex justify-center items-center h-64 w-full">
                 ${playerListHtml(5)}
-                <div class="flex flex-col space-y-12 items-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
-                    <div class="flex mt-4 space-x-56">
+                <div class="flex flex-col items-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
+                    <div class="flex mt-4 space-x-48">
                       <div class="flex h-10 w-12">
                         ${cardListHtml(0)._1}
                         ${cardListHtml(0)._2}
@@ -122,11 +117,21 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                       </div>
                     </div>
 
-                    <div class = "flex justify-center items-center space-x-24">
+                  <div class ="flex space-x-36">
+                      ${betListHtml(0)}
+                      ${betListHtml(1)}
+                  </div>
+
+                  <div class = "flex justify-center items-center space-x-12 mt-6">
+
+                    <div class=" flex items-center space-x-2">
                       <div class="flex h-10 w-12">
                         ${cardListHtml(5)._1}   
                         ${cardListHtml(5)._2}
                       </div>
+                        ${betListHtml(5)}
+                    </div>
+
                       <div class="flex flex-col items-center space-y-2">
                         <p class="rounded-full bg-slate-100 px-2">${
             if (gameStarted) { gameState.getPot + "$" }
@@ -141,13 +146,22 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                         ${boardListHtml(4)}
                         </div>
                       </div>
+
+                    <div class=" flex items-center space-x-2">
+                        ${betListHtml(2)}
                       <div class="flex h-10 w-12">
                         ${cardListHtml(2)._1}   
                         ${cardListHtml(2)._2}
                       </div>
                     </div>
+                    </div>
+
+                    <div class ="flex space-x-36 mt-6">
+                        ${betListHtml(4)}
+                        ${betListHtml(3)}
+                  </div>
                     
-                    <div class = "flex mb-4 space-x-56">
+                    <div class = "flex mb-4 space-x-48 mt-1">
                     <div class="flex h-10 w-12">
                             ${cardListHtml(4)._1}   
                             ${cardListHtml(4)._2}
@@ -178,14 +192,14 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
             """
             } else
               s"""
-              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
+              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
-              <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-md  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
-              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-md hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL ${gameState.getHighestBetSize + "$"}</button>
+              <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-full  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
+              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL ${gameState.getHighestBetSize + "$"}</button>
               <form onsubmit="bet()" class="flex flex-row items-center">
-                <input type="submit" value="BET" class="w-28 h-12 font-bold my-5 bg-yellow-600 text-slate-100 rounded-l-md hover:text-gray-700 hover:bg-slate-100">
-                <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class=" h-12 w-28 bg-slate-600 rounded-r-md px-2 py-1 focus:none text-white">
+                <input type="submit" value="BET" class="w-28 h-12 font-bold my-5 bg-yellow-600 text-slate-100 rounded-l-full hover:text-gray-700 hover:bg-slate-100">
+                <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class=" h-12 w-28 bg-slate-600 rounded-r-full px-2 py-1 focus:none text-white">
               </form>
               </div>
                 """
@@ -268,5 +282,15 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     val hiddenBoardList =
       List.fill(5)("<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>")
     hiddenBoardList.patch(0, newBoardList, newBoardList.size)
+  }
+
+  def updateBetListHtml(gameState: GameState): List[String] = {
+    val playerList = gameState.getPlayers
+
+    val newBetList =
+      playerList.map(player => player.betSizeToHtml)
+    val hiddenBetList =
+      List.fill(6)("<div class=\"hidden\"> </div>")
+    hiddenBetList.patch(0, newBetList, playerList.size)
   }
 }

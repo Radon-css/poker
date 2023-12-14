@@ -3,6 +3,8 @@ import scala.math
 import de.htwg.poker.model.PlayersComponent.playersBaseImpl.Player
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
 import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
+import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck.shuffleDeck
+import de.htwg.poker.model.GameStateComponent.GameStateInterface
 
 case class GameState(
     originalPlayers: List[Player],
@@ -15,7 +17,7 @@ case class GameState(
     smallBlind: Int = 10,
     bigBlind: Int = 20,
     smallBlindPointer: Int = 0
-) {
+) extends GameStateInterface {
 
   def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
   def getDeck: List[Card] = deck.getOrElse(List.empty[Card])
@@ -84,7 +86,7 @@ case class GameState(
       bigBlind: Int
   ): GameState = {
 
-    val shuffledDeck = Deck.shuffleDeck
+    val shuffledDeck = shuffleDeck
 
     val playerList = playerNameList.zipWithIndex.map {
       case (playerName, index) =>
@@ -241,7 +243,11 @@ case class GameState(
     )
   }
 
-  object updateBoard {
+  def updateBoard(): GameState = {
+    updateStrategy.strategy
+  }
+
+  object updateStrategy {
     var strategy: GameState =
       if (getBoard.size == 0) flop
       else if (getBoard.size == 3) turn
@@ -249,7 +255,7 @@ case class GameState(
       else startRound
 
     def startRound: GameState = {
-      val shuffledDeck = Deck.shuffleDeck
+      val shuffledDeck = shuffleDeck
 
       val newPlayerList = getOriginalPlayers.zipWithIndex.map {
         case (playerName, index) =>

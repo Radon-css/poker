@@ -1,7 +1,7 @@
 package de.htwg.poker
 package controller.ControllerBaseImpl
-import model.PlayersComponent.playersBaseImpl.Player
-import model.GameStateComponent.GameStateBaseImpl.GameState
+import model.PlayersComponent.PlayerInterface as Player
+import model.GameStateComponent.GameStateInterface as GameState
 import util.Observable
 import util.UndoManager
 import controller.ControllerInterface
@@ -94,7 +94,7 @@ class Controller(var gameState: GameState)
     gameState = gameState.fold()
 
     if (handout_required_fold()) {
-      gameState = gameState.updateBoard.strategy
+      gameState = gameState.updateBoard()
     }
     this.notifyObservers
     true
@@ -115,7 +115,7 @@ class Controller(var gameState: GameState)
     undoManager.doStep(gameState)
     gameState = gameState.call()
     if (handout_required()) {
-      gameState = gameState.updateBoard.strategy
+      gameState = gameState.updateBoard()
     }
     this.notifyObservers
     true
@@ -134,7 +134,7 @@ class Controller(var gameState: GameState)
     undoManager.doStep(gameState)
     gameState = gameState.check()
     if (handout_required()) {
-      gameState = gameState.updateBoard.strategy
+      gameState = gameState.updateBoard()
     }
     this.notifyObservers
     true
@@ -152,10 +152,11 @@ class Controller(var gameState: GameState)
     gameState.getPlayers.forall(player =>
       gameState.getBoard.size != 0 &&
         player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
-    ) && gameState.playerAtTurn == 0
+    ) && gameState.getPlayerAtTurn == 0
   }
 
   def handout_required_fold(): Boolean = {
     gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required()
   }
+
 }

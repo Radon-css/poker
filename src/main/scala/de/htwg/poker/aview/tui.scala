@@ -1,6 +1,6 @@
 package de.htwg.poker
 package aview
-import controller.ControllerBaseImpl.Controller
+import controller.ControllerInterface as Controller
 import util.Observer
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}

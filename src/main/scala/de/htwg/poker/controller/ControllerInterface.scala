@@ -1,9 +1,8 @@
 package de.htwg.poker.controller
 
-import de.htwg.poker.model.GameStateComponent.GameStateBaseImpl.GameState
+import de.htwg.poker.model.GameStateComponent.GameStateInterface as GameState
 import de.htwg.poker.util.Observer
 import de.htwg.poker.util.Observable
-import de.htwg.poker.model.GameStateComponent.GameStateBaseImpl.GameState
 
 trait ControllerInterface extends Observable {
 

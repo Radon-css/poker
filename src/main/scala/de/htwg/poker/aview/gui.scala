@@ -11,10 +11,10 @@ import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
 import scalafx.scene.control.Button
-import controller.ControllerBaseImpl.Controller
+import controller.ControllerInterface as Controller
 import controller.ControllerInterface
-import model.GameStateComponent.GameStateBaseImpl.GameState
-import model.CardsComponent.CardsBaseImpl.Card
+import model.GameStateComponent.GameStateInterface as GameState
+import model.CardsComponent.CardInterface as Card
 import util.Observer
 import scalafx.application.Platform
 

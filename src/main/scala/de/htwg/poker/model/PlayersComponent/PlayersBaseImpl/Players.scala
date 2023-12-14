@@ -1,5 +1,6 @@
 package de.htwg.poker.model.PlayersComponent.playersBaseImpl
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
+import de.htwg.poker.model.PlayersComponent.PlayersMockImpl.PlayerInterface
 
 case class Player(
     val card1: Card,
@@ -7,7 +8,7 @@ case class Player(
     val playername: String,
     val balance: Int = 1000,
     val currentAmountBetted: Int = 0
-) {
+) extends PlayerInterface {
   def balanceToString() = "(" + balance + "$)"
 
   def toHtml = {

@@ -1,8 +1,8 @@
 package de.htwg.poker.model.GameStateComponent.GameStateBaseImpl
 import scala.math
 import de.htwg.poker.model.PlayersComponent.playersBaseImpl.Player
-import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
-import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck
+import de.htwg.poker.model.CardsComponent.CardInterface as Card
+import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
 
 case class GameState(
     originalPlayers: List[Player],

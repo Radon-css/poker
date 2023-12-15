@@ -1,10 +1,10 @@
 package de.htwg.poker.model.PlayersComponent.playersBaseImpl
-import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
 import de.htwg.poker.model.PlayersComponent.PlayersMockImpl.PlayerInterface
+import de.htwg.poker.model.CardsComponent.CardInterface
 
 case class Player(
-    val card1: Card,
-    val card2: Card,
+    val card1: CardInterface,
+    val card2: CardInterface,
     val playername: String,
     val balance: Int = 1000,
     val currentAmountBetted: Int = 0

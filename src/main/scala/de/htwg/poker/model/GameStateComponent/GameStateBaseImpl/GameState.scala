@@ -6,6 +6,8 @@ import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck.shuffleDeck
 import de.htwg.poker.model.GameStateComponent.GameStateInterface
 
+import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as CardsAdvancedImpl
+
 case class GameState(
     originalPlayers: List[Player],
     players: Option[List[Player]],

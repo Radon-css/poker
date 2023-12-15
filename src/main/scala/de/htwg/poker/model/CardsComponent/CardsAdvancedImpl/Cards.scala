@@ -1,17 +1,16 @@
 package de.htwg.poker.model
-package CardsComponent.CardsBaseImpl
+package CardsComponent.CardsAdvancedImpl
 
 import scala.util.Random
 import de.htwg.poker.model.CardsComponent.CardInterface
 import de.htwg.poker.model.CardsComponent.DeckInterface
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
-import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as AdvancedCard
 
 class Card(val suit: Suit, val rank: Rank) extends CardInterface {
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def CardToHtml: String = {
-    s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${SuitToHtml(suit)}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
+    s"<div class=\"rounded-lg bg-slate-700 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${SuitToHtml(suit)}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
   }
 
   def SuitToHtml(suit: Suit): String =
@@ -25,24 +24,4 @@ class Card(val suit: Suit, val rank: Rank) extends CardInterface {
       case Suit.Hearts =>
         "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\" class=\"bi bi-suit-heart-fill\" viewBox=\"0 0 16 16\"><path d=\"M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1\"/></svg>"
     }
-}
-
-object Deck extends DeckInterface {
-
-  val deck: List[CardInterface] = {
-    for {
-      rank <- Rank.values.toList
-      suit <- Suit.values.toList
-    } yield new Card(suit, rank)
-  }
-
-  def shuffleDeck: List[CardInterface] = {
-    val random = new Random
-    random.shuffle(deck)
-  }
-
-  def removeCards(deck: List[CardInterface], n: Int): List[CardInterface] = {
-    val newCardList = deck.drop(n);
-    newCardList
-  }
 }

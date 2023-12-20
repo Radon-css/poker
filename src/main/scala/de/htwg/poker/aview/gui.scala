@@ -84,10 +84,10 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               """
               <div class="flex items-center justify-between w-full h-14">
               <div class="flex space-x-2 ml-2 ">
-                <button class="mt-4 ml-4 font-extrabold h-12 w-28 my-5 text-slate-100 bg-gray-600 rounded-full hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
+                <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600 rounded-full hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
-                <button class="mt-4 font-extrabold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="redo()">
+                <button class="mt-4 font-extrabold h-12 w-16 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="redo()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-redo"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
                 </button>
               </div>
@@ -182,17 +182,13 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${
             if (!gameStarted) {
               """ 
-               <button class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
-                <div class="flex justify-center items-center space-x-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-                  <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                </svg>
-              </div>
-            </button>
+                <button class="w-28 h-12 font-bold my-5 bg-gray-700 text-slate-100 ring ring-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="startGame">
+                <div class="flex justify-center items-center">START</div>
+              </button>
             """
             } else
               s"""
-              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
+              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
               <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-full  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
@@ -279,8 +275,14 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     val boardList = gameState.getBoard
 
     val newBoardList = boardList.map(card => card.toHtml)
+    val invisBoardList =
+      List.fill(5)("<div class=\"hidden\"> </div>")
     val hiddenBoardList =
       List.fill(5)("<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>")
+
+    if (gameState.getPlayers == Nil) {
+      return invisBoardList
+    }
     hiddenBoardList.patch(0, newBoardList, newBoardList.size)
   }
 

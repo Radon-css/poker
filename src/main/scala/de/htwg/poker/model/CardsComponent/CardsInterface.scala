@@ -41,9 +41,3 @@ trait CardInterface {
   def CardToHtml: String
   def SuitToHtml(suit: Suit): String
 }
-
-trait DeckInterface {
-  def deck: List[CardInterface]
-  def shuffleDeck: List[CardInterface]
-  def removeCards(deck: List[CardInterface], n: Int): List[CardInterface]
-}

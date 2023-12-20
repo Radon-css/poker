@@ -5,8 +5,10 @@ import model.GameStateComponent.GameStateInterface as GameState
 import util.Observable
 import util.UndoManager
 import controller.ControllerComponent.ControllerInterface
+import com.google.inject.{Guice, Inject}
+import net.codingwell.scalaguice.InjectorExtensions._
 
-class Controller(var gameState: GameState)
+class Controller @Inject() (var gameState: GameState)
     extends Observable
     with ControllerInterface {
 

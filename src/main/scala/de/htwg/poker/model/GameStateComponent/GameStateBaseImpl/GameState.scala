@@ -2,9 +2,8 @@ package de.htwg.poker.model.GameStateComponent.GameStateBaseImpl
 import scala.math
 import de.htwg.poker.model.PlayersComponent.PlayersBaseImpl.Player
 import de.htwg.poker.model.PlayersComponent.PlayerInterface
+import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
-import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
-import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck.shuffleDeck
 import de.htwg.poker.model.GameStateComponent.GameStateInterface
 
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as CardsAdvancedImpl
@@ -90,7 +89,7 @@ case class GameState(
       bigBlind: Int
   ): GameState = {
 
-    val shuffledDeck = shuffleDeck
+    val shuffledDeck = Deck.shuffleDeck
 
     print(playerNameList.size)
 
@@ -279,7 +278,7 @@ case class GameState(
       else startRound
 
     def startRound: GameState = {
-      val shuffledDeck = shuffleDeck
+      val shuffledDeck = Deck.shuffleDeck
 
       val newPlayerList = getOriginalPlayers.zipWithIndex.map {
         case (playerName, index) =>

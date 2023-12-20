@@ -1,4 +1,5 @@
-package de.htwg.poker.model.PlayersComponent.playersBaseImpl
+package de.htwg.poker.model
+package PlayersComponent.playersBaseImpl
 import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
 

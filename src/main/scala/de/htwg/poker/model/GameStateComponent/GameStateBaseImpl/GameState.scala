@@ -5,10 +5,12 @@ import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
 import de.htwg.poker.model.GameStateComponent.GameStateInterface
+import com.google.inject.{Guice, Inject}
+import net.codingwell.scalaguice.InjectorExtensions._
 
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as CardsAdvancedImpl
 
-case class GameState(
+case class GameState @Inject() (
     originalPlayers: List[PlayerInterface],
     players: Option[List[PlayerInterface]],
     deck: Option[List[Card]],

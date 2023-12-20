@@ -1,9 +1,8 @@
 package de.htwg.poker.model.GameStateComponent
 
-import de.htwg.poker.model.PlayersComponent.playersBaseImpl.Player
+import de.htwg.poker.model.PlayersComponent.PlayersBaseImpl.Player
 import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
-import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
 
 trait GameStateInterface {
   def getPlayers: List[PlayerInterface]

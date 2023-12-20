@@ -1,6 +1,6 @@
 package de.htwg.poker.model.GameStateComponent.GameStateMockImpl
 
-import de.htwg.poker.model.PlayersComponent.playersBaseImpl.Player
+import de.htwg.poker.model.PlayersComponent.PlayersBaseImpl.Player
 import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.GameStateComponent.GameStateInterface
 import de.htwg.poker.model.CardsComponent.CardInterface as Card

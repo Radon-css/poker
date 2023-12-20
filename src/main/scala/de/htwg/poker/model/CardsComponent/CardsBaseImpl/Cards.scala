@@ -3,12 +3,13 @@ package CardsComponent.CardsBaseImpl
 
 import scala.util.Random
 import de.htwg.poker.model.CardsComponent.CardInterface
-import de.htwg.poker.model.CardsComponent.DeckInterface
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as AdvancedCard
+import com.google.inject.{Guice, Inject}
+import net.codingwell.scalaguice.InjectorExtensions._
 
-class Card(val suit: Suit, val rank: Rank) extends CardInterface {
+class Card @Inject() (val suit: Suit, val rank: Rank) extends CardInterface {
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def CardToHtml: String = {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${SuitToHtml(suit)}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
@@ -27,7 +28,7 @@ class Card(val suit: Suit, val rank: Rank) extends CardInterface {
     }
 }
 
-object Deck extends DeckInterface {
+object Deck {
 
   val deck: List[CardInterface] = {
     for {

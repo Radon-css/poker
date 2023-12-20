@@ -3,7 +3,6 @@ package CardsComponent.CardsAdvancedImpl
 
 import scala.util.Random
 import de.htwg.poker.model.CardsComponent.CardInterface
-import de.htwg.poker.model.CardsComponent.DeckInterface
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
 

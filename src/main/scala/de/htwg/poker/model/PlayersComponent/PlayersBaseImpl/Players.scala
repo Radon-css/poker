@@ -1,8 +1,10 @@
 package de.htwg.poker.model.PlayersComponent.PlayersBaseImpl
 import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
+import com.google.inject.{Guice, Inject}
+import net.codingwell.scalaguice.InjectorExtensions._
 
-case class Player(
+case class Player @Inject() (
     val card1: Card,
     val card2: Card,
     val playername: String,

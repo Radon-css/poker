@@ -1,15 +1,24 @@
 package de.htwg.poker.model.PlayersComponent.playersBaseImpl
-import de.htwg.poker.model.PlayersComponent.PlayersMockImpl.PlayerInterface
-import de.htwg.poker.model.CardsComponent.CardInterface
+import de.htwg.poker.model.PlayersComponent.PlayerInterface
+import de.htwg.poker.model.CardsComponent.CardInterface as Card
 
 case class Player(
-    val card1: CardInterface,
-    val card2: CardInterface,
+    val card1: Card,
+    val card2: Card,
     val playername: String,
     val balance: Int = 1000,
     val currentAmountBetted: Int = 0
 ) extends PlayerInterface {
   def balanceToString() = "(" + balance + "$)"
+
+  def createPlayer(
+      card1: Card,
+      card2: Card,
+      playername: String,
+      balance: Int,
+      currentAmountBetted: Int
+  ): PlayerInterface =
+    Player(card1, card2, playername, balance, currentAmountBetted)
 
   def toHtml = {
     s"""<div class=\"flex flex-col items-center justify-center space-x-2\">

@@ -1,11 +1,12 @@
 package de.htwg.poker.model.GameStateComponent
 
 import de.htwg.poker.model.PlayersComponent.playersBaseImpl.Player
+import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
 import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
 
 trait GameStateInterface {
-  def getPlayers: List[Player]
+  def getPlayers: List[PlayerInterface]
   def getDeck: List[Card]
   def getPlayerAtTurn: Int
   def getHighestBetSize: Int
@@ -13,7 +14,7 @@ trait GameStateInterface {
   def getSmallBlind: Int
   def getBigBlind: Int
   def getPot: Int
-  def getOriginalPlayers: List[Player]
+  def getOriginalPlayers: List[PlayerInterface]
   def getSmallBlindPointer: Int
 
   def toString(): String

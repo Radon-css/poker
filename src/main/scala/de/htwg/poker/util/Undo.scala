@@ -1,5 +1,5 @@
 package de.htwg.poker.util
-import de.htwg.poker.controller.ControllerBaseImpl.Controller
+import de.htwg.poker.controller.ControllerComponent.ControllerBaseImpl.Controller
 import de.htwg.poker.model.GameStateComponent.GameStateInterface as GameState
 
 class UndoManager {

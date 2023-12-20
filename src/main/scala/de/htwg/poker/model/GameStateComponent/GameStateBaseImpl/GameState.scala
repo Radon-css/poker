@@ -1,6 +1,7 @@
 package de.htwg.poker.model.GameStateComponent.GameStateBaseImpl
 import scala.math
 import de.htwg.poker.model.PlayersComponent.playersBaseImpl.Player
+import de.htwg.poker.model.PlayersComponent.PlayerInterface
 import de.htwg.poker.model.CardsComponent.CardInterface as Card
 import de.htwg.poker.model.CardsComponent.DeckInterface as Deck
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Deck.shuffleDeck
@@ -9,8 +10,8 @@ import de.htwg.poker.model.GameStateComponent.GameStateInterface
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as CardsAdvancedImpl
 
 case class GameState(
-    originalPlayers: List[Player],
-    players: Option[List[Player]],
+    originalPlayers: List[PlayerInterface],
+    players: Option[List[PlayerInterface]],
     deck: Option[List[Card]],
     playerAtTurn: Int = 0,
     currentHighestBetSize: Int = 0,
@@ -21,7 +22,8 @@ case class GameState(
     smallBlindPointer: Int = 0
 ) extends GameStateInterface {
 
-  def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
+  def getPlayers: List[PlayerInterface] =
+    players.getOrElse(List.empty[PlayerInterface])
   def getDeck: List[Card] = deck.getOrElse(List.empty[Card])
   def getPlayerAtTurn: Int = playerAtTurn
   def getHighestBetSize: Int = currentHighestBetSize
@@ -29,7 +31,7 @@ case class GameState(
   def getSmallBlind: Int = smallBlind
   def getBigBlind: Int = bigBlind
   def getPot: Int = pot
-  def getOriginalPlayers: List[Player] = originalPlayers
+  def getOriginalPlayers: List[PlayerInterface] = originalPlayers
   def getSmallBlindPointer = smallBlindPointer
 
   override def toString(): String = {
@@ -90,38 +92,53 @@ case class GameState(
 
     val shuffledDeck = shuffleDeck
 
-    val playerList = playerNameList.zipWithIndex.map {
+    print(playerNameList.size)
+
+    val playerList0 = playerNameList.zipWithIndex.map {
       case (playerName, index) =>
         new Player(
           shuffledDeck(index * 2),
           shuffledDeck(index * 2 + 1),
-          playerName
+          playerName,
+          1000,
+          0
+        )
+    }
+
+    val playerList = playerNameList.zipWithIndex.map {
+      case (playerName, index) =>
+        playerList0(index).createPlayer(
+          shuffledDeck(index * 2),
+          shuffledDeck(index * 2 + 1),
+          playerName,
+          1000,
+          0
         )
     }
     val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
 
-    val smallBlindPlayer = new Player(
-      playerList(0).card1,
-      playerList(0).card2,
-      playerList(0).playername,
-      playerList(0).balance - smallBlind,
-      playerList(0).currentAmountBetted + smallBlind
+    val smallBlindPlayer = playerList.head.createPlayer(
+      playerList.head.card1,
+      playerList.head.card2,
+      playerList.head.playername,
+      1000 - smallBlind,
+      smallBlind
     )
 
-    val bigBlindPlayer = new Player(
+    val bigBlindPlayer = playerList(1).createPlayer(
       playerList(1).card1,
       playerList(1).card2,
       playerList(1).playername,
-      playerList(1).balance - bigBlind,
-      playerList(1).currentAmountBetted + bigBlind
+      1000 - bigBlind,
+      bigBlind
     )
 
     val playerListWithBlinds0 = playerList.updated(0, smallBlindPlayer)
     val playerListWithBlinds =
       playerListWithBlinds0.updated(1, bigBlindPlayer)
 
-    val gameState = GameState(
-      playerList,
+    GameState(
+      originalPlayers,
       Some(playerListWithBlinds),
       Some(newShuffledDeck),
       if (playerList.size < 3) 0 else 2,
@@ -131,10 +148,13 @@ case class GameState(
       smallBlind,
       bigBlind
     )
-    gameState
   }
+
   def bet(amount: Int): GameState = {
-    val updatedPlayer = new Player(
+
+    val currentTurnPlayer = getPlayers(getPlayerAtTurn)
+
+    val updatedPlayer = currentTurnPlayer.createPlayer(
       getPlayers(playerAtTurn).card1,
       getPlayers(playerAtTurn).card2,
       getPlayers(playerAtTurn).playername,
@@ -157,7 +177,8 @@ case class GameState(
   }
 
   def allIn(): GameState = {
-    val updatedPlayer = new Player(
+    val currentTurnPlayer = getPlayers(getPlayerAtTurn)
+    val updatedPlayer = currentTurnPlayer.createPlayer(
       getPlayers(playerAtTurn).card1,
       getPlayers(playerAtTurn).card2,
       getPlayers(playerAtTurn).playername,
@@ -198,7 +219,8 @@ case class GameState(
   }
 
   def call(): GameState = {
-    val updatedPlayer = new Player(
+    val currentTurnPlayer = getPlayers(getPlayerAtTurn)
+    val updatedPlayer = currentTurnPlayer.createPlayer(
       getPlayers(playerAtTurn).card1,
       getPlayers(playerAtTurn).card2,
       getPlayers(playerAtTurn).playername,
@@ -261,15 +283,16 @@ case class GameState(
 
       val newPlayerList = getOriginalPlayers.zipWithIndex.map {
         case (playerName, index) =>
-          new Player(
+          getOriginalPlayers(index).createPlayer(
             shuffledDeck(index * 2),
             shuffledDeck(index * 2 + 1),
             getOriginalPlayers(index).playername,
-            getOriginalPlayers(index).balance
+            getOriginalPlayers(index).balance,
+            0 // Assuming 0 is the initial value for currentAmountBetted
           )
       }
 
-      val smallBlindPlayer = new Player(
+      val smallBlindPlayer = newPlayerList(0).createPlayer(
         newPlayerList(0).card1,
         newPlayerList(0).card2,
         newPlayerList(0).playername,
@@ -277,7 +300,7 @@ case class GameState(
         newPlayerList(0).currentAmountBetted + smallBlind
       )
 
-      val bigBlindPlayer = new Player(
+      val bigBlindPlayer = newPlayerList(1).createPlayer(
         newPlayerList(1).card1,
         newPlayerList(1).card2,
         newPlayerList(1).playername,
@@ -305,10 +328,19 @@ case class GameState(
         getSmallBlindPointer
       )
     }
+
     def flop: GameState = {
       val newBoard = getDeck.take(3)
       val newPlayerList =
-        getPlayers.map(player => player.copy(currentAmountBetted = 0))
+        getPlayers.map(player =>
+          player.createPlayer(
+            player.card1,
+            player.card2,
+            player.playername,
+            player.balance,
+            player.currentAmountBetted
+          )
+        )
       GameState(
         getOriginalPlayers,
         Some(newPlayerList),
@@ -325,7 +357,15 @@ case class GameState(
     def turn: GameState = {
       val newBoard = getDeck.take(1)
       val newPlayerList =
-        getPlayers.map(player => player.copy(currentAmountBetted = 0))
+        getPlayers.map(player =>
+          player.createPlayer(
+            player.card1,
+            player.card2,
+            player.playername,
+            player.balance,
+            player.currentAmountBetted
+          )
+        )
       GameState(
         getOriginalPlayers,
         Some(newPlayerList),
@@ -342,7 +382,15 @@ case class GameState(
     def river: GameState = {
       val newBoard = getDeck.take(1)
       val newPlayerList =
-        getPlayers.map(player => player.copy(currentAmountBetted = 0))
+        getPlayers.map(player =>
+          player.createPlayer(
+            player.card1,
+            player.card2,
+            player.playername,
+            player.balance,
+            player.currentAmountBetted
+          )
+        )
       GameState(
         getOriginalPlayers,
         Some(newPlayerList),
@@ -381,7 +429,7 @@ case class GameState(
   }
 
   object Print {
-    def printBalances(playerList: List[Player]): String = {
+    def printBalances(playerList: List[PlayerInterface]): String = {
       val sb = new StringBuilder
       for (player <- playerList) {
         val spaces = " " * (14 - player.balanceToString().length)
@@ -391,7 +439,9 @@ case class GameState(
       sb.toString
     }
 
-    def printPlayerNames(indexedPlayerList: List[(Player, Int)]): String = {
+    def printPlayerNames(
+        indexedPlayerList: List[(PlayerInterface, Int)]
+    ): String = {
       val sb = new StringBuilder
       val ANSI_COLORED = "\u001b[34m"
       val ANSI_RESET = "\u001b[0m"
@@ -422,7 +472,7 @@ case class GameState(
       sb.append("\n")
       sb.toString
     }
-    def printPlayerCards(playerList: List[Player]): String = {
+    def printPlayerCards(playerList: List[PlayerInterface]): String = {
       val sb = new StringBuilder
       for (player <- playerList) {
         val spaces =
@@ -435,7 +485,7 @@ case class GameState(
       sb.toString
     }
 
-    def printPlayerBets(playerList: List[Player]): String = {
+    def printPlayerBets(playerList: List[PlayerInterface]): String = {
       val sb = new StringBuilder
       for (player <- playerList) {
         val spaces =

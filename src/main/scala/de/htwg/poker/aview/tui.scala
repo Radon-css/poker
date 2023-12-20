@@ -1,10 +1,10 @@
 package de.htwg.poker
 package aview
-import controller.ControllerInterface as Controller
+import controller.ControllerComponent.{ControllerInterface => Controller}
 import util.Observer
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}
-import controller.ControllerInterface
+import controller.ControllerComponent.ControllerInterface
 
 class TUI(controller: ControllerInterface) extends Observer {
   controller.add(this)
@@ -33,22 +33,17 @@ class TUI(controller: ControllerInterface) extends Observer {
           )
         )
         result match {
-          case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Success(value) => return true
+          case Failure(exception) =>
+            println(s"Erroddr: ${exception.getMessage}")
         }
         false
       case "x" =>
-        val result: Try[Boolean] = Try(
-          controller.createGame(
-            List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
-            "10",
-            "20"
-          )
+        controller.createGame(
+          List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
+          "10",
+          "20"
         )
-        result match {
-          case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
-        }
         false
       case "bet" =>
         val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))

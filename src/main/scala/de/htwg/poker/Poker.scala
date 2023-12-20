@@ -1,5 +1,5 @@
 package de.htwg.poker;
-import controller.ControllerBaseImpl.Controller
+import controller.ControllerComponent.ControllerBaseImpl.Controller
 import aview.TUI
 import scala.io.StdIn.readLine
 import model.GameStateComponent.GameStateBaseImpl.GameState

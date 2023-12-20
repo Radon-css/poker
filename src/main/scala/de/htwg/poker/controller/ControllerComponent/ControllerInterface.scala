@@ -1,4 +1,4 @@
-package de.htwg.poker.controller
+package de.htwg.poker.controller.ControllerComponent
 
 import de.htwg.poker.model.GameStateComponent.GameStateInterface as GameState
 import de.htwg.poker.util.Observer

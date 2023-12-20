@@ -11,8 +11,8 @@ import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
 import scalafx.scene.control.Button
-import controller.ControllerInterface as Controller
-import controller.ControllerInterface
+import controller.ControllerComponent.{ControllerInterface => Controller}
+import controller.ControllerComponent.ControllerInterface
 import model.GameStateComponent.GameStateInterface as GameState
 import model.CardsComponent.CardInterface as Card
 import util.Observer

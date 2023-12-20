@@ -1,10 +1,10 @@
 package de.htwg.poker
-package controller.ControllerBaseImpl
+package controller.ControllerComponent.ControllerBaseImpl
 import model.PlayersComponent.PlayerInterface as Player
 import model.GameStateComponent.GameStateInterface as GameState
 import util.Observable
 import util.UndoManager
-import controller.ControllerInterface
+import controller.ControllerComponent.ControllerInterface
 
 class Controller(var gameState: GameState)
     extends Observable
@@ -21,13 +21,8 @@ class Controller(var gameState: GameState)
     if (playerNameList.size < 1) {
       throw new Exception("minimum two players")
     }
-    try {
-      smallBlind.toInt
-      bigBlind.toInt
-    } catch {
-      case _: NumberFormatException =>
-        throw new Exception("last 2 inputs must be integers")
-    }
+    smallBlind.toInt
+    bigBlind.toInt
     val smallBlindInt = smallBlind.toInt
     val bigBlindInt = bigBlind.toInt
 

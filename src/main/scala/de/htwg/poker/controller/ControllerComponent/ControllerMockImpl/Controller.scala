@@ -1,6 +1,6 @@
-package de.htwg.poker.controller.ControllerMockImpl
+package de.htwg.poker.controller.ControllerComponent.ControllerMockImpl
 
-import de.htwg.poker.controller.ControllerInterface
+import de.htwg.poker.controller.ControllerComponent.ControllerInterface
 import de.htwg.poker.model.GameStateComponent.GameStateBaseImpl.GameState
 
 trait ControllerMockInterface extends ControllerInterface {

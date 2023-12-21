@@ -12,13 +12,14 @@ import de.htwg.poker.model.CardsComponent.CardInterface
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl
+import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
 
 class PokerModule extends AbstractModule with ScalaModule {
 
   override def configure() = {
     bind[ControllerInterface].to[ControllerBaseImpl.Controller]
-    bind[CardInterface].to[CardsBaseImpl.Card]
+    bind[CardInterface].to[CardsAdvancedImpl.Card]
     bind[GameStateInterface].toInstance(
       new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
     )

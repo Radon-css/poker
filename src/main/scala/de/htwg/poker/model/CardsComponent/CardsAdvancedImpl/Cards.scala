@@ -5,8 +5,9 @@ import scala.util.Random
 import de.htwg.poker.model.CardsComponent.CardInterface
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
+import com.google.inject.{Guice, Inject}
 
-class Card(val suit: Suit, val rank: Rank) extends CardInterface {
+class Card @Inject() (val suit: Suit, val rank: Rank) extends CardInterface {
 
   def createCard(suit: Suit, rank: Rank): CardInterface = {
     new Card(suit, rank)

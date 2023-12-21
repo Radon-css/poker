@@ -18,7 +18,7 @@ class Controller @Inject() (var gameState: GameState)
   private val undoManager = new UndoManager
 
   def createNewGameState(): Unit = {
-    gameState = injector.instance[GameState](Names.named("default"))
+    gameState = injector.instance[GameState]
   }
 
   def getGameState(): GameState = gameState

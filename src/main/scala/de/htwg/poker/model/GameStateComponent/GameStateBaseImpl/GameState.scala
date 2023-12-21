@@ -7,8 +7,10 @@ import de.htwg.poker.model.CardsComponent.CardInterface as Card
 import de.htwg.poker.model.GameStateComponent.GameStateInterface
 import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
+import de.htwg.poker.PokerModule
 
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as CardsAdvancedImpl
+import com.google.inject.Injector
 
 case class GameState @Inject() (
     originalPlayers: List[PlayerInterface],
@@ -23,6 +25,7 @@ case class GameState @Inject() (
     smallBlindPointer: Int = 0
 ) extends GameStateInterface {
 
+  def getInjector: Injector = Guice.createInjector(new PokerModule)
   def getPlayers: List[PlayerInterface] =
     players.getOrElse(List.empty[PlayerInterface])
   def getDeck: List[Card] = deck.getOrElse(List.empty[Card])
@@ -95,9 +98,10 @@ case class GameState @Inject() (
 
     print(playerNameList.size)
 
-    val playerList0 = playerNameList.zipWithIndex.map {
+    val playerList = playerNameList.zipWithIndex.map {
       case (playerName, index) =>
-        new Player(
+        val player = getInjector.getInstance(classOf[PlayerInterface])
+        player.createPlayer(
           shuffledDeck(index * 2),
           shuffledDeck(index * 2 + 1),
           playerName,
@@ -106,16 +110,6 @@ case class GameState @Inject() (
         )
     }
 
-    val playerList = playerNameList.zipWithIndex.map {
-      case (playerName, index) =>
-        playerList0(index).createPlayer(
-          shuffledDeck(index * 2),
-          shuffledDeck(index * 2 + 1),
-          playerName,
-          1000,
-          0
-        )
-    }
     val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
 
     val smallBlindPlayer = playerList.head.createPlayer(

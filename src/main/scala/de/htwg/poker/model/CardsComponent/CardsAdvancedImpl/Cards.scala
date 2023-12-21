@@ -7,6 +7,10 @@ import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
 
 class Card(val suit: Suit, val rank: Rank) extends CardInterface {
+
+  def createCard(suit: Suit, rank: Rank): CardInterface = {
+    new Card(suit, rank)
+  }
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def CardToHtml: String = {
     s"<div class=\"rounded-lg bg-slate-700 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${SuitToHtml(suit)}<h1 class=\"font-bold \">${rank.toString}</h1></div>"

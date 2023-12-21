@@ -7,12 +7,19 @@ import util.UndoManager
 import controller.ControllerComponent.ControllerInterface
 import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
+import com.google.inject.name.Names
 
 class Controller @Inject() (var gameState: GameState)
     extends Observable
     with ControllerInterface {
 
+  val injector = Guice.createInjector(new PokerModule)
+
   private val undoManager = new UndoManager
+
+  def createNewGameState(): Unit = {
+    gameState = injector.instance[GameState](Names.named("default"))
+  }
 
   def getGameState(): GameState = gameState
   def createGame(

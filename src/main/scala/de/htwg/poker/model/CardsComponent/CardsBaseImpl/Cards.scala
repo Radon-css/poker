@@ -8,8 +8,14 @@ import de.htwg.poker.model.CardsComponent.Suit
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as AdvancedCard
 import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
+import de.htwg.poker.PokerModule
+import com.google.inject.Guice
 
 class Card @Inject() (val suit: Suit, val rank: Rank) extends CardInterface {
+
+  def createCard(suit: Suit, rank: Rank): CardInterface = {
+    new Card(suit, rank)
+  }
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def CardToHtml: String = {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${SuitToHtml(suit)}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
@@ -30,11 +36,16 @@ class Card @Inject() (val suit: Suit, val rank: Rank) extends CardInterface {
 
 object Deck {
 
+  val injector = Guice.createInjector(new PokerModule)
+
   val deck: List[CardInterface] = {
     for {
       rank <- Rank.values.toList
       suit <- Suit.values.toList
-    } yield new Card(suit, rank)
+    } yield {
+      val card = injector.getInstance(classOf[CardInterface])
+      card.createCard(suit, rank)
+    }
   }
 
   def shuffleDeck: List[CardInterface] = {

@@ -6,6 +6,8 @@ import de.htwg.poker.util.Observable
 
 trait ControllerInterface extends Observable {
 
+  def createNewGameState(): Unit
+
   def getGameState(): GameState
 
   def createGame(

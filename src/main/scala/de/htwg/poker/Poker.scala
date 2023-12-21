@@ -11,6 +11,7 @@ import scala.concurrent.Future
 object Poker {
   val injector = Guice.createInjector(new PokerModule)
   val controller = injector.getInstance(classOf[ControllerInterface])
+  controller.createNewGameState()
   val tui = new TUI(controller)
   val gui = new GUI(controller)
 

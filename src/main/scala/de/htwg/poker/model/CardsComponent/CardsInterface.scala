@@ -40,4 +40,5 @@ trait CardInterface {
   def toString: String
   def CardToHtml: String
   def SuitToHtml(suit: Suit): String
+  def createCard(suit: Suit, rank: Rank): CardInterface
 }

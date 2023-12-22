@@ -35,6 +35,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         "10",
         "20"
       )
+
     }
     def call(): Unit = {
       controller.call()
@@ -88,7 +89,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
             ${
             if (gameStarted) {
               s"""
-                <!DOCTYPE html>
+          <!DOCTYPE html>
           <html>
             <head>
               <meta charset="UTF-8">
@@ -185,20 +186,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${playerListHtml(3)}
               </div>
               <div class="flex space-x-8 items-center">
-<<<<<<< Updated upstream
-                ${
-            if (!gameStarted) {
-              """ 
-                <button class="w-28 h-12 font-bold my-5 bg-gray-700 text-slate-100 ring ring-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="startGame">
-                <div class="flex justify-center items-center">START</div>
-              </button>
-            """
-            } else
-              s"""
-              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
-=======
               <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
->>>>>>> Stashed changes
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
               <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-full  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
@@ -244,30 +232,32 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <script src="https://cdn.tailwindcss.com"></script>
             </head>
             <body class="flex flex-col">
-            <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
+             <form onsubmit="startGame()">
+              <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
                 <div class="flex space-x-56">
-                ${addButton}
-                ${addButton}
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex justify-center items-center h-64 w-full">
-                ${addButton}
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
                 <div class="flex flex-col items-center justify-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
                 <h1 class="text-9xl font-semibold">Poker</h1>
                 </div>
-                ${addButton}
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-56">
-                ${addButton}
-                ${addButton}
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-8 items-center">
-               <button class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
+               <button type="submit" class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
                 <div class="flex justify-center items-center space-x-1">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
                   <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
                 </svg>
               </div>
             </button>
+          </form>
               <script>
                 function startGame() {
                   invoke.startGame();

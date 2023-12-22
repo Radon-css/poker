@@ -9,8 +9,6 @@ import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
 import de.htwg.poker.PokerModule
 import com.google.inject.name.Named
-import de.htwg.poker.PokerModule.DefaultGameState
-
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl.Card as CardsAdvancedImpl
 import com.google.inject.Injector
 

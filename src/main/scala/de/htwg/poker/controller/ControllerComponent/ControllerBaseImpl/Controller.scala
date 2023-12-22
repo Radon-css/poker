@@ -9,7 +9,7 @@ import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
 import com.google.inject.name.Names
 
-class Controller @Inject() (var gameState: GameState)
+class Controller (using var gameState: GameState)
     extends Observable
     with ControllerInterface {
 

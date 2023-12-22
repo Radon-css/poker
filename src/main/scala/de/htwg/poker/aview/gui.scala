@@ -16,10 +16,11 @@ import model.GameState
 import model.Card
 import util.Observer
 import scalafx.application.Platform
-
+import scala.util.{Try, Success, Failure}
 import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
+import scala.compiletime.ops.boolean
 
 class GUI(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
@@ -29,13 +30,28 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   }
 
   class External {
-    def startGame(): Unit = {
-      controller.createGame(
-        List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
-        "10",
-        "20"
-      )
-
+    def startGame(args: List[String]): Unit = {
+      val allEmpty = args.forall(_.isEmpty)
+      if (!allEmpty) {
+        val args2 = args.toList
+        val result: Try[Boolean] = Try(
+          controller.createGame(
+            args2.tail.dropRight(2),
+            args2.init.last,
+            args2.last
+          )
+        )
+        result match {
+          case Success(value)     => return
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+        }
+      } else {
+        controller.createGame(
+          List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
+          "10",
+          "20"
+        )
+      }
     }
     def call(): Unit = {
       controller.call()
@@ -54,6 +70,20 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     }
     def bet(amount: Int): Unit = {
       controller.bet(amount)
+    }
+    def toList(
+        name1: String,
+        name2: String,
+        name3: String,
+        name4: String,
+        name5: String,
+        name6: String,
+        smallBlind: String,
+        bigBlind: String
+    ): Unit = {
+      startGame(
+        List(name1, name2, name3, name4, name5, name6, smallBlind, bigBlind)
+      )
     }
   }
 
@@ -235,19 +265,19 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
              <form onsubmit="startGame()">
               <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
                 <div class="flex space-x-56">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName1" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName2" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex justify-center items-center h-64 w-full">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName3" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
                 <div class="flex flex-col items-center justify-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
                 <h1 class="text-9xl font-semibold">Poker</h1>
                 </div>
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName4" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-56">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName5" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName6" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-8 items-center">
                <button type="submit" class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
@@ -257,12 +287,25 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 </svg>
               </div>
             </button>
+           <div class="flex justify-center items-center">
+              <input type="number" id="smallBlind" name="fname" placeholder="smallBlind" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+              <input type="number" id="bigBlind" name="fname" placeholder="bigBlind" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+            </div>
           </form>
               <script>
-                function startGame() {
-                  invoke.startGame();
-                }
-                </script>
+            function startGame() {
+              invoke.toList(
+                document.getElementById("pName1").value,
+                document.getElementById("pName2").value,
+                document.getElementById("pName3").value,
+                document.getElementById("pName4").value,
+                document.getElementById("pName5").value,
+                document.getElementById("pName6").value,
+                document.getElementById("smallBlind").value,
+                document.getElementById("bigBlind").value
+              );
+            }
+            </script>
             </body>
           </html>
         """

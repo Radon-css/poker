@@ -22,6 +22,21 @@ enum Rank:
     case King  => "K"
     case Ace   => "A"
   }
+  def strength: Int = this match {
+    case Two   => 1
+    case Three => 2
+    case Four  => 3
+    case Five  => 4
+    case Six   => 5
+    case Seven => 6
+    case Eight => 7
+    case Nine  => 8
+    case Ten   => 9
+    case Jack  => 10
+    case Queen => 11
+    case King  => 12
+    case Ace   => 13
+  }
 
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
@@ -31,6 +46,13 @@ enum Suit:
     case Diamonds => s"$ANSI_RED♢$ANSI_RESET"
     case Hearts   => s"$ANSI_RED♡$ANSI_RESET"
   }
+  def id: Int = this match {
+    case Clubs    => 1
+    case Spades   => 2
+    case Diamonds => 3
+    case Hearts   => 4
+  }
+
   def toHtml: String = this match {
     case Clubs =>
       "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-suit-club-fill\" viewBox=\"0 0 16 16\"><path d=\"M11.5 12.5a3.493 3.493 0 0 1-2.684-1.254 19.92 19.92 0 0 0 1.582 2.907c.231.35-.02.847-.438.847H6.04c-.419 0-.67-.497-.438-.847a19.919 19.919 0 0 0 1.582-2.907 3.5 3.5 0 1 1-2.538-5.743 3.5 3.5 0 1 1 6.708 0A3.5 3.5 0 1 1 11.5 12.5\"/></svg>"
@@ -42,35 +64,9 @@ enum Suit:
       "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\" class=\"bi bi-suit-heart-fill\" viewBox=\"0 0 16 16\"><path d=\"M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1\"/></svg>"
   }
 
-class Card private (val suit: Suit, val rank: Rank) {
+class Card(val suit: Suit, val rank: Rank) {
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def toHtml: String = {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suit.toHtml}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
   }
-}
-
-object Card {
-  class CardBuilder {
-    private var suit: Suit = _
-    private var rank: Rank = _
-
-    def setSuit(suit: Suit): CardBuilder = {
-      this.suit = suit
-      this
-    }
-
-    def setRank(rank: Rank): CardBuilder = {
-      this.rank = rank
-      this
-    }
-
-    def build(): Card = {
-      new Card(suit, rank)
-    }
-  }
-
-  def create(): CardBuilder = {
-    new CardBuilder
-  }
-
 }

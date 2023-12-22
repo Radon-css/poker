@@ -16,79 +16,68 @@ import model.GameState
 import model.Card
 import util.Observer
 import scalafx.application.Platform
-
+import scala.util.{Try, Success, Failure}
 import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
+import scala.compiletime.ops.boolean
 
 class GUI(controller: Controller) extends JFXApp3 with Observer {
   controller.add(this)
-
-  override def update: Unit = {
-    Platform.runLater(() => start())
-  }
-
-  class External {
-    def startGame(): Unit = {
-      controller.createGame(
-        List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
-        "10",
-        "20"
-      )
-
-    }
-    def call(): Unit = {
-      controller.call()
-    }
-    def check(): Unit = {
-      controller.check()
-    }
-    def fold(): Unit = {
-      controller.fold()
-    }
-    def undo(): Unit = {
-      controller.undo
-    }
-    def redo(): Unit = {
-      controller.redo
-    }
-    def bet(amount: Int): Unit = {
-      controller.bet(amount)
-    }
-  }
-
-  def getHiddenCardHtml: String =
-    "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
+  var webEngine: WebEngine = _
 
   override def start(): Unit = {
+    val webView = new WebView {
+      prefWidth = 1000
+      prefHeight = 800
+    }
+    // webview setup
+    webView.engine.loadContent(render)
+
+    webView.engine.getLoadWorker
+      .stateProperty()
+      .addListener((_, _, newValue) => {
+        if (newValue == State.SUCCEEDED) {
+          val window =
+            webView.engine.executeScript("window").asInstanceOf[JSObject]
+          window.setMember("invoke", new External)
+        }
+      })
+
+    // stage setup
+    val stage = new JFXApp3.PrimaryStage {
+      title = "Poker"
+      scene = new Scene {
+        content = new HBox {
+          children = Seq(webView)
+        }
+      }
+    }
+    // bind engine to webview
+    webEngine = webView.engine
+  }
+
+  override def update: Unit = {
+    Platform.runLater(() => updateGui())
+  }
+
+  def updateGui() = {
+    webEngine.loadContent(render)
+  }
+
+  def render: String = {
+
     val gameState = controller.gameState
     val playerListHtml = updatePlayerListHtml(gameState)
     val cardListHtml = updateCardListHtml(gameState)
     val boardListHtml = updateBoardListHtml(gameState)
     val betListHtml = updateBetListHtml(gameState)
     val gameStarted = gameState.getPlayers.size != 0
-    val addButton = """
-    <div class="flex flex-col items-center justify-center space-x-2">
-              <form onsubmit="addPlayer()">
-              <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-                 <button type="submit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add hover:text-gray-700 animate-spin" viewBox="0 0 16 16" onclick="submitForm()">
-                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                    <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
-                  </svg>
-                 </button>
-                </form>
-              </div>
-              <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
-            </div>
-    """
 
-    val webView = new WebView {
-      engine.loadContent(
-        s"""
-            ${
-            if (gameStarted) {
-              s"""
+    return s"""
+    ${
+        if (gameStarted) {
+          s"""
           <!DOCTYPE html>
           <html>
             <head>
@@ -122,7 +111,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                         ${cardListHtml(0)._2}
                       </div>
                       <div class="flex h-10 w-12">
-                        ${cardListHtml(1)._1}   
+                        ${cardListHtml(1)._1}
                         ${cardListHtml(1)._2}
                       </div>
                     </div>
@@ -136,7 +125,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
                     <div class=" flex items-center space-x-2">
                       <div class="flex h-10 w-12">
-                        ${cardListHtml(5)._1}   
+                        ${cardListHtml(5)._1}
                         ${cardListHtml(5)._2}
                       </div>
                         ${betListHtml(5)}
@@ -157,7 +146,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                     <div class=" flex items-center space-x-2">
                         ${betListHtml(2)}
                       <div class="flex h-10 w-12">
-                        ${cardListHtml(2)._1}   
+                        ${cardListHtml(2)._1}
                         ${cardListHtml(2)._2}
                       </div>
                     </div>
@@ -167,14 +156,14 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                         ${betListHtml(4)}
                         ${betListHtml(3)}
                   </div>
-                    
+
                     <div class = "flex mb-4 space-x-48 mt-1">
                     <div class="flex h-10 w-12">
-                            ${cardListHtml(4)._1}   
+                            ${cardListHtml(4)._1}
                             ${cardListHtml(4)._2}
                     </div>
                     <div class="flex h-10 w-12">
-                            ${cardListHtml(3)._1}   
+                            ${cardListHtml(3)._1}
                             ${cardListHtml(3)._2}
                     </div>
                     </div>
@@ -222,8 +211,8 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               </body>
           </html>
               """
-            } else {
-              s""" 
+        } else {
+          s"""
               <!DOCTYPE html>
           <html>
             <head>
@@ -235,19 +224,19 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
              <form onsubmit="startGame()">
               <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
                 <div class="flex space-x-56">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName1" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName2" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex justify-center items-center h-64 w-full">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName3" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
                 <div class="flex flex-col items-center justify-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
                 <h1 class="text-9xl font-semibold">Poker</h1>
                 </div>
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName4" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-56">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
-                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName5" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName6" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-8 items-center">
                <button type="submit" class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
@@ -257,40 +246,94 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 </svg>
               </div>
             </button>
+           <div class="flex justify-center items-center">
+              <input type="number" id="smallBlind" name="fname" placeholder="smallBlind" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+              <input type="number" id="bigBlind" name="fname" placeholder="bigBlind" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+            </div>
           </form>
               <script>
-                function startGame() {
-                  invoke.startGame();
-                }
-                </script>
+            function startGame() {
+              invoke.toList(
+                document.getElementById("pName1").value,
+                document.getElementById("pName2").value,
+                document.getElementById("pName3").value,
+                document.getElementById("pName4").value,
+                document.getElementById("pName5").value,
+                document.getElementById("pName6").value,
+                document.getElementById("smallBlind").value,
+                document.getElementById("bigBlind").value
+              );
+            }
+            </script>
             </body>
           </html>
         """
-            }
-          }
-        """
-      )
-      prefWidth = 1000
-      prefHeight = 800
-      engine.getLoadWorker
-        .stateProperty()
-        .addListener((_, _, newValue) => {
-          if (newValue == State.SUCCEEDED) {
-            val window = engine.executeScript("window").asInstanceOf[JSObject]
-            window.setMember("invoke", new External)
-          }
-        })
-    }
-
-    val stage = new JFXApp3.PrimaryStage {
-      scene = new Scene {
-        content = new HBox {
-          children = Seq(webView)
         }
       }
-    }
-
+    """
   }
+
+  class External {
+    def startGame(args: List[String]): Unit = {
+      val allEmpty = args.forall(_.isEmpty)
+      if (!allEmpty) {
+        val args2 = args.toList
+        val result: Try[Boolean] = Try(
+          controller.createGame(
+            args2.tail.dropRight(2),
+            args2.init.last,
+            args2.last
+          )
+        )
+        result match {
+          case Success(value)     => return
+          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+        }
+      } else {
+        controller.createGame(
+          List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
+          "10",
+          "20"
+        )
+      }
+    }
+    def call(): Unit = {
+      controller.call()
+    }
+    def check(): Unit = {
+      controller.check()
+    }
+    def fold(): Unit = {
+      controller.fold()
+    }
+    def undo(): Unit = {
+      controller.undo
+    }
+    def redo(): Unit = {
+      controller.redo
+    }
+    def bet(amount: Int): Unit = {
+      controller.bet(amount)
+    }
+    def toList(
+        name1: String,
+        name2: String,
+        name3: String,
+        name4: String,
+        name5: String,
+        name6: String,
+        smallBlind: String,
+        bigBlind: String
+    ): Unit = {
+      startGame(
+        List(name1, name2, name3, name4, name5, name6, smallBlind, bigBlind)
+      )
+    }
+  }
+
+  def getHiddenCardHtml: String =
+    "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
+
   def updatePlayerListHtml(gameState: GameState): List[String] = {
     val playerList = gameState.getPlayers
     val newPlayerList = playerList.map(player => player.toHtml)

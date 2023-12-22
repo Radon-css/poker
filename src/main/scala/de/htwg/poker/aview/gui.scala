@@ -35,6 +35,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         "10",
         "20"
       )
+
     }
     def call(): Unit = {
       controller.call()
@@ -66,10 +67,28 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     val boardListHtml = updateBoardListHtml(gameState)
     val betListHtml = updateBetListHtml(gameState)
     val gameStarted = gameState.getPlayers.size != 0
+    val addButton = """
+    <div class="flex flex-col items-center justify-center space-x-2">
+              <form onsubmit="addPlayer()">
+              <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+                 <button type="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add hover:text-gray-700 animate-spin" viewBox="0 0 16 16" onclick="submitForm()">
+                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
+                  </svg>
+                 </button>
+                </form>
+              </div>
+              <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+            </div>
+    """
 
     val webView = new WebView {
       engine.loadContent(
         s"""
+            ${
+            if (gameStarted) {
+              s"""
           <!DOCTYPE html>
           <html>
             <head>
@@ -79,9 +98,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
             </head>
             <body class="flex flex-col">
             <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
-            ${
-            if (gameStarted) {
-              """
               <div class="flex items-center justify-between w-full h-14">
               <div class="flex space-x-2 ml-2 ">
                 <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600 rounded-full hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
@@ -93,12 +109,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               </div>
                 <button class="mt-4 mr-4 font-bold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
             </div>
-              """
-            } else {
-              ""
-            }
-          }
-              
                 <div class="flex space-x-56">
                 ${playerListHtml(0)}
                 ${playerListHtml(1)}
@@ -133,10 +143,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                     </div>
 
                       <div class="flex flex-col items-center space-y-2">
-                        <p class="rounded-full bg-slate-100 px-2">${
-            if (gameStarted) { gameState.getPot + "$" }
-            else { "" }
-          }
+                        <p class="rounded-full bg-slate-100 px-2">${gameState.getPot + "$"}
                         </p>
                         <div class="flex px-16">
                         ${boardListHtml(0)}
@@ -179,16 +186,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${playerListHtml(3)}
               </div>
               <div class="flex space-x-8 items-center">
-                ${
-            if (!gameStarted) {
-              """ 
-                <button class="w-28 h-12 font-bold my-5 bg-gray-700 text-slate-100 ring ring-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="startGame">
-                <div class="flex justify-center items-center">START</div>
-              </button>
-            """
-            } else
-              s"""
-              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
+              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
               <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-full  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
@@ -198,8 +196,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class=" h-12 w-28 bg-slate-600 rounded-r-full px-2 py-1 focus:none text-white">
               </form>
               </div>
-                """
-          }
               <script>
                 function startGame() {
                   invoke.startGame();
@@ -223,8 +219,55 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                   invoke.bet(document.getElementById("betInput").value);
                 }
               </script>
+              </body>
+          </html>
+              """
+            } else {
+              s""" 
+              <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <script src="https://cdn.tailwindcss.com"></script>
+            </head>
+            <body class="flex flex-col">
+             <form onsubmit="startGame()">
+              <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
+                <div class="flex space-x-56">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+              </div>
+              <div class="flex justify-center items-center h-64 w-full">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <div class="flex flex-col items-center justify-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
+                <h1 class="text-9xl font-semibold">Poker</h1>
+                </div>
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+              </div>
+              <div class="flex space-x-56">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="betInput" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+              </div>
+              <div class="flex space-x-8 items-center">
+               <button type="submit" class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
+                <div class="flex justify-center items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+                  <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                </svg>
+              </div>
+            </button>
+          </form>
+              <script>
+                function startGame() {
+                  invoke.startGame();
+                }
+                </script>
             </body>
           </html>
+        """
+            }
+          }
         """
       )
       prefWidth = 1000

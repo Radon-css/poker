@@ -6,13 +6,13 @@ import de.htwg.poker.model.*
 def run(): Unit = {
   val evaluator = new Evaluator
   evaluator.evaluate(
-    List(new Card(Suit.Hearts, Rank.Two), new Card(Suit.Hearts, Rank.Two)),
+    List(new Card(Suit.Hearts, Rank.Jack), new Card(Suit.Hearts, Rank.Two)),
     List(
+      new Card(Suit.Hearts, Rank.Ace),
       new Card(Suit.Hearts, Rank.Four),
-      new Card(Suit.Hearts, Rank.Four),
-      new Card(Suit.Hearts, Rank.Five),
-      new Card(Suit.Hearts, Rank.Ten),
-      new Card(Suit.Hearts, Rank.Six)
+      new Card(Suit.Spades, Rank.Five),
+      new Card(Suit.Spades, Rank.Ten),
+      new Card(Suit.Spades, Rank.Six)
     )
   )
 }
@@ -44,7 +44,7 @@ class Evaluator() {
     for (card <- bestHand) {
       println(card.toString)
     }
-    println(bestType.strength)
+    println(bestType.toString())
   }
 
   def evalHand(
@@ -159,12 +159,22 @@ class Evaluator() {
     if (handsWithHighestType.size == 1)
       return handsWithHighestType.head
     if (highestType == Type.High)
-      for (hands <- handsWithHighestType) {}
-    handsWithHighestType.head
+      return getHighestKicker(handsWithHighestType)
+
   }
 
-  def findHighestKicker(cards: List[List[Card]]): List[Card] = {
-    cards.maxBy(_.maxBy(_.rank.strength).rank.strength)
-  }
+  def getHighestKicker(cards: List[List[Card]]): List[Card] = {
+    val sortedCardLists =
+      cards.map(list => list.sorted(Ordering.by(_.rank.strength)).reverse)
+    val highestKickerList =
+      cards.reduceLeft((acc, current) => {
+        val maxAcc = acc.map(_.rank.strength).max
+        val maxCurrent = current.map(_.rank.strength).max
 
+        if (maxAcc > maxCurrent) acc
+        else if (maxAcc < maxCurrent) current
+        else Nil
+      })
+    highestKickerList
+  }
 }

@@ -160,7 +160,7 @@ class Evaluator() {
       return handsWithHighestType.head
     if (highestType == Type.High)
       return getHighestKicker(handsWithHighestType)
-
+    hands.head._1
   }
 
   def getHighestKicker(cards: List[List[Card]]): List[Card] = {

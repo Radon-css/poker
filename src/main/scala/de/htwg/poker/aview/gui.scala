@@ -228,15 +228,15 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 <input type="string" id="pName2" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex justify-center items-center h-64 w-full">
-                <input type="string" id="pName3" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName6" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
                 <div class="flex flex-col items-center justify-center rounded-full bg-teal-600 h-72 w-3/5 border-8 border-teal-400 shadow-[inset_0_-2px_8px_rgba(0,0,0,0.8)]">
                 <h1 class="text-9xl font-semibold">Poker</h1>
                 </div>
-                <input type="string" id="pName4" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName3" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-56">
                 <input type="string" id="pName5" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
-                <input type="string" id="pName6" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
+                <input type="string" id="pName4" name="fname" placeholder="Playername" class="h-8 w-20 bg-transparent rounded-md focus:none text-white">
               </div>
               <div class="flex space-x-8 items-center">
                <button type="submit" class="w-28 h-12 font-bold my-5 bg-slate-100 text-slate-700 rounded-md hover:text-gray-100 hover:bg-slate-700 shadow-lg" onclick="startGame()">
@@ -244,6 +244,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
                   <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
                 </svg>
+              </div>
               </div>
             </button>
            <div class="flex justify-center items-center">
@@ -280,7 +281,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         val args2 = args.toList
         val result: Try[Boolean] = Try(
           controller.createGame(
-            args2.tail.dropRight(2),
+            args2.dropRight(2),
             args2.init.last,
             args2.last
           )
@@ -325,9 +326,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         smallBlind: String,
         bigBlind: String
     ): Unit = {
-      startGame(
-        List(name1, name2, name3, name4, name5, name6, smallBlind, bigBlind)
-      )
+      val names =
+        List(name1, name2, name3, name4, name5, name6).filter(_.nonEmpty)
+      startGame(names :+ smallBlind :+ bigBlind)
     }
   }
 

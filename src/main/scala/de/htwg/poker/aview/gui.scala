@@ -98,6 +98,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               </div>
                 <button class="mt-4 mr-4 font-bold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
             </div>
+            <div class="rounded-full bg-gray-500">
+              <h1 class="text-gray-100">Current Hand: ${gameState.getCurrentHand}</h1>
+            </div>
                 <div class="flex space-x-56">
                 ${playerListHtml(0)}
                 ${playerListHtml(1)}

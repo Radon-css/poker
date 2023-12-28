@@ -39,12 +39,13 @@ class Evaluator() {
       case StraightFlush => 9
     }
 
-  def evaluate(playerCards: List[Card], boardCards: List[Card]): Unit = {
+  def evaluate(playerCards: List[Card], boardCards: List[Card]): String = {
     val (bestHand, bestType) = evalHand(playerCards, boardCards)
     for (card <- bestHand) {
       println(card.toString)
     }
     println(bestType.toString())
+    bestType.toString()
   }
 
   def evalHand(

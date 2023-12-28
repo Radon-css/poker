@@ -1,5 +1,6 @@
 package de.htwg.poker.model
 import scala.math
+import de.htwg.poker.util.Evaluator
 
 case class GameState(
     originalPlayers: List[Player],
@@ -316,6 +317,18 @@ case class GameState(
       return getPlayers.length - 1
     }
     return getPlayerAtTurn - 1
+  }
+
+  def getCurrentHand: String = {
+    val currHand = new Evaluator()
+      .evaluate(
+        List(
+          getPlayers(getPlayerAtTurn).card1,
+          getPlayers(getPlayerAtTurn).card2
+        ),
+        getBoard
+      )
+    currHand
   }
 
   object Print {

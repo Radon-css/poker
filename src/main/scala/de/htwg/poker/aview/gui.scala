@@ -230,9 +230,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     </div>
       <div class="flex space-x-56">
       <div class="flex flex-col justify-center items-center">
-        <button onClick="revealForm1()">
-        <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16 ">
+        <button onClick="revealForm('form1')">
+        <div id="outerDiv1" class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+        <svg id="innerDiv1" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100" viewBox="0 0 16 16 ">
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
         </svg>
@@ -241,9 +241,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       <input type="string" id="form1" name="fname" placeholder="Playername" class="h-8 w-28 bg-transparent rounded-md focus:none text-white text-center" style="visibility:hidden;">
     </div>
     <div class="flex flex-col justify-center items-center">
-      <button onClick="revealForm2()">
-      <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
+      <button onClick="revealForm('form2')">
+      <div id="outerDiv2" class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+      <svg id="innerDiv2" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
         <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
         <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
       </svg>
@@ -254,9 +254,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     </div>
     <div class="flex justify-center items-center h-64 w-full">
       <div class="flex flex-col justify-center items-center">
-        <button onClick="revealForm3()">
-        <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
+        <button onClick="revealForm('form3')">
+        <div id="outerDiv3" class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+        <svg id="innerDiv3" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
         </svg>
@@ -272,9 +272,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       </div>
       </div>
       <div class="flex flex-col justify-center items-center">
-        <button onClick="revealForm4()">
-        <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
+        <button onClick="revealForm('form4')">
+        <div id="outerDiv4" class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+        <svg id="innerDiv4" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
         </svg>
@@ -285,9 +285,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     </div>
     <div class="flex space-x-56">
       <div class="flex flex-col justify-center items-center">
-        <button onClick="revealForm5()">
-        <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
+        <button onClick="revealForm('form5')">
+        <div id="outerDiv5" class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+        <svg id="innerDiv5" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
         </svg>
@@ -296,9 +296,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       <input type="string" id="form5" name="fname" placeholder="Playername" class="h-8 w-28 bg-transparent rounded-md focus:none text-white text-center" style="visibility:hidden;">
     </div>
     <div class="flex flex-col justify-center items-center">
-      <button onClick="revealForm6()">
-      <div class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
+      <button onClick="revealForm('form6')">
+      <div id="outerDiv6" class="rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5">
+      <svg id="innerDiv6" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-fill-add text-slate-100 hover:w-10 hover:h-10" viewBox="0 0 16 16">
         <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
         <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4"/>
       </svg>
@@ -308,9 +308,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   </div>
     </div>
     <div class="flex space-x-8 items-center">
-     <button type="submit" class="w-28 h-12 font-bold my-5 bg-gray-300/80 text-slate-700 rounded-full hover:text-gray-100 hover:bg-gray-600 shadow-lg" onclick="startGame()">
+     <button id="outerDiv7"type="submit" class="w-28 h-12 font-bold my-5 bg-gray-300/80 text-slate-700 rounded-full hover:text-gray-100 hover:bg-gray-600 shadow-lg" onclick="startGame()">
       <div class="flex justify-center items-center space-x-1">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill hover:w-10 hover:h-10" viewBox="0 0 16 16">
+      <svg id="innerDiv7" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill hover:w-10 hover:h-10" viewBox="0 0 16 16">
         <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
       </svg>
     </div>
@@ -330,36 +330,31 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       document.getElementById("bigBlind").value
     );
   }
-  function revealForm1(){
-    event.preventDefault();
-    var element = document.getElementById("form1");
-    element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
+  function revealForm(formId) {
+   event.preventDefault();
+   var element = document.getElementById(formId);
+   element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
+   document.getElementById(formId).focus();
+}
+  function addHoverEffect(outerId, innerId) {
+      var outerDiv = document.getElementById(outerId);
+      var innerDiv = document.getElementById(innerId);
+
+  outerDiv.addEventListener('mouseenter', function() {
+      innerDiv.classList.add('w-10', 'h-10');
+    });
+
+  outerDiv.addEventListener('mouseleave', function() {
+      innerDiv.classList.remove('w-10', 'h-10');
+    });
   }
-  function revealForm2(){
-    event.preventDefault();
-    var element = document.getElementById("form2");
-    element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
-  }
-  function revealForm3(){
-    event.preventDefault();
-    var element = document.getElementById("form3");
-    element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
-  }
-  function revealForm4(){
-    event.preventDefault();
-    var element = document.getElementById("form4");
-    element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
-  }
-  function revealForm5(){
-    event.preventDefault();
-    var element = document.getElementById("form5");
-    element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
-  }
-  function revealForm6(){
-    event.preventDefault();
-    var element = document.getElementById("form6");
-    element.style.visibility = (element.style.visibility === "hidden") ? "visible" : "hidden";
-  }
+  addHoverEffect('outerDiv1', 'innerDiv1');
+  addHoverEffect('outerDiv2', 'innerDiv2');
+  addHoverEffect('outerDiv3', 'innerDiv3');
+  addHoverEffect('outerDiv4', 'innerDiv4');
+  addHoverEffect('outerDiv5', 'innerDiv5');
+  addHoverEffect('outerDiv6', 'innerDiv6');
+  addHoverEffect('outerDiv7', 'innerDiv7');
   </script>
   </body>
 </html>

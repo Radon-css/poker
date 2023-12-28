@@ -86,7 +86,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <script src="https://cdn.tailwindcss.com"></script>
             </head>
             <body class="flex flex-col">
-            <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
+            <div class="flex flex-col justify-center items-center h-screen w-full bg-gradient-to-tl from-gray-900 to-gray-700 bg-gradient-to-r space-y-5">
               <div class="flex items-center justify-between w-full h-14">
               <div class="flex space-x-2 ml-2 ">
                 <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600 rounded-full hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
@@ -225,7 +225,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   </head>
   <body class="flex flex-col">
    <form onsubmit="startGame()">
-    <div class="flex flex-col justify-center items-center h-screen w-full bg-gray-700 space-y-5">
+    <div class="flex flex-col justify-center items-center h-screen w-full  bg-gradient-to-tl from-gray-900 to-gray-700 bg-gradient-to-r  space-y-5">
       <div class="flex flex-col justify-center items-center">
       <h1 class="text-xl font-bold text-gray-300/80">Insert Playernames</h1>
       <h1 class="text-xl font-bold text-gray-300/80">Insert small and big Blind</h1>

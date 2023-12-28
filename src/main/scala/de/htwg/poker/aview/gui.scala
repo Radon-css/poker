@@ -314,19 +314,18 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
       </svg>
     </div>
-    </div>
   </button>
   </div>
 </form>
     <script>
   function startGame() {
     invoke.toList(
-      document.getElementById("pName1").value,
-      document.getElementById("pName2").value,
-      document.getElementById("pName3").value,
-      document.getElementById("pName4").value,
-      document.getElementById("pName5").value,
-      document.getElementById("pName6").value,
+      document.getElementById("form1").value,
+      document.getElementById("form2").value,
+      document.getElementById("form3").value,
+      document.getElementById("form4").value,
+      document.getElementById("form5").value,
+      document.getElementById("form6").value,
       document.getElementById("smallBlind").value,
       document.getElementById("bigBlind").value
     );

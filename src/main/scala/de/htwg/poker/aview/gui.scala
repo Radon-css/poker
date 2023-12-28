@@ -96,10 +96,11 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-redo"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
                 </button>
               </div>
+              <div class="flex flex-col items-center justify-center">
+              <h1 class="text-gray-100">Current Hand:</h1>
+              <h1 class="text-red-500">${gameState.getCurrentHand}</h1>
+              </div>
                 <button class="mt-4 mr-4 font-bold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
-            </div>
-            <div class="rounded-full bg-gray-500">
-              <h1 class="text-gray-100">Current Hand: ${gameState.getCurrentHand}</h1>
             </div>
                 <div class="flex space-x-56">
                 ${playerListHtml(0)}

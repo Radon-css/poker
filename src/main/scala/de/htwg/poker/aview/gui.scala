@@ -86,13 +86,13 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <script src="https://cdn.tailwindcss.com"></script>
             </head>
             <body class="flex flex-col">
-            <div class="flex flex-col justify-center items-center h-screen w-full bg-gradient-to-tl from-gray-900 to-gray-700 bg-gradient-to-r space-y-5">
+            <div class="flex flex-col justify-center items-center h-screen w-full bg-gradient-to-tl from-gray-800 to-gray-700 bg-gradient-to-r space-y-5">
               <div class="flex items-center justify-between w-full h-14">
               <div class="flex space-x-2 ml-2 ">
-                <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600 rounded-full hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="undo()">
+                <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600/40 rounded-full hover:bg-gray-600/20 flex justify-center items-center" onclick="undo()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
-                <button class="mt-4 font-extrabold h-12 w-16 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100 flex justify-center items-center" onclick="redo()">
+                <button class="mt-4 font-extrabold h-12 w-16 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20 flex justify-center items-center" onclick="redo()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-redo"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
                 </button>
               </div>
@@ -100,7 +100,13 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
               <h1 class="text-gray-100">Current Hand:</h1>
               <h1 class="text-red-500">${gameState.getCurrentHand}</h1>
               </div>
-                <button class="mt-4 mr-4 font-bold h-12 w-28 my-5 text-slate-100 rounded-full bg-gray-600 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
+                <button class="flex justify-start space-x-2 items-center mt-4 mr-4 font-bold h-12 w-36 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20" onclick="startGame()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-clockwise ml-4" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                </svg>
+                <div>RESTART</div>
+                </button>
             </div>
                 <div class="flex space-x-56">
                 ${playerListHtml(0)}
@@ -179,13 +185,33 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
                 ${playerListHtml(3)}
               </div>
               <div class="flex space-x-8 items-center">
-              <button class="w-28 h-12 font-bold my-5 bg-red-600 text-slate-100  rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="fold()">
+              <button class=" flex justify-start space-x-2 items-center w-28 h-12 font-bold my-5 bg-red-600/20 text-red-500  rounded-full hover:bg-red-600/10" onclick="fold()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-circle ml-4" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                </svg>
                 <div class="flex justify-center items-center">FOLD</div>
               </button>
-              <button class="w-28 h-12 font-bold my-5 bg-blue-600 text-slate-100 rounded-full  hover:text-gray-700 hover:bg-slate-100" onclick="check()">CHECK</button>
-              <button class="w-28 h-12 font-bold my-5 bg-green-600 text-slate-100 rounded-full hover:text-gray-700 hover:bg-slate-100" onclick="call()">CALL ${gameState.getHighestBetSize + "$"}</button>
+              <button class="flex justify-start space-x-2 items-center w-28 h-12 font-bold my-5 bg-blue-600/20 text-blue-400 rounded-full  hover:bg-blue-600/10" onclick="check()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check2-circle ml-3" viewBox="0 0 16 16">
+                  <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0"/>
+                  <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z"/>
+                </svg>
+                <div class="flex justify-center items-center">CHECK</div>
+              </button>
+              <button class="flex justify-start space-x-2 items-center w-32 h-12 font-bold my-5 bg-green-600/20 text-green-400 rounded-full  hover:bg-green-600/10" onclick="call()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-right-circle ml-2" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                </svg>
+                <div class="flex justify-center items-center">CALL ${gameState.getHighestBetSize + "$"}</div>
+              </button>
               <form onsubmit="bet()" class="flex flex-row items-center">
-                <input type="submit" value="BET" class="w-28 h-12 font-bold my-5 bg-yellow-600 text-slate-100 rounded-l-full hover:text-gray-700 hover:bg-slate-100">
+                <button type="submit" class="flex justify-start space-x-2 items-center w-28 h-12 font-bold my-5 bg-yellow-600/20 text-yellow-400 rounded-l-full hover:bg-yellow-600/10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up-circle ml-4" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
+                </svg>
+                <div>BET</div>
+              </button>
                 <input type="number" id="betInput" name="fname" placeholder="Enter betsize" class=" h-12 w-28 bg-slate-600 rounded-r-full px-2 py-1 focus:none text-white">
               </form>
               </div>
@@ -226,7 +252,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   </head>
   <body class="flex flex-col">
    <form onsubmit="startGame()">
-    <div class="flex flex-col justify-center items-center h-screen w-full  bg-gradient-to-tl from-gray-900 to-gray-700 bg-gradient-to-r  space-y-5">
+    <div class="flex flex-col justify-center items-center h-screen w-full  bg-gradient-to-tl from-gray-800 to-gray-700 bg-gradient-to-r  space-y-5">
       <div class="flex flex-col justify-center items-center">
       <h1 class="text-xl font-bold text-gray-300/80">Insert Playernames</h1>
       <h1 class="text-xl font-bold text-gray-300/80">Insert small and big Blind</h1>
@@ -427,8 +453,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   }
 
   def getHiddenCardHtml: String =
-    "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
-
+    "<svg class=\"ml-3\"width=\"42\" height=\"42\" viewBox=\"0 0 119 119\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M38.9596 14H14C6.26801 14 0 20.268 0 28V105C0 112.732 6.26801 119 14 119H44.4789L16.2797 110.439C8.88111 108.193 5.16362 100.534 7.97644 93.3319L38.9596 14Z\" fill=\"#2dd4bf\"/><rect width=\"67.2466\" height=\"106.582\" rx=\"14\" transform=\"matrix(0.95688 0.290485 -0.363791 0.931481 54.6531 0)\" fill=\"#2dd4bf\"/></svg>"
   def updatePlayerListHtml(gameState: GameState): List[String] = {
     val playerList = gameState.getPlayers
     val newPlayerList = playerList.map(player => player.toHtml)
@@ -444,10 +469,13 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       case (player, index) if index == playerAtTurn =>
         (player.card1.toHtml, player.card2.toHtml)
       case (player, index) =>
-        (getHiddenCardHtml, getHiddenCardHtml)
+        (getHiddenCardHtml, "<div class=\"hidden\"> </div>")
     }
     val defaultCardListHtml = List.fill(6)(
-      ("<div class=\"hidden\"> </div>", "<div class=\"hidden\"> </div>")
+      (
+        "<div class=\"hidden\"> </div>",
+        "<div class=\"hidden\"> </div>"
+      )
     )
     defaultCardListHtml.toList.patch(0, newCardList, newCardList.size)
   }

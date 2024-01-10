@@ -45,6 +45,12 @@ class TUI(controller: ControllerInterface) extends Observer {
           "20"
         )
         false
+      case "save" =>
+        controller.save
+        false
+      case "load" =>
+        controller.load
+        false
       case "bet" =>
         val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))
         result match {

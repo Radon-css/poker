@@ -33,6 +33,12 @@ enum Suit:
     case Diamonds => s"$ANSI_RED♢$ANSI_RESET"
     case Hearts   => s"$ANSI_RED♡$ANSI_RESET"
   }
+  def toString1: String = this match {
+    case Clubs    => "♣"
+    case Spades   => "♠"
+    case Diamonds => "♢"
+    case Hearts   => "♡"
+  }
 
 trait CardInterface {
   def suit: Suit

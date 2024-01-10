@@ -5,15 +5,19 @@ import model.GameStateComponent.GameStateInterface as GameState
 import util.Observable
 import util.UndoManager
 import controller.ControllerComponent.ControllerInterface
+import model.FileIOComponent.FileIOInterface
+import model.FileIOComponent.FileIOJsonImpl.FileIO
 import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
 import com.google.inject.name.Names
 
-class Controller @Inject()(var gameState: GameState)
+class Controller @Inject() (var gameState: GameState)
     extends Observable
     with ControllerInterface {
 
   val injector = Guice.createInjector(new PokerModule)
+
+  val fileIOInterface = new FileIO
 
   private val undoManager = new UndoManager
 
@@ -59,6 +63,15 @@ class Controller @Inject()(var gameState: GameState)
 
   def redo: Unit = {
     undoManager.redoStep(this)
+    notifyObservers
+  }
+
+  def save: Unit = {
+    fileIOInterface.save(gameState)
+  }
+
+  def load: Unit = {
+    gameState = fileIOInterface.load
     notifyObservers
   }
 

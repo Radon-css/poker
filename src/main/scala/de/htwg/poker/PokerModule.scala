@@ -20,8 +20,18 @@ class PokerModule extends AbstractModule with ScalaModule {
   override def configure() = {
     bind[ControllerInterface].to[ControllerBaseImpl.Controller]
     bind[CardInterface].to[CardsAdvancedImpl.Card]
-    bind[GameStateInterface].toInstance(new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0))
-    bind[PlayerInterface].toInstance( new Player(new Card(Suit.Hearts, Rank.Ace), new Card(Suit.Hearts, Rank.Ace)," ",0,0))
+    bind[GameStateInterface].toInstance(
+      new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
+    )
+    bind[PlayerInterface].toInstance(
+      new Player(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Hearts, Rank.Ace),
+        " ",
+        0,
+        0
+      )
+    )
     bind[Rank].toInstance(Rank.Ace)
     bind[Suit].toInstance(Suit.Hearts)
   }

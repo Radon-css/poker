@@ -20,6 +20,10 @@ trait ControllerInterface extends Observable {
 
   def redo: Unit
 
+  def save: Unit
+
+  def load: Unit
+
   def bet(amount: Int): Boolean
 
   def allin(): Boolean

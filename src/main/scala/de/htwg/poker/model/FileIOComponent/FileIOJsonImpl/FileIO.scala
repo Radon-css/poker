@@ -8,8 +8,9 @@ import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
 import de.htwg.poker.model.CardsComponent.CardInterface
+import com.google.inject.{Guice, Inject}
 
-class FileIO extends FileIOInterface {
+class FileIO @Inject() extends FileIOInterface {
 
   override def load: GameStateInterface = {
     val source: String =

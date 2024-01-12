@@ -14,6 +14,10 @@ import de.htwg.poker.model.CardsComponent.Suit
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl
 import de.htwg.poker.model.CardsComponent.CardsAdvancedImpl
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
+import de.htwg.poker.model.FileIOComponent.FileIOInterface
+import de.htwg.poker.model.FileIOComponent.FileIOJsonImpl
+import de.htwg.poker.model.FileIOComponent.FileIOXmlImpl
+
 
 class PokerModule extends AbstractModule with ScalaModule {
 
@@ -34,5 +38,6 @@ class PokerModule extends AbstractModule with ScalaModule {
     )
     bind[Rank].toInstance(Rank.Ace)
     bind[Suit].toInstance(Suit.Hearts)
+    bind[FileIOInterface].to[FileIOXmlImpl.FileIO]
   }
 }

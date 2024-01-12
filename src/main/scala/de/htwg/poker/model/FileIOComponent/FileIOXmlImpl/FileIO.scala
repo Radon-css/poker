@@ -7,10 +7,11 @@ import de.htwg.poker.model.PlayersComponent.PlayersBaseImpl.Player
 import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
 import de.htwg.poker.model.CardsComponent.Rank
 import de.htwg.poker.model.CardsComponent.Suit
+import com.google.inject.{Guice, Inject}
 
 import scala.xml.{ Node,NodeSeq, PrettyPrinter }
 
-class FileIO extends FileIOInterface {
+class FileIO @Inject() extends FileIOInterface {
 
     def load: GameStateInterface = {
         val file = scala.xml.XML.loadFile("gameState.xml")

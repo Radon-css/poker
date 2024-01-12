@@ -17,7 +17,7 @@ class Controller @Inject() (var gameState: GameState)
 
   val injector = Guice.createInjector(new PokerModule)
 
-  val fileIOInterface = new FileIO
+  val fileIOInterface = injector.getInstance(classOf[FileIOInterface])
 
   private val undoManager = new UndoManager
 

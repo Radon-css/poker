@@ -2,12 +2,12 @@
     <players>
         <player>
             <card1>
-                <rank>2</rank>
+                <rank>J</rank>
                 <suit>♣</suit>
             </card1>
             <card2>
-                <rank>6</rank>
-                <suit>♣</suit>
+                <rank>7</rank>
+                <suit>♠</suit>
             </card2>
             <playername>Henrik</playername>
             <balance>990</balance>
@@ -15,12 +15,12 @@
         </player>
         <player>
             <card1>
-                <rank>3</rank>
+                <rank>2</rank>
                 <suit>♣</suit>
             </card1>
             <card2>
-                <rank>2</rank>
-                <suit>♠</suit>
+                <rank>4</rank>
+                <suit>♢</suit>
             </card2>
             <playername>Julian</playername>
             <balance>980</balance>
@@ -28,12 +28,12 @@
         </player>
         <player>
             <card1>
-                <rank>K</rank>
-                <suit>♠</suit>
+                <rank>9</rank>
+                <suit>♡</suit>
             </card1>
             <card2>
-                <rank>J</rank>
-                <suit>♢</suit>
+                <rank>6</rank>
+                <suit>♣</suit>
             </card2>
             <playername>Till</playername>
             <balance>1000</balance>
@@ -41,12 +41,12 @@
         </player>
         <player>
             <card1>
-                <rank>8</rank>
-                <suit>♠</suit>
+                <rank>10</rank>
+                <suit>♡</suit>
             </card1>
             <card2>
                 <rank>J</rank>
-                <suit>♣</suit>
+                <suit>♠</suit>
             </card2>
             <playername>Julian</playername>
             <balance>1000</balance>
@@ -54,12 +54,12 @@
         </player>
         <player>
             <card1>
-                <rank>5</rank>
-                <suit>♣</suit>
+                <rank>2</rank>
+                <suit>♢</suit>
             </card1>
             <card2>
-                <rank>5</rank>
-                <suit>♠</suit>
+                <rank>9</rank>
+                <suit>♣</suit>
             </card2>
             <playername>Dominik</playername>
             <balance>1000</balance>
@@ -67,12 +67,12 @@
         </player>
         <player>
             <card1>
-                <rank>8</rank>
-                <suit>♢</suit>
+                <rank>6</rank>
+                <suit>♡</suit>
             </card1>
             <card2>
-                <rank>5</rank>
-                <suit>♡</suit>
+                <rank>Q</rank>
+                <suit>♣</suit>
             </card2>
             <playername>Luuk</playername>
             <balance>1000</balance>
@@ -81,164 +81,164 @@
     </players>
     <deck>
         <card>
-            <rank>9</rank>
-            <suit>♡</suit>
-        </card>
-        <card>
-            <rank>3</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>7</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>10</rank>
-            <suit>♡</suit>
-        </card>
-        <card>
-            <rank>7</rank>
+            <rank>5</rank>
             <suit>♣</suit>
-        </card>
-        <card>
-            <rank>8</rank>
-            <suit>♡</suit>
-        </card>
-        <card>
-            <rank>7</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>Q</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>9</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>9</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>2</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>K</rank>
-            <suit>♡</suit>
-        </card>
-        <card>
-            <rank>6</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>K</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>Q</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>Q</rank>
-            <suit>♡</suit>
-        </card>
-        <card>
-            <rank>J</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>10</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>4</rank>
-            <suit>♣</suit>
-        </card>
-        <card>
-            <rank>10</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>6</rank>
-            <suit>♢</suit>
         </card>
         <card>
             <rank>5</rank>
             <suit>♢</suit>
         </card>
         <card>
-            <rank>2</rank>
-            <suit>♡</suit>
+            <rank>3</rank>
+            <suit>♣</suit>
         </card>
         <card>
-            <rank>4</rank>
-            <suit>♢</suit>
+            <rank>8</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
+            <rank>Q</rank>
+            <suit>♠</suit>
         </card>
         <card>
             <rank>3</rank>
+            <suit>♡</suit>
+        </card>
+        <card>
+            <rank>K</rank>
             <suit>♢</suit>
+        </card>
+        <card>
+            <rank>6</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>8</rank>
+            <suit>♡</suit>
+        </card>
+        <card>
+            <rank>9</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>5</rank>
+            <suit>♠</suit>
         </card>
         <card>
             <rank>K</rank>
             <suit>♣</suit>
         </card>
         <card>
-            <rank>6</rank>
-            <suit>♡</suit>
+            <rank>A</rank>
+            <suit>♠</suit>
         </card>
         <card>
-            <rank>8</rank>
-            <suit>♣</suit>
+            <rank>3</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
+            <rank>9</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
+            <rank>2</rank>
+            <suit>♡</suit>
         </card>
         <card>
             <rank>10</rank>
             <suit>♣</suit>
         </card>
         <card>
-            <rank>4</rank>
-            <suit>♠</suit>
-        </card>
-        <card>
-            <rank>9</rank>
+            <rank>8</rank>
             <suit>♣</suit>
         </card>
         <card>
-            <rank>4</rank>
+            <rank>K</rank>
             <suit>♡</suit>
-        </card>
-        <card>
-            <rank>Q</rank>
-            <suit>♣</suit>
-        </card>
-        <card>
-            <rank>A</rank>
-            <suit>♡</suit>
-        </card>
-        <card>
-            <rank>A</rank>
-            <suit>♢</suit>
-        </card>
-        <card>
-            <rank>A</rank>
-            <suit>♠</suit>
         </card>
         <card>
             <rank>7</rank>
             <suit>♡</suit>
         </card>
         <card>
-            <rank>3</rank>
+            <rank>4</rank>
             <suit>♡</suit>
+        </card>
+        <card>
+            <rank>4</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
+            <rank>3</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>10</rank>
+            <suit>♢</suit>
         </card>
         <card>
             <rank>A</rank>
             <suit>♣</suit>
         </card>
         <card>
+            <rank>A</rank>
+            <suit>♡</suit>
+        </card>
+        <card>
+            <rank>7</rank>
+            <suit>♣</suit>
+        </card>
+        <card>
+            <rank>Q</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>Q</rank>
+            <suit>♡</suit>
+        </card>
+        <card>
+            <rank>4</rank>
+            <suit>♣</suit>
+        </card>
+        <card>
+            <rank>K</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
             <rank>J</rank>
             <suit>♡</suit>
+        </card>
+        <card>
+            <rank>7</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>5</rank>
+            <suit>♡</suit>
+        </card>
+        <card>
+            <rank>8</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>A</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>6</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
+            <rank>J</rank>
+            <suit>♢</suit>
+        </card>
+        <card>
+            <rank>2</rank>
+            <suit>♠</suit>
+        </card>
+        <card>
+            <rank>10</rank>
+            <suit>♠</suit>
         </card>
     </deck>
     <playerAtTurn>2</playerAtTurn>

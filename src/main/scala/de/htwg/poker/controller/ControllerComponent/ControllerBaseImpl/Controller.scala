@@ -6,7 +6,7 @@ import util.Observable
 import util.UndoManager
 import controller.ControllerComponent.ControllerInterface
 import model.FileIOComponent.FileIOInterface
-import model.FileIOComponent.FileIOJsonImpl.FileIO
+import model.FileIOComponent.FileIOXmlImpl.FileIO
 import com.google.inject.{Guice, Inject}
 import net.codingwell.scalaguice.InjectorExtensions._
 import com.google.inject.name.Names

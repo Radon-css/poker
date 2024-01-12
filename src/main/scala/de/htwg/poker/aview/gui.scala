@@ -55,6 +55,12 @@ class GUI(controller: ControllerInterface) extends JFXApp3 with Observer {
     def bet(amount: Int): Unit = {
       controller.bet(amount)
     }
+    def save(): Unit = {
+      controller.save
+    }
+    def load(): Unit = {
+      controller.load
+    }
   }
 
   def getHiddenCardHtml: String =
@@ -94,6 +100,12 @@ class GUI(controller: ControllerInterface) extends JFXApp3 with Observer {
                     <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
                   </svg>
                 </button>
+              </div>
+              <div>
+                <button class="font-bold h-8 w-20 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100" onclick="save()">SAVE</button>
+              </div>
+              <div>
+                <button class="font-bold h-8 w-20 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100" onclick="load()">LOAD</button>
               </div>
               <div class="mr-5">
                 <button class="font-bold h-8 w-20 my-5 text-slate-100 rounded-md bg-gray-700 hover:text-gray-700 hover:bg-slate-100" onclick="startGame()">RESTART</button>
@@ -212,6 +224,12 @@ class GUI(controller: ControllerInterface) extends JFXApp3 with Observer {
                 }
                 function bet() {
                   invoke.bet(document.getElementById("betInput").value);
+                }
+                function save() {
+                  invoke.save();
+                }
+                function load() {
+                  invoke.load();
                 }
               </script>
             </body>

@@ -1,203 +1,281 @@
 {
   "gameState" : {
     "originalPlayers" : [ [ ] ],
-    "players" : [ [ [ "Player", {
-      "card1" : {
-        "rank" : "10",
+    "players" : [ {
+      "Player" : {
+        "card1" : {
+          "rank" : "2",
+          "suit" : "♣"
+        },
+        "card2" : {
+          "rank" : "2",
+          "suit" : "♢"
+        },
+        "playername" : "Henrik",
+        "balance" : 990,
+        "currentAmountBetted" : 10
+      }
+    }, {
+      "Player" : {
+        "card1" : {
+          "rank" : "2",
+          "suit" : "♠"
+        },
+        "card2" : {
+          "rank" : "9",
+          "suit" : "♢"
+        },
+        "playername" : "Julian",
+        "balance" : 980,
+        "currentAmountBetted" : 20
+      }
+    }, {
+      "Player" : {
+        "card1" : {
+          "rank" : "7",
+          "suit" : "♡"
+        },
+        "card2" : {
+          "rank" : "A",
+          "suit" : "♢"
+        },
+        "playername" : "Julian",
+        "balance" : 1000,
+        "currentAmountBetted" : 0
+      }
+    }, {
+      "Player" : {
+        "card1" : {
+          "rank" : "10",
+          "suit" : "♣"
+        },
+        "card2" : {
+          "rank" : "3",
+          "suit" : "♢"
+        },
+        "playername" : "Dominik",
+        "balance" : 1000,
+        "currentAmountBetted" : 0
+      }
+    }, {
+      "Player" : {
+        "card1" : {
+          "rank" : "5",
+          "suit" : "♠"
+        },
+        "card2" : {
+          "rank" : "J",
+          "suit" : "♣"
+        },
+        "playername" : "Luuk",
+        "balance" : 1000,
+        "currentAmountBetted" : 0
+      }
+    } ],
+    "deck" : [ {
+      "card" : {
+        "rank" : "Q",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "4",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "K",
         "suit" : "♢"
-      },
-      "card2" : {
-        "rank" : "6",
-        "suit" : "♣"
-      },
-      "playername" : "Henrik",
-      "balance" : 990,
-      "currentAmountBetted" : 10
-    } ], [ "Player", {
-      "card1" : {
-        "rank" : "9",
-        "suit" : "♢"
-      },
-      "card2" : {
+      }
+    }, {
+      "card" : {
         "rank" : "J",
         "suit" : "♠"
-      },
-      "playername" : "Julian",
-      "balance" : 980,
-      "currentAmountBetted" : 20
-    } ], [ "Player", {
-      "card1" : {
-        "rank" : "6",
-        "suit" : "♢"
-      },
-      "card2" : {
-        "rank" : "A",
-        "suit" : "♣"
-      },
-      "playername" : "Till",
-      "balance" : 1000,
-      "currentAmountBetted" : 0
-    } ], [ "Player", {
-      "card1" : {
-        "rank" : "9",
-        "suit" : "♡"
-      },
-      "card2" : {
-        "rank" : "J",
-        "suit" : "♡"
-      },
-      "playername" : "Julian",
-      "balance" : 1000,
-      "currentAmountBetted" : 0
-    } ], [ "Player", {
-      "card1" : {
-        "rank" : "10",
-        "suit" : "♣"
-      },
-      "card2" : {
-        "rank" : "3",
-        "suit" : "♠"
-      },
-      "playername" : "Dominik",
-      "balance" : 1000,
-      "currentAmountBetted" : 0
-    } ], [ "Player", {
-      "card1" : {
+      }
+    }, {
+      "card" : {
         "rank" : "8",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "7",
         "suit" : "♢"
-      },
-      "card2" : {
+      }
+    }, {
+      "card" : {
         "rank" : "5",
         "suit" : "♡"
-      },
-      "playername" : "Luuk",
-      "balance" : 1000,
-      "currentAmountBetted" : 0
-    } ] ] ],
-    "deck" : [ [ [ "card", {
-      "rank" : "10",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "4",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "8",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "5",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "A",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "2",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "8",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "2",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "Q",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "2",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "A",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "3",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "7",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "7",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "5",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "K",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "5",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "A",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "9",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "4",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "4",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "J",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "4",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "Q",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "3",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "K",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "K",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "7",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "6",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "10",
-      "suit" : "♡"
-    } ], [ "card", {
-      "rank" : "2",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "7",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "J",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "3",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "K",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "8",
-      "suit" : "♠"
-    } ], [ "card", {
-      "rank" : "Q",
-      "suit" : "♢"
-    } ], [ "card", {
-      "rank" : "Q",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "9",
-      "suit" : "♣"
-    } ], [ "card", {
-      "rank" : "6",
-      "suit" : "♡"
-    } ] ] ],
+      }
+    }, {
+      "card" : {
+        "rank" : "Q",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "J",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "10",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "Q",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "A",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "3",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "K",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "9",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "7",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "K",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "5",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "4",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "3",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "9",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "8",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "A",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "10",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "3",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "2",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "8",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "4",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "A",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "4",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "J",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "6",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "6",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "9",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "K",
+        "suit" : "♡"
+      }
+    }, {
+      "card" : {
+        "rank" : "5",
+        "suit" : "♣"
+      }
+    }, {
+      "card" : {
+        "rank" : "6",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "8",
+        "suit" : "♠"
+      }
+    }, {
+      "card" : {
+        "rank" : "10",
+        "suit" : "♢"
+      }
+    }, {
+      "card" : {
+        "rank" : "7",
+        "suit" : "♣"
+      }
+    } ],
     "playerAtTurn" : 2,
     "currentHighestBetSize" : 20,
-    "board" : [ [ ] ],
+    "board" : [ ],
     "pot" : 30,
     "smallBlind" : 10,
     "bigBlind" : 20,

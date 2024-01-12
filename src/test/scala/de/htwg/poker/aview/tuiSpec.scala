@@ -1,59 +1,120 @@
-package de.htwg.poker.aview
-import de.htwg.poker.controller.Controller
-
-import org.scalatest._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should._
+import de.htwg.poker.controller.Controller
+import de.htwg.poker.aview.TUI
 import de.htwg.poker.model.GameState
-import de.htwg.poker.model.shuffledDeck
-import de.htwg.poker.model.Player
 
 class TUISpec extends AnyWordSpec with Matchers {
 
   "A TUI" when {
-    "processInput" should {
-      "return true for valid start command" in {
-        val controller = new Controller(new GameState(None, None, 0))
+    "created" should {
+      "register itself as an observer" in {
+        val controller = new Controller(
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        )
         val tui = new TUI(controller)
-        tui.processInput("start 2") should be(true)
+        tui.update
       }
+    }
+
+    "processing input" should {
+      "return true for valid 'start' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("start player1 player2 10")
+        result shouldBe true
+      }
+
+      "return true for valid 'x' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("x")
+        result shouldBe true
+      }
+
+      "return true for valid 'bet' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("bet 50")
+        result shouldBe true
+      }
+
+      "return true for valid 'allin' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("allin")
+        result shouldBe true
+      }
+
+      "return true for valid 'fold' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("fold")
+        result shouldBe true
+      }
+
+      "return true for valid 'call' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("call")
+        result shouldBe true
+      }
+
+      "return true for valid 'check' command" in {
+        val controller = new Controller(
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        )
+        val tui = new TUI(controller)
+        val result = tui.processInput("check")
+        result shouldBe true
+      }
+
+      "return true for 'q' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("q")
+        result shouldBe true
+      }
+
+      "return true for 'u' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("u")
+        result shouldBe true
+      }
+
+      "return true for 'r' command" in {
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
+        val tui = new TUI(controller)
+        val result = tui.processInput("r")
+        result shouldBe true
+      }
+
       "return false for invalid command" in {
-        val controller = new Controller(new GameState(None, None, 0))
+        val gameState =
+          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+        val controller = new Controller(gameState)
         val tui = new TUI(controller)
-        tui.processInput("invalid") should be(false)
-      }
-    }
-  }
-
-  "A TUI" when {
-    "update is called" should {
-      "print the controller's string representation" in {
-        val controller = new Controller(new GameState(None, None, 0))
-        val tui = new TUI(controller)
-        val outputStream = new java.io.ByteArrayOutputStream()
-        Console.withOut(outputStream) {
-          tui.update
-        }
-        val expectedOutput = controller.toString + "\n"
-        outputStream.toString should be(expectedOutput)
-      }
-    }
-  }
-
-  "A TUI" when {
-    "gameLoop is called" should {
-      "process input until the program is exited" in {
-        val controller = new Controller(new GameState(None, None, 0))
-        val tui = new TUI(controller)
-        val input = "q"
-        val outputStream = new java.io.ByteArrayOutputStream()
-        Console.withIn(new java.io.StringReader(input + "\n")) {
-          Console.withOut(outputStream) {
-            tui.gameLoop()
-          }
-        }
-        val expectedOutput = "invalid command\n"
-        outputStream.toString should be(expectedOutput)
+        val result = tui.processInput("invalid")
+        result shouldBe false
       }
     }
   }

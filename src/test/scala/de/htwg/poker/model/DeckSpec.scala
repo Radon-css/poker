@@ -15,19 +15,22 @@ class DeckSpec extends AnyWordSpec with Matchers {
 
     "shuffled" should {
       "have the same number of cards" in {
+        val shuffledDeck = shuffleDeck
         shuffledDeck.length should be(52)
       }
 
       "have different order than the original deck" in {
+        val shuffledDeck = shuffleDeck
         shuffledDeck should not be deck
       }
     }
 
     "removeCards" should {
       "remove n cards from the deck" in {
-        val newDeck = removeCards(deck, 5)
-        newDeck.length should be(47)
-        newDeck shouldBe deck.drop(5)
+        val n = 5
+        val newDeck = removeCards(deck, n)
+        newDeck.length should be(52 - n)
+        newDeck shouldBe deck.drop(n)
       }
     }
   }

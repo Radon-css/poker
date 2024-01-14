@@ -82,6 +82,68 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Add more test cases for other methods in GameState
+    "call" should {
+      "update the player's balance and current amount betted" in {
+        val updatedGameState = gameState.call()
+        val updatedPlayer = updatedGameState.getPlayers(0)
+        updatedPlayer.balance should be(player1.balance - 20)
+        updatedPlayer.currentAmountBetted should be(
+          player1.currentAmountBetted + 20
+        )
+      }
+
+      "update the pot and highest bet size" in {
+        val updatedGameState = gameState.call()
+        updatedGameState.getPot should be(gameState.getPot + 20)
+        updatedGameState.getHighestBetSize should be(20)
+      }
+
+      "update the player at turn" in {
+        val updatedGameState = gameState.call()
+        updatedGameState.getPlayerAtTurn should be(1)
+      }
+    }
+
+    "fold" should {
+      "remove the player from the game" in {
+        val updatedGameState = gameState.fold()
+        updatedGameState.getPlayers should be(List(player2))
+      }
+
+      "update the player at turn" in {
+        val updatedGameState = gameState.fold()
+        updatedGameState.getPlayerAtTurn should be(1)
+      }
+    }
+
+    "allin" should {
+      "update the player's balance and current amount betted" in {
+        val updatedGameState = gameState.allIn()
+        val updatedPlayer = updatedGameState.getPlayers(0)
+        updatedPlayer.balance should be(0)
+        updatedPlayer.currentAmountBetted should be(
+          player1.currentAmountBetted + 1000
+        )
+      }
+
+      "update the pot and highest bet size" in {
+        val updatedGameState = gameState.allIn()
+        updatedGameState.getPot should be(gameState.getPot + 1000)
+        updatedGameState.getHighestBetSize should be(1000)
+      }
+
+      "update the player at turn" in {
+        val updatedGameState = gameState.allIn()
+        updatedGameState.getPlayerAtTurn should be(1)
+      }
+    }
+
+    "check" should {
+      "update the player at turn" in {
+        val updatedGameState = gameState.check()
+        updatedGameState.getPlayerAtTurn should be(1)
+      }
+    }
+
   }
 }

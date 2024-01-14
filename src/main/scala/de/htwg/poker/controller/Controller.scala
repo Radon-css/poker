@@ -10,6 +10,13 @@ class Controller(var gameState: GameState) extends Observable {
 
   private val undoManager = new UndoManager
 
+  /* the following methods are structured in this particular way:
+    first, check the action for errors and throw an exception if necessary.
+    second, update the gameState.
+    third, notify the observers.
+    additionally, for some actions like bet, call and fold it first has to be checked wether community cards need to be revealed.
+   */
+
   def createGame(
       playerNameList: List[String],
       smallBlind: String,
@@ -25,6 +32,7 @@ class Controller(var gameState: GameState) extends Observable {
       case _: NumberFormatException =>
         throw new Exception("last 2 inputs must be integers")
     }
+
     val smallBlindInt = smallBlind.toInt
     val bigBlindInt = bigBlind.toInt
 
@@ -33,7 +41,6 @@ class Controller(var gameState: GameState) extends Observable {
         "small blind must be smaller than 101 and big blind must be smaller than 201"
       )
     }
-
     if (bigBlindInt <= smallBlindInt) {
       throw new Exception(
         "small blind must be smaller than big blind"
@@ -67,6 +74,7 @@ class Controller(var gameState: GameState) extends Observable {
     } else if (gameState.getHighestBetSize >= amount) {
       throw new Exception("bet Size is too low")
     }
+
     undoManager.doStep(gameState)
     gameState = gameState.bet(amount)
     this.notifyObservers
@@ -77,6 +85,7 @@ class Controller(var gameState: GameState) extends Observable {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("start a game first")
     }
+
     undoManager.doStep(gameState)
     gameState = gameState.allIn()
     this.notifyObservers
@@ -87,9 +96,11 @@ class Controller(var gameState: GameState) extends Observable {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("start a game first")
     }
+
     undoManager.doStep(gameState)
     gameState = gameState.fold()
 
+    // check if handout is required and if so, call updateBoard to reveal board Cards
     if (handout_required_fold()) {
       gameState = gameState.updateBoard.strategy
     }
@@ -111,6 +122,8 @@ class Controller(var gameState: GameState) extends Observable {
     }
     undoManager.doStep(gameState)
     gameState = gameState.call()
+
+    // check if handout is required and if so, call updateBoard to reveal board Cards
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
     }
@@ -128,8 +141,11 @@ class Controller(var gameState: GameState) extends Observable {
     ) {
       throw new Exception("cannot check")
     }
+
     undoManager.doStep(gameState)
     gameState = gameState.check()
+
+    // check if handout is required and if so, call updateBoard to reveal board Cards
     if (handout_required()) {
       gameState = gameState.updateBoard.strategy
     }
@@ -137,22 +153,26 @@ class Controller(var gameState: GameState) extends Observable {
     true
   }
 
-  override def toString(): String = gameState.toString()
+  // helper methods
 
-  // Hilfsfunktion
+  // check if handout is required
   def handout_required(): Boolean = {
-    // handout_preflop
     gameState.getPlayers.forall(player =>
-      gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted && gameState.getPlayers.head.currentAmountBetted != 0 && (gameState.getPlayers.size > 2 && gameState.getPlayerAtTurn == 2 || gameState.getPlayers.size < 3 && gameState.getPlayerAtTurn == 0)
+      gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
+        && gameState.getPlayers.head.currentAmountBetted != 0
+        && (gameState.getPlayers.size > 2 && gameState.getPlayerAtTurn == 2
+          || gameState.getPlayers.size < 3 && gameState.getPlayerAtTurn == 0)
     ) ||
-    // handout_not_preflop
     gameState.getPlayers.forall(player =>
       gameState.getBoard.size != 0 &&
         player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
     ) && gameState.playerAtTurn == 0
   }
 
+  // check if handout is required after a fold
   def handout_required_fold(): Boolean = {
     gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required()
   }
+
+  override def toString(): String = gameState.toString()
 }

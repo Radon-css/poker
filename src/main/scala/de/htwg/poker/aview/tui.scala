@@ -13,7 +13,6 @@ class TUI(controller: Controller) extends Observer {
   }
 
   def gameLoop(): Unit = {
-
     while (true) {
       val input = readLine()
       processInput(input)
@@ -23,6 +22,9 @@ class TUI(controller: Controller) extends Observer {
   def processInput(input: String): Boolean = {
     val inputList = input.split(" ").toList
     inputList(0) match {
+      /* start a game by typing start followed by the name of the players participating and finally the amount of the small Blind and big Blind
+        (Blinds are the cost for the players to participate in the next round).
+         for example, type "start player1 player2 player3 player4 10 20"*/
       case "start" =>
         val result: Try[Boolean] = Try(
           controller.createGame(
@@ -36,6 +38,7 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // start a quick example game without inserting playernames and so on.
       case "x" =>
         val result: Try[Boolean] = Try(
           controller.createGame(
@@ -49,6 +52,7 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // make a monetary contribution to the pot by calling "bet (amount)". This indicates that you are confident in your current hand.
       case "bet" =>
         val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))
         result match {
@@ -56,6 +60,7 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // bet all of your remaining chips. This way you are putting everything at stake for the current round.
       case "allin" =>
         val result: Try[Boolean] = Try(controller.allin())
         result match {
@@ -63,6 +68,7 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // fold to to discard your hand and forfeit any further involvement in the current round. Do this if your hand is weak.
       case "fold" =>
         val result: Try[Boolean] = Try(controller.fold())
         result match {
@@ -70,6 +76,7 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // call to match the current bet to continue in the round and see the next community cards. You can only call if there were bets beforehand.
       case "call" =>
         val result: Try[Boolean] = Try(controller.call())
         result match {
@@ -77,6 +84,7 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // check to dismiss your right to bet and pass the action to the next player. You can only do this if there were no bets in the current state of the game.
       case "check" =>
         val result: Try[Boolean] = Try(controller.check())
         result match {
@@ -84,12 +92,15 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
+      // close the game
       case "q" =>
         sys.exit()
         true
+      // undo the last move
       case "u" =>
         controller.undo
         true
+      // redo the move
       case "r" =>
         controller.redo
         true

@@ -2,6 +2,7 @@ package de.htwg.poker.model
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import de.htwg.poker.controller.Controller
 
 class GameStateSpec extends AnyWordSpec with Matchers {
   "A GameState" when {
@@ -12,6 +13,7 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     val players = List(player1, player2)
     val deck = List(card1, card2)
     val gameState = GameState(players, Some(players), Some(deck))
+    val controller = new Controller(gameState)
 
     "created" should {
       "have the correct players" in {

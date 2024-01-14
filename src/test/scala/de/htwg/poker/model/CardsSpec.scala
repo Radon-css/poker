@@ -27,7 +27,7 @@ class CardsSpec extends AnyWordSpec with Matchers {
       "return the correct HTML representation" in {
         val card = new Card(Suit.Diamonds, Rank.Two)
         card.toHtml should be(
-          "<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">&#x2666;<h1 class=\"font-bold \">2</h1></div>"
+          "<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\" class=\"bi bi-diamond-fill\" viewBox=\"0 0 16 16\"><path fill-rule=\"evenodd\" d=\"M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.482 1.482 0 0 1 0-2.098L6.95.435z\"/></svg><h1 class=\"font-bold \">2</h1></div>"
         )
       }
     }

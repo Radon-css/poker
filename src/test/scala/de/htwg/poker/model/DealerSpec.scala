@@ -10,7 +10,7 @@ class DealerSpec extends AnyWordSpec with Matchers {
       val playerNameList = List("Julian", "Henrik", "Urs")
       val gameState = Dealer.createGame(playerNameList, 10, 20)
       gameState.getPlayers.length shouldEqual 3
-      gameState.getDeck.length shouldEqual 49
+      gameState.getDeck.length shouldEqual 46
     }
   }
 

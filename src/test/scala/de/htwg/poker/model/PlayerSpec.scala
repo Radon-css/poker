@@ -11,6 +11,8 @@ class PlayerSpec extends AnyWordSpec with Matchers {
     val balance = 1000
     val currentAmountBetted = 0
     val player = Player(card1, card2, playername, balance, currentAmountBetted)
+    val gameState =
+      Dealer.createGame(List(playername), 10, 20)
 
     "created" should {
       "have the correct card1" in {

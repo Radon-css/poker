@@ -53,6 +53,9 @@ case class GameState(
     If there was a call, the players balance has to be reduced by the amount of the highest previous bet in that round
     and this amount goes into the pot...
 
+    To achieve this, we first assign the new information for the GameState to a val and then pass it into the
+    copy() method which creates a new GameState and changes only the according variables.
+
     After we are done with this we also need to call the getNextPlayer method so that its the next players turn.*/
 
   def createGame(
@@ -106,61 +109,40 @@ case class GameState(
         getPlayers(playerAtTurn).currentAmountBetted + amount
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    GameState(
-      originalPlayers = getOriginalPlayers,
+    copy(
       players = Some(newPlayerList),
-      deck = Some(getDeck),
       playerAtTurn = getNextPlayer,
       currentHighestBetSize = amount,
-      board = getBoard,
-      pot = getPot + amount,
-      smallBlind = getSmallBlind,
-      bigBlind = getBigBlind,
-      smallBlindPointer = getSmallBlindPointer
+      pot = getPot + amount
     )
   }
 
   def allIn: GameState = {
-    val updatedPlayer = getPlayers(playerAtTurn).copy(
+    val currentPlayer = getPlayers(playerAtTurn)
+    val updatedPlayer = currentPlayer.copy(
       balance = 0,
-      currentAmountBetted = getPlayers(
-        playerAtTurn
-      ).currentAmountBetted + getPlayers(playerAtTurn).balance
+      currentAmountBetted =
+        currentPlayer.currentAmountBetted + currentPlayer.balance
     )
-    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    GameState(
-      originalPlayers = getOriginalPlayers,
+    val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
+    copy(
       players = Some(newPlayerList),
-      deck = Some(getDeck),
       playerAtTurn = getNextPlayer,
-      currentHighestBetSize = getPlayers(playerAtTurn).balance,
-      board = getBoard,
-      pot = getPot + getPlayers(playerAtTurn).balance,
-      smallBlind = getSmallBlind,
-      bigBlind = getBigBlind,
-      smallBlindPointer = getSmallBlindPointer,
+      currentHighestBetSize = currentPlayer.balance,
+      pot = getPot + currentPlayer.balance,
       allInFlag = true
     )
   }
 
   def fold: GameState = {
-    val newPlayerList = getPlayers.patch(getPlayerAtTurn, Nil, 1)
-    GameState(
-      originalPlayers = getOriginalPlayers,
+    val newPlayerList = getPlayers.patch(playerAtTurn, Nil, 1)
+    copy(
       players = Some(newPlayerList),
-      deck = Some(getDeck),
-      playerAtTurn = getNextPlayerWhenFold,
-      currentHighestBetSize = getHighestBetSize,
-      board = getBoard,
-      pot = getPot,
-      smallBlind = getSmallBlind,
-      bigBlind = getBigBlind,
-      smallBlindPointer = getSmallBlindPointer
+      playerAtTurn = getNextPlayerWhenFold
     )
   }
 
   def call: GameState = {
-
     val currentBet =
       if (
         getAllInFlag || getPlayers(playerAtTurn).balance <= getHighestBetSize
@@ -175,35 +157,18 @@ case class GameState(
       currentAmountBetted =
         getPlayers(playerAtTurn).currentAmountBetted + currentBet
     )
-    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    GameState(
-      originalPlayers = getOriginalPlayers,
+
+    val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
+
+    copy(
       players = Some(newPlayerList),
-      deck = Some(getDeck),
       playerAtTurn = getNextPlayer,
       currentHighestBetSize = getHighestBetSize,
-      board = getBoard,
-      pot = getPot + currentBet,
-      smallBlind = getSmallBlind,
-      bigBlind = getBigBlind,
-      smallBlindPointer = getSmallBlindPointer
+      pot = getPot + currentBet
     )
   }
 
-  def check: GameState = {
-    GameState(
-      originalPlayers = getOriginalPlayers,
-      players = Some(getPlayers),
-      deck = Some(getDeck),
-      playerAtTurn = getNextPlayer,
-      currentHighestBetSize = getHighestBetSize,
-      board = getBoard,
-      pot = getPot,
-      smallBlind = getSmallBlind,
-      bigBlind = getBigBlind,
-      smallBlindPointer = getSmallBlindPointer
-    )
-  }
+  def check: GameState = copy(playerAtTurn = getNextPlayer)
 
   /* here we used a strategy pattern to update the community cards. If a handout of community cards is required,
     we can simply call the strategy method which then decides how many cards have to be revealed.
@@ -223,7 +188,7 @@ case class GameState(
 
       val newPlayerList = getOriginalPlayers.zipWithIndex.map {
         case (player, index) =>
-          new Player(
+          Player(
             shuffledDeck(index * 2),
             shuffledDeck(index * 2 + 1),
             player.playername,
@@ -247,17 +212,16 @@ case class GameState(
       val playerListWithBlinds =
         newPlayerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
 
-      GameState(
-        getOriginalPlayers,
-        Some(playerListWithBlinds),
-        Some(newShuffledDeck),
-        if (getOriginalPlayers.size < 3) 0 else 2,
-        getBigBlind,
-        Nil,
-        getSmallBlind + getBigBlind,
-        getSmallBlind,
-        getBigBlind,
-        getSmallBlindPointer
+      copy(
+        players = Some(playerListWithBlinds),
+        deck = Some(newShuffledDeck),
+        playerAtTurn = if (getOriginalPlayers.size < 3) 0 else 2,
+        currentHighestBetSize = getBigBlind,
+        board = Nil,
+        pot = getSmallBlind + getBigBlind,
+        smallBlind = getSmallBlind,
+        bigBlind = getBigBlind,
+        smallBlindPointer = getSmallBlindPointer
       )
     }
 
@@ -270,17 +234,12 @@ case class GameState(
     private def addCardsToBoard(cardsToAdd: Int): GameState = {
       val newBoard = getDeck.take(cardsToAdd)
       val newPlayerList = getPlayers.map(_.copy(currentAmountBetted = 0))
-      GameState(
-        getOriginalPlayers,
-        Some(newPlayerList),
-        Some(getDeck.drop(cardsToAdd)),
-        0,
-        0,
-        getBoard ::: newBoard,
-        getPot,
-        getSmallBlind,
-        getBigBlind,
-        getSmallBlindPointer
+      copy(
+        players = Some(newPlayerList),
+        deck = Some(getDeck.drop(cardsToAdd)),
+        playerAtTurn = 0,
+        currentHighestBetSize = 0,
+        board = getBoard ::: newBoard
       )
     }
   }

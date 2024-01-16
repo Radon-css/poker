@@ -140,7 +140,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   def updateCardsHtml(gameState: GameState): List[(String, String)] = {
     val playerList = gameState.getPlayers.zipWithIndex
     val playerAtTurn = gameState.getPlayerAtTurn
-
     val newCardList = playerList.map {
       case (player, index) if index == playerAtTurn =>
         (player.card1.toHtml, player.card2.toHtml)
@@ -157,7 +156,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   def updateBoardHtml(gameState: GameState): List[String] = {
     val boardList = gameState.getBoard
-
     val newBoardList = boardList.map(_.toHtml)
     val invisBoardList = List.fill(5)(HiddenHtml)
     val hiddenBoardList =
@@ -169,7 +167,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   def updateBetsHtml(gameState: GameState): List[String] = {
     val playerList = gameState.getPlayers
-
     val newBetList = playerList.map(_.betSizeToHtml)
     val hiddenBetList = List.fill(6)(HiddenHtml)
 

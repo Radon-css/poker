@@ -18,3 +18,7 @@ In diesem eindrucksvollen Schöpfungsakt des digitalen Genies entfaltet sich ein
 Die Benutzeroberfläche, gestaltet mit der Finesse eines Kunsthandwerks, bietet einen nahtlosen Übergang zwischen Realität und digitaler Ästhetik. Die Auswahl von Optionen wird zu einem künstlerischen Ausdruck, bei dem jedes Detail darauf abzielt, den Spieler in einen Zustand der vollkommenen Hingabe an das Spiel zu versetzen.
 
 Dieses Poker-Spiel, ein digitaler Monarch unter den Kartenspielen, erhebt sich über die Grenzen des Gewöhnlichen und öffnet die Pforten zu einer Welt, in der die Kunst der Programmierung und die Magie des Luxus zu einer einzigartigen Symbiose verschmelzen. Es ist mehr als nur ein Spiel - es ist ein Meisterwerk der digitalen Eleganz.
+
+Henrik, der König des Codes, regiert über sein Königreich aus Nullen und Einsen mit königlicher Eleganz. Seine Codezeilen sind nicht nur edel geschrieben, sondern auch königlich effizient!
+
+Julian, der edle Programmierer, ist bekannt für seine exquisiten Algorithmen und königlichen Debugging-Fähigkeiten. Wenn andere in Code-Chaos versinken, tritt Julian auf den Plan und verwandelt es in ein königliches Meisterwerk der Softwarekunst!

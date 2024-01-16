@@ -419,13 +419,13 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
       }
     }
     def call(): Unit = {
-      controller.call()
+      controller.call
     }
     def check(): Unit = {
-      controller.check()
+      controller.check
     }
     def fold(): Unit = {
-      controller.fold()
+      controller.fold
     }
     def undo(): Unit = {
       controller.undo

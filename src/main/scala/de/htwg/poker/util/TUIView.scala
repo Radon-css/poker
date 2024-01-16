@@ -65,8 +65,8 @@ class Print(gameState: GameState) {
   def printBalances(playerList: List[Player]): String = {
     val sb = new StringBuilder
     for (player <- playerList) {
-      val spaces = " " * (14 - player.balanceToString().length)
-      sb.append(s"${player.balanceToString()}$spaces")
+      val spaces = " " * (14 - player.balanceToString.length)
+      sb.append(s"${player.balanceToString}$spaces")
     }
     sb.append("\n")
     sb.toString

@@ -2,27 +2,12 @@ package de.htwg.poker.util
 
 import de.htwg.poker.model.*
 
-@main
-def run(): Unit = {
-  val evaluator = new Evaluator
-  evaluator.evaluate(
-    List(new Card(Suit.Hearts, Rank.Jack), new Card(Suit.Hearts, Rank.Two)),
-    List(
-      new Card(Suit.Hearts, Rank.Ace),
-      new Card(Suit.Hearts, Rank.Four),
-      new Card(Suit.Spades, Rank.Five),
-      new Card(Suit.Spades, Rank.Ten),
-      new Card(Suit.Spades, Rank.Six)
-    )
-  )
-}
+/* this class contains an Algorithm that can evaluate Poker Hands. It compares the two Cards the player
+  holds with the community Cards that are currently revealed to find the combination of player cards and community cards that is worth most.
+   The Evaluator is called whenever a new Player is at turn to show what Kind of Hand a player currently holds (High, Pair, TwoPair, Triples
+  , Straight, Flush etc...). A Flush is worth more than a Straight which is worth more than triples etc...*/
 
 class Evaluator() {
-
-  /*val boardCards: List[Card] = gameState.getBoard
-  val playerCards: Map[Player, (Card, Card)] = gameState.getPlayers
-    .map(player => player -> (player.card1, player.card2))
-    .toMap*/
 
   enum Type:
     case High, Pair, TwoPair, Triples, Straight, Flush, FullHouse, Quads,
@@ -40,13 +25,11 @@ class Evaluator() {
     }
 
   def evaluate(playerCards: List[Card], boardCards: List[Card]): String = {
-    val (bestHand, bestType) = evalHand(playerCards, boardCards)
-    for (card <- bestHand) {
-      println(card.toString)
-    }
-    println(bestType.toString())
-    bestType.toString()
-  }
+  val (bestHand, bestType) = evalHand(playerCards, boardCards)
+  bestHand.foreach(card => println(card.toString))
+  println(bestType.toString())
+  bestType.toString
+}
 
   def evalHand(
       playerCards: List[Card],

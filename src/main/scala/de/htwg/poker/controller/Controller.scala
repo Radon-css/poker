@@ -1,7 +1,6 @@
 package de.htwg.poker
 package controller
 import model.Player
-import model.Dealer
 import model.GameState
 import util.Observable
 import util.UndoManager
@@ -18,39 +17,35 @@ class Controller(var gameState: GameState) extends Observable {
    */
 
   def createGame(
-      playerNameList: List[String],
-      smallBlind: String,
-      bigBlind: String
-  ): Boolean = {
-    if (playerNameList.size < 1) {
-      throw new Exception("minimum two players")
-    }
-    try {
-      smallBlind.toInt
-      bigBlind.toInt
-    } catch {
-      case _: NumberFormatException =>
-        throw new Exception("last 2 inputs must be integers")
-    }
+    playerNameList: List[String],
+    smallBlind: String,
+    bigBlind: String
+): Boolean = {
+  if (playerNameList.size < 2) {
+    throw new Exception("Minimum two players required")
+  }
 
+  try {
     val smallBlindInt = smallBlind.toInt
     val bigBlindInt = bigBlind.toInt
 
     if (smallBlindInt > 100 || bigBlindInt > 200) {
-      throw new Exception(
-        "small blind must be smaller than 101 and big blind must be smaller than 201"
-      )
-    }
-    if (bigBlindInt <= smallBlindInt) {
-      throw new Exception(
-        "small blind must be smaller than big blind"
-      )
+      throw new Exception("Small blind must be smaller than 101 and big blind must be smaller than 201")
     }
 
-    gameState = Dealer.createGame(playerNameList, smallBlindInt, bigBlindInt)
-    this.notifyObservers
+    if (bigBlindInt <= smallBlindInt) {
+      throw new Exception("Small blind must be smaller than big blind")
+    }
+
+    gameState = gameState.createGame(playerNameList, smallBlindInt, bigBlindInt)
+    notifyObservers
     true
+  } catch {
+    case _: NumberFormatException =>
+      throw new Exception("Last two inputs must be integers")
   }
+  }
+
 
   def undo: Unit = {
     undoManager.undoStep(this, this.gameState)
@@ -64,99 +59,91 @@ class Controller(var gameState: GameState) extends Observable {
 
   def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      throw new Exception("start a game first")
-    } else if (
-      gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount
-    ) {
-      throw new Exception("insufficient balance")
-    } else if (gameState.getBigBlind >= amount) {
-      throw new Exception("bet Size is too low")
-    } else if (gameState.getHighestBetSize >= amount) {
-      throw new Exception("bet Size is too low")
+      throw new Exception("Start a game first")
+    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
+      throw new Exception("Insufficient balance")
+    } else if (gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount) {
+      throw new Exception("Bet size is too low")
     }
 
     undoManager.doStep(gameState)
     gameState = gameState.bet(amount)
-    this.notifyObservers
+    notifyObservers
     true
   }
 
-  def allin(): Boolean = {
+  def allin: Boolean = {
+  if (gameState.getPlayers.isEmpty) {
+    throw new Exception("Start a game first")
+  }
+
+  undoManager.doStep(gameState)
+  gameState = gameState.allIn
+  notifyObservers
+  true
+}
+
+  def fold: Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      throw new Exception("start a game first")
+      throw new Exception("Start a game first")
     }
 
     undoManager.doStep(gameState)
-    gameState = gameState.allIn()
-    this.notifyObservers
+    gameState = gameState.fold
+
+    // Check if handout is required and if so, call updateBoard to reveal board cards
+    if (handout_required_fold) {
+      gameState = gameState.UpdateBoard.strategy
+    }
+    notifyObservers
     true
   }
 
-  def fold(): Boolean = {
+  def call: Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      throw new Exception("start a game first")
-    }
-
-    undoManager.doStep(gameState)
-    gameState = gameState.fold()
-
-    // check if handout is required and if so, call updateBoard to reveal board Cards
-    if (handout_required_fold()) {
-      gameState = gameState.updateBoard.strategy
-    }
-    this.notifyObservers
-    true
-  }
-
-  def call(): Boolean = {
-    if (gameState.getPlayers.isEmpty) {
-      throw new Exception("start a game first")
+      throw new Exception("Start a game first")
     } else if (gameState.getHighestBetSize == 0) {
-      throw new Exception("invalid call before bet")
+      throw new Exception("Invalid call before bet")
     } else if (
-      gameState
-        .getPlayers(gameState.getPlayerAtTurn)
-        .currentAmountBetted == gameState.getHighestBetSize
+      gameState.getPlayers(gameState.getPlayerAtTurn).currentAmountBetted == gameState.getHighestBetSize
     ) {
-      throw new Exception("cannot call")
+      throw new Exception("Cannot call")
     }
     undoManager.doStep(gameState)
-    gameState = gameState.call()
+    gameState = gameState.call
 
-    // check if handout is required and if so, call updateBoard to reveal board Cards
-    if (handout_required()) {
-      gameState = gameState.updateBoard.strategy
+    // Check if handout is required and if so, call updateBoard to reveal board cards
+    if (handout_required) {
+      gameState = gameState.UpdateBoard.strategy
     }
-    this.notifyObservers
+    notifyObservers
     true
   }
 
-  def check(): Boolean = {
+  def check: Boolean = {
     if (gameState.getPlayers.isEmpty) {
-      throw new Exception("start a game first")
+      throw new Exception("Start a game first")
     } else if (
-      gameState
-        .getPlayers(gameState.getPlayerAtTurn)
-        .currentAmountBetted != gameState.getHighestBetSize
+      gameState.getPlayers(gameState.getPlayerAtTurn).currentAmountBetted != gameState.getHighestBetSize
     ) {
-      throw new Exception("cannot check")
+      throw new Exception("Cannot check")
     }
 
     undoManager.doStep(gameState)
-    gameState = gameState.check()
+    gameState = gameState.check
 
-    // check if handout is required and if so, call updateBoard to reveal board Cards
-    if (handout_required()) {
-      gameState = gameState.updateBoard.strategy
+    // Check if handout is required and if so, call updateBoard to reveal board cards
+    if (handout_required) {
+      gameState = gameState.UpdateBoard.strategy
     }
-    this.notifyObservers
+    notifyObservers
     true
   }
 
   // helper methods
 
   // check if handout is required
-  def handout_required(): Boolean = {
+  def handout_required: Boolean = {
     gameState.getPlayers.forall(player =>
       gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
         && gameState.getPlayers.head.currentAmountBetted != 0
@@ -170,9 +157,9 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   // check if handout is required after a fold
-  def handout_required_fold(): Boolean = {
-    gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required()
+  def handout_required_fold: Boolean = {
+    gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required
   }
 
-  override def toString(): String = gameState.toString()
+  override def toString: String = gameState.toString()
 }

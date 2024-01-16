@@ -7,7 +7,7 @@ case class Player(
     val balance: Int = 1000,
     val currentAmountBetted: Int = 0
 ) {
-  def balanceToString() = "(" + balance + "$)"
+  def balanceToString = "(" + balance + "$)"
 
   def toHtml = {
     s"""<div class=\"flex flex-col items-center justify-center space-x-2\">

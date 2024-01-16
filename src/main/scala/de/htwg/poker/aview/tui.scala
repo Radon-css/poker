@@ -62,7 +62,7 @@ class TUI(controller: Controller) extends Observer {
         false
       // bet all of your remaining chips. This way you are putting everything at stake for the current round.
       case "allin" =>
-        val result: Try[Boolean] = Try(controller.allin())
+        val result: Try[Boolean] = Try(controller.allin)
         result match {
           case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
@@ -70,7 +70,7 @@ class TUI(controller: Controller) extends Observer {
         false
       // fold to to discard your hand and forfeit any further involvement in the current round. Do this if your hand is weak.
       case "fold" =>
-        val result: Try[Boolean] = Try(controller.fold())
+        val result: Try[Boolean] = Try(controller.fold)
         result match {
           case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
@@ -78,7 +78,7 @@ class TUI(controller: Controller) extends Observer {
         false
       // call to match the current bet to continue in the round and see the next community cards. You can only call if there were bets beforehand.
       case "call" =>
-        val result: Try[Boolean] = Try(controller.call())
+        val result: Try[Boolean] = Try(controller.call)
         result match {
           case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
@@ -86,7 +86,7 @@ class TUI(controller: Controller) extends Observer {
         false
       // check to dismiss your right to bet and pass the action to the next player. You can only do this if there were no bets in the current state of the game.
       case "check" =>
-        val result: Try[Boolean] = Try(controller.check())
+        val result: Try[Boolean] = Try(controller.check)
         result match {
           case Success(value)     => return true
           case Failure(exception) => println(s"Error: ${exception.getMessage}")

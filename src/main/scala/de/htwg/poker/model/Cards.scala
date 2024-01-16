@@ -1,4 +1,5 @@
 package de.htwg.poker.model
+import scala.util.Random
 
 val ANSI_BLACK = "\u001b[30m"
 val ANSI_RED = "\u001b[31m"
@@ -70,3 +71,20 @@ class Card(val suit: Suit, val rank: Rank) {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suit.toHtml}<h1 class=\"font-bold \">${rank.toString}</h1></div>"
   }
 }
+
+val deck: List[Card] = {
+  for {
+    rank <- Rank.values.toList
+    suit <- Suit.values.toList
+  } yield new Card(suit, rank)
+  }
+
+  def shuffleDeck: List[Card] = {
+    val random = new Random
+    random.shuffle(deck)
+  }
+
+  def removeCards(deck: List[Card], n: Int): List[Card] = {
+    val newCardList = deck.drop(n);
+    newCardList
+  }

@@ -40,5 +40,6 @@ class EvaluatorSpec extends AnyWordSpec with Matchers {
       val result = evaluator.evaluate(playerCards, boardCards)
       result shouldBe "High"
     }
+
   }
 }

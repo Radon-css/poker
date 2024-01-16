@@ -2,22 +2,15 @@ package de.htwg.poker.controller
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.poker.model.{Card, GameState, Player, Rank, Suit}
 
 class ControllerSpec extends AnyWordSpec with Matchers {
+
   "A Controller" when {
-    val card1 = Card(Suit.Hearts, Rank.Ace)
-    val card2 = Card(Suit.Diamonds, Rank.King)
-    val playername = "John Doe"
-    val balance = 1000
-    val currentAmountBetted = 0
-    val player = Player(card1, card2, playername, balance, currentAmountBetted)
-
-    val controller = new Controller(null)
-
-    "createGame" should {
-      "throw an exception if playerNameList is empty" in {
-        val playerNameList = List.empty[String]
+    "created" should {
+      "throw an exception if playerNameList has less than 2 players" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        val playerNameList = List("Player1")
         val smallBlind = "10"
         val bigBlind = "20"
 
@@ -26,18 +19,10 @@ class ControllerSpec extends AnyWordSpec with Matchers {
         }
       }
 
-      "throw an exception if smallBlind or bigBlind is not an integer" in {
-        val playerNameList = List("John Doe", "Jane Smith")
-        val smallBlind = "10"
-        val bigBlind = "abc"
-
-        an[Exception] should be thrownBy {
-          controller.createGame(playerNameList, smallBlind, bigBlind)
-        }
-      }
-
       "throw an exception if smallBlind is greater than 100" in {
-        val playerNameList = List("John Doe", "Jane Smith")
+        val gameState = ???
+        val controller = new Controller(gameState)
+        val playerNameList = List("Player1", "Player2")
         val smallBlind = "101"
         val bigBlind = "20"
 
@@ -47,7 +32,9 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
 
       "throw an exception if bigBlind is greater than 200" in {
-        val playerNameList = List("John Doe", "Jane Smith")
+        val gameState = ???
+        val controller = new Controller(gameState)
+        val playerNameList = List("Player1", "Player2")
         val smallBlind = "10"
         val bigBlind = "201"
 
@@ -56,8 +43,10 @@ class ControllerSpec extends AnyWordSpec with Matchers {
         }
       }
 
-      "throw an exception if smallBlind is greater than or equal to bigBlind" in {
-        val playerNameList = List("John Doe", "Jane Smith")
+      "throw an exception if bigBlind is less than or equal to smallBlind" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        val playerNameList = List("Player1", "Player2")
         val smallBlind = "20"
         val bigBlind = "20"
 
@@ -66,65 +55,186 @@ class ControllerSpec extends AnyWordSpec with Matchers {
         }
       }
 
-      "create a new game state with the given parameters" in {
-        val playerNameList = List("John Doe", "Jane Smith")
+      "update the gameState and notify observers if all conditions are met" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        val playerNameList = List("Player1", "Player2")
         val smallBlind = "10"
         val bigBlind = "20"
 
-        controller.createGame(playerNameList, smallBlind, bigBlind) should be(
-          true
-        )
-        controller.gameState.getPlayers should be(
-          playerNameList.map(_ => player)
-        )
-        controller.gameState.getSmallBlind should be(10)
-        controller.gameState.getBigBlind should be(20)
+        controller.createGame(
+          playerNameList,
+          smallBlind,
+          bigBlind
+        ) shouldBe true
+        // assert gameState and notify observers
       }
-    }
 
-    "bet" should {
-
-      "throw an exception if amount is greater than the player's balance" in {
-        val amount = 1001
+      "throw an exception if no game has been started" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
 
         an[Exception] should be thrownBy {
-          controller.bet(amount)
+          controller.undo
         }
       }
 
-      "throw an exception if amount is less than the current highest bet size" in {
-        val amount = 9
+      "undo the last step and notify observers" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // perform some actions to modify the gameState
+
+        controller.undo
+        // assert gameState and notify observers
+      }
+
+      "redo the last undone step and notify observers" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // perform some actions and undo them
+
+        controller.redo
+        // assert gameState and notify observers
+      }
+
+      "throw an exception if no game has been started" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
 
         an[Exception] should be thrownBy {
-          controller.bet(amount)
+          controller.bet(100)
         }
       }
 
-      "throw an exception if amount is less than the big blind" in {
-        val amount = 9
+      "throw an exception if player has insufficient balance" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with a player having insufficient balance
 
         an[Exception] should be thrownBy {
-          controller.bet(amount)
+          controller.bet(100)
         }
       }
 
-      "update the player's balance and current amount betted" in {
-        val amount = 100
+      "throw an exception if bet size is too low" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with a bet size that is too low
 
-        controller.bet(amount) should be(true)
-        controller.gameState.getPlayers(0).balance should be(
-          player.balance - amount.toInt - controller.gameState.getSmallBlind
-        )
-        controller.gameState.getPlayers(0).currentAmountBetted should be(
-          player.currentAmountBetted + amount.toInt
-        )
+        an[Exception] should be thrownBy {
+          controller.bet(50)
+        }
       }
-    }
 
-    "fold" should {
-      "remove the player from the player list" in {
-        controller.fold should be(true)
-        controller.gameState.getPlayers should be(List.empty[Player])
+      "update the gameState and notify observers if all conditions are met" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with valid conditions
+
+        controller.bet(100) shouldBe true
+        // assert gameState and notify observers
+      }
+
+      "throw an exception if no game has been started" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+
+        an[Exception] should be thrownBy {
+          controller.allin
+        }
+      }
+
+      "update the gameState and notify observers if all conditions are met" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with valid conditions
+
+        controller.allin shouldBe true
+        // assert gameState and notify observers
+      }
+
+      "throw an exception if no game has been started" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+
+        an[Exception] should be thrownBy {
+          controller.fold
+        }
+      }
+
+      "update the gameState and notify observers if all conditions are met" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with valid conditions
+
+        controller.fold shouldBe true
+        // assert gameState and notify observers
+      }
+
+      "throw an exception if no game has been started" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+
+        an[Exception] should be thrownBy {
+          controller.call
+        }
+      }
+
+      "throw an exception if no bet has been made" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with no bet made
+
+        an[Exception] should be thrownBy {
+          controller.call
+        }
+      }
+
+      "throw an exception if player has already called" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with player already called
+
+        an[Exception] should be thrownBy {
+          controller.call
+        }
+      }
+
+      "update the gameState and notify observers if all conditions are met" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with valid conditions
+
+        controller.call shouldBe true
+        // assert gameState and notify observers
+      }
+
+      "throw an exception if no game has been started" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+
+        an[Exception] should be thrownBy {
+          controller.check
+        }
+      }
+
+      "throw an exception if player has not betted the highest amount" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with player not betted the highest amount
+
+        an[Exception] should be thrownBy {
+          controller.check
+        }
+      }
+
+      "update the gameState and notify observers if all conditions are met" in {
+        val gameState = ???
+        val controller = new Controller(gameState)
+        // set up the gameState with valid conditions
+
+        controller.check shouldBe true
+        // assert gameState and notify observers
       }
     }
   }

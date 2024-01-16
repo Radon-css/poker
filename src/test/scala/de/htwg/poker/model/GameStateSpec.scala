@@ -1,7 +1,9 @@
+package de.htwg.poker.model
+
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.poker.controller.Controller
-import de.htwg.poker.model.{Card, GameState, Player, Rank, Suit}
+import de.htwg.poker.model._
 
 class GameStateSpec extends AnyWordSpec with Matchers {
   "A GameState" when {
@@ -144,5 +146,180 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       }
     }
 
+  }
+
+  "UpdateBoard" should {
+    "return the correct GameState when starting a new round" in {
+      val player1 =
+        Player(
+          new Card(Suit.Clubs, Rank.Ace),
+          new Card(Suit.Clubs, Rank.Eight),
+          "John Doe",
+          1000,
+          0
+        )
+      val player2 = Player(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Hearts, Rank.Eight),
+        "Jane Smith",
+        2000,
+        0
+      )
+      val gameState = GameState(
+        List(player1, player2),
+        Some(List(player1, player2)),
+        None,
+        0,
+        20,
+        Nil,
+        30,
+        10,
+        20,
+        0
+      )
+
+      val updatedGameState = gameState.UpdateBoard.startRound
+
+      updatedGameState.getOriginalPlayers should be(
+        gameState.getOriginalPlayers
+      )
+      updatedGameState.getPlayers should not be gameState.getPlayers
+      updatedGameState.getDeck should not be gameState.getDeck
+      updatedGameState.getPlayerAtTurn should be(2)
+      updatedGameState.getBigBlind should be(20)
+      updatedGameState.getBoard should be(Nil)
+      updatedGameState.getPot should be(30)
+      updatedGameState.getSmallBlind should be(10)
+      updatedGameState.getSmallBlindPointer should be(0)
+    }
+
+    "return the correct GameState when revealing the flop" in {
+      val player1 =
+        Player(
+          new Card(Suit.Clubs, Rank.Ace),
+          new Card(Suit.Clubs, Rank.Eight),
+          "John Doe",
+          1000,
+          0
+        )
+      val player2 = Player(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Hearts, Rank.Eight),
+        "Jane Smith",
+        2000,
+        0
+      )
+      val gameState = GameState(
+        List(player1, player2),
+        Some(List(player1, player2)),
+        None,
+        0,
+        20,
+        Nil,
+        30,
+        10,
+        20,
+        0
+      )
+
+      val updatedGameState = gameState.UpdateBoard.flop
+
+      updatedGameState.getOriginalPlayers should be(
+        gameState.getOriginalPlayers
+      )
+      updatedGameState.getPlayers should not be gameState.getPlayers
+      updatedGameState.getDeck should not be gameState.getDeck
+      updatedGameState.getPlayerAtTurn should be(0)
+      updatedGameState.getBigBlind should be(0)
+      updatedGameState.getPot should be(30)
+      updatedGameState.getSmallBlind should be(10)
+      updatedGameState.getSmallBlindPointer should be(0)
+    }
+
+    "return the correct GameState when revealing the turn" in {
+      val player1 =
+        Player(
+          new Card(Suit.Clubs, Rank.Ace),
+          new Card(Suit.Clubs, Rank.Eight),
+          "John Doe",
+          1000,
+          0
+        )
+      val player2 = Player(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Hearts, Rank.Eight),
+        "Jane Smith",
+        2000,
+        0
+      )
+      val gameState = GameState(
+        List(player1, player2),
+        Some(List(player1, player2)),
+        None,
+        0,
+        20,
+        Nil,
+        30,
+        10,
+        20,
+        0
+      )
+
+      val updatedGameState = gameState.UpdateBoard.turn
+
+      updatedGameState.getOriginalPlayers should be(
+        gameState.getOriginalPlayers
+      )
+      updatedGameState.getPlayers should not be gameState.getPlayers
+      updatedGameState.getDeck should not be gameState.getDeck
+      updatedGameState.getPlayerAtTurn should be(0)
+      updatedGameState.getBigBlind should be(0)
+      updatedGameState.getPot should be(30)
+      updatedGameState.getSmallBlind should be(10)
+      updatedGameState.getSmallBlindPointer should be(0)
+    }
+
+    "return the correct GameState when revealing the river" in {
+      val player1 =
+        Player(
+          new Card(Suit.Clubs, Rank.Ace),
+          new Card(Suit.Clubs, Rank.Eight),
+          "John Doe",
+          1000,
+          0
+        )
+      val player2 = Player(
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Hearts, Rank.Eight),
+        "Jane Smith",
+        2000,
+        0
+      )
+      val gameState = GameState(
+        List(player1, player2),
+        Some(List(player1, player2)),
+        None,
+        0,
+        20,
+        Nil,
+        30,
+        10,
+        20,
+        0
+      )
+
+      val updatedGameState = gameState.UpdateBoard.river
+
+      updatedGameState.getOriginalPlayers should be(
+        gameState.getOriginalPlayers
+      )
+      updatedGameState.getPlayers should not be gameState.getPlayers
+      updatedGameState.getDeck should not be gameState.getDeck
+      updatedGameState.getPlayerAtTurn should be(0)
+      updatedGameState.getBigBlind should be(0)
+      updatedGameState.getPot should be(30)
+      updatedGameState.getSmallBlind should be(10)
+      updatedGameState.getSmallBlindPointer should be(0)
+    }
   }
 }

@@ -53,53 +53,54 @@ case class GameState(
     After we are done with this we also need to call the getNextPlayer method so that its the next players turn.*/
 
   def createGame(
-    playerNameList: List[String],
-    smallBlind: Int,
-    bigBlind: Int
-): GameState = {
-  val shuffledDeck = shuffleDeck
+      playerNameList: List[String],
+      smallBlind: Int,
+      bigBlind: Int
+  ): GameState = {
+    val shuffledDeck = shuffleDeck
 
-  val playerList = playerNameList.zipWithIndex.map {
-    case (playerName, index) =>
-      new Player(
-        shuffledDeck(index * 2),
-        shuffledDeck(index * 2 + 1),
-        playerName
-      )
+    val playerList = playerNameList.zipWithIndex.map {
+      case (playerName, index) =>
+        new Player(
+          shuffledDeck(index * 2),
+          shuffledDeck(index * 2 + 1),
+          playerName
+        )
+    }
+
+    val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
+
+    val smallBlindPlayer = playerList.head.copy(
+      balance = playerList.head.balance - smallBlind,
+      currentAmountBetted = playerList.head.currentAmountBetted + smallBlind
+    )
+
+    val bigBlindPlayer = playerList(1).copy(
+      balance = playerList(1).balance - bigBlind,
+      currentAmountBetted = playerList(1).currentAmountBetted + bigBlind
+    )
+
+    val playerListWithBlinds =
+      playerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
+
+    GameState(
+      playerList,
+      Some(playerListWithBlinds),
+      Some(newShuffledDeck),
+      if (playerList.size < 3) 0 else 2,
+      bigBlind,
+      Nil,
+      smallBlind + bigBlind,
+      smallBlind,
+      bigBlind
+    )
   }
-
-  val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
-
-  val smallBlindPlayer = playerList.head.copy(
-    balance = playerList.head.balance - smallBlind,
-    currentAmountBetted = playerList.head.currentAmountBetted + smallBlind
-  )
-
-  val bigBlindPlayer = playerList(1).copy(
-    balance = playerList(1).balance - bigBlind,
-    currentAmountBetted = playerList(1).currentAmountBetted + bigBlind
-  )
-
-  val playerListWithBlinds = playerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
-
-  GameState(
-    playerList,
-    Some(playerListWithBlinds),
-    Some(newShuffledDeck),
-    if (playerList.size < 3) 0 else 2,
-    bigBlind,
-    Nil,
-    smallBlind + bigBlind,
-    smallBlind,
-    bigBlind
-  )
-}
-
 
   def bet(amount: Int): GameState = {
     val updatedPlayer = getPlayers(playerAtTurn).copy(
       balance = getPlayers(playerAtTurn).balance - amount,
-      currentAmountBetted = getPlayers(playerAtTurn).currentAmountBetted + amount
+      currentAmountBetted =
+        getPlayers(playerAtTurn).currentAmountBetted + amount
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
     GameState(
@@ -119,7 +120,9 @@ case class GameState(
   def allIn: GameState = {
     val updatedPlayer = getPlayers(playerAtTurn).copy(
       balance = 0,
-      currentAmountBetted = getPlayers(playerAtTurn).currentAmountBetted + getPlayers(playerAtTurn).balance
+      currentAmountBetted = getPlayers(
+        playerAtTurn
+      ).currentAmountBetted + getPlayers(playerAtTurn).balance
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
     GameState(
@@ -153,10 +156,12 @@ case class GameState(
   }
 
   def call: GameState = {
-    val currentBet = getHighestBetSize - getPlayers(playerAtTurn).currentAmountBetted
+    val currentBet =
+      getHighestBetSize - getPlayers(playerAtTurn).currentAmountBetted
     val updatedPlayer = getPlayers(playerAtTurn).copy(
       balance = getPlayers(playerAtTurn).balance - currentBet,
-      currentAmountBetted = getPlayers(playerAtTurn).currentAmountBetted + currentBet
+      currentAmountBetted =
+        getPlayers(playerAtTurn).currentAmountBetted + currentBet
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
     GameState(
@@ -174,19 +179,19 @@ case class GameState(
   }
 
   def check: GameState = {
-  GameState(
-    originalPlayers = getOriginalPlayers,
-    players = Some(getPlayers),
-    deck = Some(getDeck),
-    playerAtTurn = getNextPlayer,
-    currentHighestBetSize = getHighestBetSize,
-    board = getBoard,
-    pot = getPot,
-    smallBlind = getSmallBlind,
-    bigBlind = getBigBlind,
-    smallBlindPointer = getSmallBlindPointer
-  )
-}
+    GameState(
+      originalPlayers = getOriginalPlayers,
+      players = Some(getPlayers),
+      deck = Some(getDeck),
+      playerAtTurn = getNextPlayer,
+      currentHighestBetSize = getHighestBetSize,
+      board = getBoard,
+      pot = getPot,
+      smallBlind = getSmallBlind,
+      bigBlind = getBigBlind,
+      smallBlindPointer = getSmallBlindPointer
+    )
+  }
 
   /* here we used a strategy pattern to update the community cards. If a handout of community cards is required,
     we can simply call the strategy method which then decides how many cards have to be revealed.
@@ -195,7 +200,7 @@ case class GameState(
     If there are five community cards revealed, you can start the next round.*/
 
   object UpdateBoard {
-    val strategy: GameState = 
+    val strategy: GameState =
       if (getBoard.size == 0) flop
       else if (getBoard.size == 3) turn
       else if (getBoard.size == 4) river
@@ -216,7 +221,8 @@ case class GameState(
 
       val smallBlindPlayer = newPlayerList.head.copy(
         balance = newPlayerList.head.balance - smallBlind,
-        currentAmountBetted = newPlayerList.head.currentAmountBetted + smallBlind
+        currentAmountBetted =
+          newPlayerList.head.currentAmountBetted + smallBlind
       )
 
       val bigBlindPlayer = newPlayerList(1).copy(
@@ -226,7 +232,8 @@ case class GameState(
 
       val newShuffledDeck = shuffledDeck.drop(newPlayerList.size * 2)
 
-      val playerListWithBlinds = newPlayerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
+      val playerListWithBlinds =
+        newPlayerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
 
       GameState(
         getOriginalPlayers,
@@ -279,23 +286,26 @@ case class GameState(
         getSmallBlindPointer
       )
     }
-}
+  }
 
   // helper methods
-  def getNextPlayer: Int = if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn + 1
+  def getNextPlayer: Int =
+    if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn + 1
 
-  def getNextPlayerWhenFold: Int = if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn
+  def getNextPlayerWhenFold: Int =
+    if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn
 
-  def getPreviousPlayer: Int = if (getPlayerAtTurn == 0) getPlayers.length - 1 else getPlayerAtTurn - 1
+  def getPreviousPlayer: Int =
+    if (getPlayerAtTurn == 0) getPlayers.length - 1 else getPlayerAtTurn - 1
 
   def getCurrentHand: String = {
-  new Evaluator()
-    .evaluate(
-      List(
-        getPlayers(getPlayerAtTurn).card1,
-        getPlayers(getPlayerAtTurn).card2
-      ),
-      getBoard
-    )
-}
+    new Evaluator()
+      .evaluate(
+        List(
+          getPlayers(getPlayerAtTurn).card1,
+          getPlayers(getPlayerAtTurn).card2
+        ),
+        getBoard
+      )
+  }
 }

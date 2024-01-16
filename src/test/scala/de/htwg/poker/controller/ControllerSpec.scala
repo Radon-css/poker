@@ -116,5 +116,104 @@ class ControllerSpec extends AnyWordSpec with Matchers {
         controller.handout_required shouldBe true
       }
     }
+    "bet" should {
+      "update the player's balance and current amount betted" in {
+        val amount = 100
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                1000
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                1000
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  1000
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  1000
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+        controller.bet(amount)
+        gameState.getPlayers(0).balance should be(900)
+        gameState.getPlayers(0).currentAmountBetted should be(100)
+      }
+    }
+    "call" should {
+      "update the player's balance and current amount betted" in {
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                1000
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                1000
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  1000
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  1000
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+        controller.call
+        gameState.getPlayers(0).balance should be(1000)
+        gameState.getPlayers(0).currentAmountBetted should be(20)
+      }
+    }
   }
 }

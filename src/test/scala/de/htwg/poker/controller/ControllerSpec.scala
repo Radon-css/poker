@@ -113,7 +113,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
 
         controller.bet(amount) should be(true)
         controller.gameState.getPlayers(0).balance should be(
-          player.balance - amount.toInt
+          player.balance - amount.toInt - controller.gameState.getSmallBlind
         )
         controller.gameState.getPlayers(0).currentAmountBetted should be(
           player.currentAmountBetted + amount.toInt

@@ -11,8 +11,8 @@ class EvaluatorSpec extends AnyWordSpec with Matchers {
 
     "evaluate the best hand correctly" in {
       val playerCards = List(
-        new Card(Suit.Hearts, Rank.Jack),
-        new Card(Suit.Hearts, Rank.Two)
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Two)
       )
       val boardCards = List(
         new Card(Suit.Hearts, Rank.Ace),

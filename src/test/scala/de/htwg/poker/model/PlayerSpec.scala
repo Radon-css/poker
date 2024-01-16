@@ -2,6 +2,7 @@ package de.htwg.poker.model
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import de.htwg.poker.controller.Controller
 
 class PlayerSpec extends AnyWordSpec with Matchers {
   "A Player" when {
@@ -12,7 +13,8 @@ class PlayerSpec extends AnyWordSpec with Matchers {
     val currentAmountBetted = 0
     val player = Player(card1, card2, playername, balance, currentAmountBetted)
     val gameState =
-      Dealer.createGame(List(playername), 10, 20)
+      GameState(List(player), Some(List(player)), Some(List(card1, card2)))
+    val controller = new Controller(gameState)
 
     "created" should {
       "have the correct card1" in {
@@ -38,7 +40,7 @@ class PlayerSpec extends AnyWordSpec with Matchers {
 
     "balanceToString" should {
       "return the balance as a string" in {
-        player.balanceToString() should be(s"($balance$$)")
+        player.balanceToString should be(s"($balance$$)")
       }
     }
 

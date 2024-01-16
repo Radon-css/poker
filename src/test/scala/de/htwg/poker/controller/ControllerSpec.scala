@@ -2,7 +2,7 @@ package de.htwg.poker.controller
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import de.htwg.poker.model.{Card, Dealer, GameState, Player, Rank, Suit}
+import de.htwg.poker.model.{Card, GameState, Player, Rank, Suit}
 
 class ControllerSpec extends AnyWordSpec with Matchers {
   "A Controller" when {
@@ -123,7 +123,7 @@ class ControllerSpec extends AnyWordSpec with Matchers {
 
     "fold" should {
       "remove the player from the player list" in {
-        controller.fold() should be(true)
+        controller.fold should be(true)
         controller.gameState.getPlayers should be(List.empty[Player])
       }
     }

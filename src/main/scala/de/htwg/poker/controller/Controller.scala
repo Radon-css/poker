@@ -17,52 +17,48 @@ class Controller(var gameState: GameState) extends Observable {
    */
 
   def createGame(
-    playerNameList: List[String],
-    smallBlind: String,
-    bigBlind: String
-): Boolean = {
-  if (playerNameList.size < 2) {
-    throw new Exception("Minimum two players required")
-  }
-
-  try {
-    val smallBlindInt = smallBlind.toInt
-    val bigBlindInt = bigBlind.toInt
-
-    if (smallBlindInt > 100 || bigBlindInt > 200) {
-      throw new Exception("Small blind must be smaller than 101 and big blind must be smaller than 201")
+      playerNameList: List[String],
+      smallBlind: String,
+      bigBlind: String
+  ): Boolean = {
+    if (playerNameList.size < 2) {
+      throw new Exception("Minimum two players required")
     }
 
-    if (bigBlindInt <= smallBlindInt) {
-      throw new Exception("Small blind must be smaller than big blind")
+    try {
+      val smallBlindInt = smallBlind.toInt
+      val bigBlindInt = bigBlind.toInt
+
+      if (smallBlindInt > 100 || bigBlindInt > 200) {
+        throw new Exception(
+          "Small blind must be smaller than 101 and big blind must be smaller than 201"
+        )
+      }
+
+      if (bigBlindInt <= smallBlindInt) {
+        throw new Exception("Small blind must be smaller than big blind")
+      }
+
+      gameState =
+        gameState.createGame(playerNameList, smallBlindInt, bigBlindInt)
+      notifyObservers
+      true
+    } catch {
+      case _: NumberFormatException =>
+        throw new Exception("Last two inputs must be integers")
     }
-
-    gameState = gameState.createGame(playerNameList, smallBlindInt, bigBlindInt)
-    notifyObservers
-    true
-  } catch {
-    case _: NumberFormatException =>
-      throw new Exception("Last two inputs must be integers")
-  }
-  }
-
-
-  def undo: Unit = {
-    undoManager.undoStep(this, this.gameState)
-    notifyObservers
-  }
-
-  def redo: Unit = {
-    undoManager.redoStep(this)
-    notifyObservers
   }
 
   def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("Start a game first")
-    } else if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
+    } else if (
+      gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount
+    ) {
       throw new Exception("Insufficient balance")
-    } else if (gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount) {
+    } else if (
+      gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount
+    ) {
       throw new Exception("Bet size is too low")
     }
 
@@ -73,15 +69,15 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def allin: Boolean = {
-  if (gameState.getPlayers.isEmpty) {
-    throw new Exception("Start a game first")
-  }
+    if (gameState.getPlayers.isEmpty) {
+      throw new Exception("Start a game first")
+    }
 
-  undoManager.doStep(gameState)
-  gameState = gameState.allIn
-  notifyObservers
-  true
-}
+    undoManager.doStep(gameState)
+    gameState = gameState.allIn
+    notifyObservers
+    true
+  }
 
   def fold: Boolean = {
     if (gameState.getPlayers.isEmpty) {
@@ -105,10 +101,20 @@ class Controller(var gameState: GameState) extends Observable {
     } else if (gameState.getHighestBetSize == 0) {
       throw new Exception("Invalid call before bet")
     } else if (
-      gameState.getPlayers(gameState.getPlayerAtTurn).currentAmountBetted == gameState.getHighestBetSize
+      gameState
+        .getPlayers(gameState.getPlayerAtTurn)
+        .currentAmountBetted == gameState.getHighestBetSize
     ) {
       throw new Exception("Cannot call")
+    } else if (
+      gameState.getAllInFlag == false &&
+      gameState
+        .getPlayers(gameState.getPlayerAtTurn)
+        .balance < gameState.getHighestBetSize
+    ) {
+      throw new Exception("Insufficient balance")
     }
+
     undoManager.doStep(gameState)
     gameState = gameState.call
 
@@ -124,7 +130,9 @@ class Controller(var gameState: GameState) extends Observable {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("Start a game first")
     } else if (
-      gameState.getPlayers(gameState.getPlayerAtTurn).currentAmountBetted != gameState.getHighestBetSize
+      gameState
+        .getPlayers(gameState.getPlayerAtTurn)
+        .currentAmountBetted != gameState.getHighestBetSize
     ) {
       throw new Exception("Cannot check")
     }
@@ -138,6 +146,16 @@ class Controller(var gameState: GameState) extends Observable {
     }
     notifyObservers
     true
+  }
+
+  def undo: Unit = {
+    undoManager.undoStep(this, this.gameState)
+    notifyObservers
+  }
+
+  def redo: Unit = {
+    undoManager.redoStep(this)
+    notifyObservers
   }
 
   // helper methods

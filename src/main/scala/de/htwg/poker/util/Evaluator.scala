@@ -5,7 +5,8 @@ import de.htwg.poker.model.*
 /* this class contains an Algorithm that can evaluate Poker Hands. It compares the two Cards the player
   holds with the community Cards that are currently revealed to find the combination of player cards and community cards that is worth most.
    The Evaluator is called whenever a new Player is at turn to show what Kind of Hand a player currently holds (High, Pair, TwoPair, Triples
-  , Straight, Flush etc...). A Flush is worth more than a Straight which is worth more than triples etc...*/
+  , Straight, Flush etc...). A Flush is worth more than a Straight which is worth more than triples etc...
+  Furthermore, the Evaluator decides which player wins the pot at the end of every round.*/
 
 class Evaluator() {
 
@@ -25,11 +26,11 @@ class Evaluator() {
     }
 
   def evaluate(playerCards: List[Card], boardCards: List[Card]): String = {
-  val (bestHand, bestType) = evalHand(playerCards, boardCards)
-  bestHand.foreach(card => println(card.toString))
-  println(bestType.toString())
-  bestType.toString
-}
+    val (bestHand, bestType) = evalHand(playerCards, boardCards)
+    bestHand.foreach(card => println(card.toString))
+    println(bestType.toString())
+    bestType.toString
+  }
 
   def evalHand(
       playerCards: List[Card],

@@ -1,8 +1,7 @@
-package de.htwg.poker.model
-
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.poker.controller.Controller
+import de.htwg.poker.model.{Card, GameState, Player, Rank, Suit}
 
 class GameStateSpec extends AnyWordSpec with Matchers {
   "A GameState" when {

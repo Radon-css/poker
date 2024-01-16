@@ -82,6 +82,50 @@ class ControllerSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    // Add more test cases for other methods in the Controller class
+    "bet" should {
+
+      "throw an exception if amount is greater than the player's balance" in {
+        val amount = 1001
+
+        an[Exception] should be thrownBy {
+          controller.bet(amount)
+        }
+      }
+
+      "throw an exception if amount is less than the current highest bet size" in {
+        val amount = 9
+
+        an[Exception] should be thrownBy {
+          controller.bet(amount)
+        }
+      }
+
+      "throw an exception if amount is less than the big blind" in {
+        val amount = 9
+
+        an[Exception] should be thrownBy {
+          controller.bet(amount)
+        }
+      }
+
+      "update the player's balance and current amount betted" in {
+        val amount = 100
+
+        controller.bet(amount) should be(true)
+        controller.gameState.getPlayers(0).balance should be(
+          player.balance - amount.toInt
+        )
+        controller.gameState.getPlayers(0).currentAmountBetted should be(
+          player.currentAmountBetted + amount.toInt
+        )
+      }
+    }
+
+    "fold" should {
+      "remove the player from the player list" in {
+        controller.fold() should be(true)
+        controller.gameState.getPlayers should be(List.empty[Player])
+      }
+    }
   }
 }

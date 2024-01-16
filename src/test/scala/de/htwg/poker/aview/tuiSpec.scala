@@ -2,7 +2,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.poker.controller.Controller
 import de.htwg.poker.aview.TUI
-import de.htwg.poker.model.GameState
+import de.htwg.poker.model._
 
 class TUISpec extends AnyWordSpec with Matchers {
 
@@ -91,19 +91,70 @@ class TUISpec extends AnyWordSpec with Matchers {
       }
 
       "return true for 'u' command" in {
+        val players = List(
+          new Player(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.Ten),
+            "Frank",
+            1000
+          ),
+          new Player(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.Nine),
+            "Tom",
+            1000
+          )
+        )
         val gameState =
-          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+          new GameState(
+            players,
+            Some(players),
+            None,
+            0,
+            0,
+            List.empty,
+            0,
+            0,
+            0
+          )
         val controller = new Controller(gameState)
         val tui = new TUI(controller)
+        gameState.call
         val result = tui.processInput("u")
         result shouldBe true
       }
 
       "return true for 'r' command" in {
+        val players = List(
+          new Player(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.Ten),
+            "Frank",
+            1000
+          ),
+          new Player(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.Nine),
+            "Tom",
+            1000
+          )
+        )
         val gameState =
-          new GameState(List.empty, None, None, 0, 0, List.empty, 0, 0, 0)
+          new GameState(
+            players,
+            Some(players),
+            None,
+            0,
+            0,
+            List.empty,
+            0,
+            0,
+            0
+          )
         val controller = new Controller(gameState)
         val tui = new TUI(controller)
+        gameState.call
+        tui.processInput("u")
         val result = tui.processInput("r")
         result shouldBe true
       }

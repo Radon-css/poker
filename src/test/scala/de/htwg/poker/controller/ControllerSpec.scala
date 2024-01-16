@@ -3,6 +3,8 @@ package de.htwg.poker.controller
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.poker.model.GameState
+import de.htwg.poker.model.{Card, GameState, Player, Rank, Suit}
+import de.htwg.poker.aview.TUI
 
 class ControllerSpec extends AnyWordSpec with Matchers {
 
@@ -78,174 +80,40 @@ class ControllerSpec extends AnyWordSpec with Matchers {
           smallBlind,
           bigBlind
         ) shouldBe true
-        // assert gameState and notify observers
       }
-
-      "throw an exception if no game has been started" in {
-        val gameState = ???
+      "check if an handout is required" in {
+        val players = List(
+          new Player(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.Ten),
+            "Frank",
+            1000
+          ),
+          new Player(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.Nine),
+            "Tom",
+            1000
+          )
+        )
+        val gameState =
+          new GameState(
+            players,
+            Some(players),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
         val controller = new Controller(gameState)
-
-        an[Exception] should be thrownBy {
-          controller.undo
-        }
-      }
-
-      "undo the last step and notify observers" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // perform some actions to modify the gameState
-
-        controller.undo
-        // assert gameState and notify observers
-      }
-
-      "redo the last undone step and notify observers" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // perform some actions and undo them
-
-        controller.redo
-        // assert gameState and notify observers
-      }
-
-      "throw an exception if no game has been started" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-
-        an[Exception] should be thrownBy {
-          controller.bet(100)
-        }
-      }
-
-      "throw an exception if player has insufficient balance" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with a player having insufficient balance
-
-        an[Exception] should be thrownBy {
-          controller.bet(100)
-        }
-      }
-
-      "throw an exception if bet size is too low" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with a bet size that is too low
-
-        an[Exception] should be thrownBy {
-          controller.bet(50)
-        }
-      }
-
-      "update the gameState and notify observers if all conditions are met" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with valid conditions
-
-        controller.bet(100) shouldBe true
-        // assert gameState and notify observers
-      }
-
-      "throw an exception if no game has been started" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-
-        an[Exception] should be thrownBy {
-          controller.allin
-        }
-      }
-
-      "update the gameState and notify observers if all conditions are met" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with valid conditions
-
-        controller.allin shouldBe true
-        // assert gameState and notify observers
-      }
-
-      "throw an exception if no game has been started" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-
-        an[Exception] should be thrownBy {
-          controller.fold
-        }
-      }
-
-      "update the gameState and notify observers if all conditions are met" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with valid conditions
-
-        controller.fold shouldBe true
-        // assert gameState and notify observers
-      }
-
-      "throw an exception if no game has been started" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-
-        an[Exception] should be thrownBy {
-          controller.call
-        }
-      }
-
-      "throw an exception if no bet has been made" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with no bet made
-
-        an[Exception] should be thrownBy {
-          controller.call
-        }
-      }
-
-      "throw an exception if player has already called" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with player already called
-
-        an[Exception] should be thrownBy {
-          controller.call
-        }
-      }
-
-      "update the gameState and notify observers if all conditions are met" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with valid conditions
-
-        controller.call shouldBe true
-        // assert gameState and notify observers
-      }
-
-      "throw an exception if no game has been started" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-
-        an[Exception] should be thrownBy {
-          controller.check
-        }
-      }
-
-      "throw an exception if player has not betted the highest amount" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with player not betted the highest amount
-
-        an[Exception] should be thrownBy {
-          controller.check
-        }
-      }
-
-      "update the gameState and notify observers if all conditions are met" in {
-        val gameState = ???
-        val controller = new Controller(gameState)
-        // set up the gameState with valid conditions
-
-        controller.check shouldBe true
-        // assert gameState and notify observers
+        val tui = new TUI(controller)
+        gameState.call
+        gameState.check
+        controller.handout_required shouldBe true
       }
     }
   }

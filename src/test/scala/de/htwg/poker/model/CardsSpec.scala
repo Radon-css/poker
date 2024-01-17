@@ -34,6 +34,62 @@ class CardsSpec extends AnyWordSpec with Matchers {
       }
     }
   }
+  "A Rank" when {
+    "converted to string" should {
+      "return a string representation of the rank" in {
+        Rank.Ace.toString should be("A")
+        Rank.Two.toString should be("2")
+        Rank.Three.toString should be("3")
+        Rank.Four.toString should be("4")
+        Rank.Five.toString should be("5")
+        Rank.Six.toString should be("6")
+        Rank.Seven.toString should be("7")
+        Rank.Eight.toString should be("8")
+        Rank.Nine.toString should be("9")
+        Rank.Ten.toString should be("10")
+        Rank.Jack.toString should be("J")
+        Rank.Queen.toString should be("Q")
+        Rank.King.toString should be("K")
+      }
+    }
+
+    "converted to strength" should {
+      "return a strength representation of the rank" in {
+        Rank.Ace.strength should be(13)
+        Rank.Two.strength should be(1)
+        Rank.Three.strength should be(2)
+        Rank.Four.strength should be(3)
+        Rank.Five.strength should be(4)
+        Rank.Six.strength should be(5)
+        Rank.Seven.strength should be(6)
+        Rank.Eight.strength should be(7)
+        Rank.Nine.strength should be(8)
+        Rank.Ten.strength should be(9)
+        Rank.Jack.strength should be(10)
+        Rank.Queen.strength should be(11)
+        Rank.King.strength should be(12)
+      }
+    }
+  }
+  "A Suit" when {
+    "converted to string" should {
+      "return a string representation of the suit" in {
+        Suit.Clubs.toString should be(s"$ANSI_BLACK♣$ANSI_RESET")
+        Suit.Spades.toString should be(s"$ANSI_BLACK♠$ANSI_RESET")
+        Suit.Diamonds.toString should be(s"$ANSI_RED♢$ANSI_RESET")
+        Suit.Hearts.toString should be(s"$ANSI_RED♡$ANSI_RESET")
+      }
+    }
+
+    "converted to id" should {
+      "return an id representation of the suit" in {
+        Suit.Clubs.id should be(1)
+        Suit.Spades.id should be(2)
+        Suit.Diamonds.id should be(3)
+        Suit.Hearts.id should be(4)
+      }
+    }
+  }
 
   "A Deck" when {
     "shuffled" should {

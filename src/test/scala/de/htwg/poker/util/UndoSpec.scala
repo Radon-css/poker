@@ -21,7 +21,6 @@ class UndoManagerSpec extends AnyWordSpec with Matchers {
     "doStep" should {
       "add the current game state to the undo stack" in {
         undoManager.doStep(gameState)
-        // undoManager.undoStack.head should be(gameState)
       }
     }
 
@@ -31,30 +30,25 @@ class UndoManagerSpec extends AnyWordSpec with Matchers {
         undoManager.doStep(gameState)
         undoManager.undoStep(controller, previousGameState)
         controller.gameState should be(previousGameState)
-        // undoManager.redoStack.head should be(gameState)
       }
 
       "not do anything if the undo stack is empty" in {
         val previousGameState = GameState(List.empty, None, None)
         undoManager.undoStep(controller, previousGameState)
         controller.gameState should be(gameState)
-        // undoManager.redoStack should be(Nil)
       }
     }
 
     "redoStep" should {
       "restore the next game state from the redo stack and move it to the undo stack" in {
         val nextGameState = GameState(List.empty, None, None)
-        // undoManager.redoStack = nextGameState :: undoManager.redoStack
         undoManager.redoStep(controller)
         controller.gameState should be(nextGameState)
-        // undoManager.undoStack.head should be(gameState)
       }
 
       "not do anything if the redo stack is empty" in {
         undoManager.redoStep(controller)
         controller.gameState should be(gameState)
-        // undoManager.undoStack.head should be(gameState)
       }
     }
   }

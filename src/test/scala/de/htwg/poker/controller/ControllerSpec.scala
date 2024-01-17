@@ -65,6 +65,19 @@ class ControllerSpec extends AnyWordSpec with Matchers {
           controller.createGame(playerNameList, smallBlind, bigBlind)
         }
       }
+      "throw an exception if the last two inputs are not integers" in {
+        val playerNameList = List("Player1", "Player2")
+        val smallBlind = "20"
+        val bigBlind = "20"
+        val controller = new Controller(
+          new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
+        )
+        controller.createGame(playerNameList, smallBlind, bigBlind)
+
+        an[Exception] should be thrownBy {
+          controller.createGame(playerNameList, smallBlind, bigBlind)
+        }
+      }
 
       "update the gameState and notify observers if all conditions are met" in {
         val playerNameList = List("Player1", "Player2")
@@ -165,6 +178,106 @@ class ControllerSpec extends AnyWordSpec with Matchers {
         gameState.getPlayers(0).balance should be(900)
         gameState.getPlayers(0).currentAmountBetted should be(100)
       }
+      "throw an exception if the amount is greater than the player's balance" in {
+        val amount = 1001
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                1000
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                1000
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  1000
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  1000
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+        controller.bet(amount)
+
+        an[Exception] should be thrownBy {
+          controller.bet(amount)
+        }
+      }
+      "throw an exception if the amount is less than the current highest bet size" in {
+        val amount = 9
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                1000
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                1000
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  1000
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  1000
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+        controller.bet(amount)
+
+        an[Exception] should be thrownBy {
+          controller.bet(amount)
+        }
+      }
     }
     "call" should {
       "update the player's balance and current amount betted" in {
@@ -213,6 +326,151 @@ class ControllerSpec extends AnyWordSpec with Matchers {
         controller.call
         gameState.getPlayers(0).balance should be(1000)
         gameState.getPlayers(0).currentAmountBetted should be(20)
+      }
+      "throw an exception if a players call before any bet was made" in {
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                1000
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                1000
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  1000
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  1000
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+
+        an[Exception] should be thrownBy {
+          controller.call
+        }
+      }
+      "throw an exception if a player tries to call when he has already betted enough" in {
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                1000
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                1000
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  1000
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  1000
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+        controller.call
+
+        an[Exception] should be thrownBy {
+          controller.call
+        }
+      }
+      "throw an exception if a players balance is less then the current highest bet size" in {
+        val gameState =
+          new GameState(
+            List(
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Ten),
+                "Frank",
+                19
+              ),
+              new Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.Nine),
+                "Tom",
+                20
+              )
+            ),
+            Some(
+              List(
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Ten),
+                  "Frank",
+                  19
+                ),
+                new Player(
+                  new Card(Suit.Hearts, Rank.Ace),
+                  new Card(Suit.Hearts, Rank.Nine),
+                  "Tom",
+                  20
+                )
+              )
+            ),
+            None,
+            0,
+            0,
+            Nil,
+            0,
+            10,
+            20,
+            0
+          )
+        val controller = new Controller(gameState)
+
+        an[Exception] should be thrownBy {
+          controller.call
+        }
       }
     }
   }

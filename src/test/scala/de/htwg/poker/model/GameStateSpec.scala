@@ -320,6 +320,7 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       updatedGameState.getPot should be(30)
       updatedGameState.getSmallBlind should be(10)
       updatedGameState.getSmallBlindPointer should be(0)
+      updatedGameState.getPreviousPlayer should be(1)
     }
   }
 }

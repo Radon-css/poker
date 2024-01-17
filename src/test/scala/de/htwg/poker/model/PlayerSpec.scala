@@ -39,8 +39,8 @@ class PlayerSpec extends AnyWordSpec with Matchers with MockitoSugar {
     "calling toHtml" should {
       "return the player's HTML representation" in {
         val player = Player(
-          new Card(Suit.Clubs, Rank.Ace),
-          new Card(Suit.Hearts, Rank.Ace),
+          mock[Card],
+          mock[Card],
           "John Doe",
           1000,
           0
@@ -53,24 +53,22 @@ class PlayerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         )
       }
     }
-    /*
+
     "calling betSizeToHtml" should {
       "return the player's bet size HTML representation" in {
         val player = Player(
-          new Card(Suit.Clubs, Rank.Ace),
-          new Card(Suit.Hearts, Rank.Ace),
+          mock[Card],
+          mock[Card],
           "John Doe",
           1000,
           0
         )
-
         val html = player.betSizeToHtml
 
         html should include(
-          "<h1 class=\"text-gray-400\">0</h1>"
+          "<h1 class=\"text-gray-400\">0$</h1>"
         )
       }
     }
-     */
   }
 }

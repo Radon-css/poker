@@ -3,6 +3,7 @@ package de.htwg.poker.model
 import de._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import de.htwg.poker.util.Evaluator
 
 class GameStateSpec extends AnyWordSpec with Matchers {
   "A GameState" when {
@@ -122,10 +123,55 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     }
   }
   "getCurrentHand" should {
-    /*
     "return the evaluated hand" in {
       val gameState =
-        new GameState(List(), None, None, 0, 0, List(), 0, 10, 20, 0, false)
+        new GameState(
+          List(
+            Player(
+              new Card(Suit.Hearts, Rank.Ace),
+              new Card(Suit.Hearts, Rank.King),
+              "Player1",
+              100
+            ),
+            Player(
+              new Card(Suit.Spades, Rank.Ace),
+              new Card(Suit.Spades, Rank.King),
+              "Player2",
+              100
+            )
+          ),
+          Some(
+            List(
+              Player(
+                new Card(Suit.Hearts, Rank.Ace),
+                new Card(Suit.Hearts, Rank.King),
+                "Player1",
+                100
+              ),
+              Player(
+                new Card(Suit.Spades, Rank.Ace),
+                new Card(Suit.Spades, Rank.King),
+                "Player2",
+                100
+              )
+            )
+          ),
+          None,
+          0,
+          0,
+          List(
+            new Card(Suit.Hearts, Rank.Ace),
+            new Card(Suit.Hearts, Rank.King),
+            new Card(Suit.Hearts, Rank.Queen),
+            new Card(Suit.Hearts, Rank.Jack),
+            new Card(Suit.Hearts, Rank.Ten)
+          ),
+          0,
+          10,
+          20,
+          0,
+          false
+        )
       val evaluator = new Evaluator()
       val expectedHand = evaluator.evaluate(
         List(
@@ -136,7 +182,5 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       )
       gameState.getCurrentHand should be(expectedHand)
     }
-  }
-     */
   }
 }

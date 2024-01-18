@@ -73,19 +73,14 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
     }
-    /*
     "bet" should {
       "return true and update the game state when valid inputs are provided" in {
-
-        import org.mockito.Mockito.when
 
         val playerNameList = List("Player1", "Player2")
         val smallBlind = "10"
         val bigBlind = "20"
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
-
-        when(controller.gameState) thenReturn gameState
 
         controller.createGame(playerNameList, smallBlind, bigBlind)
 
@@ -125,7 +120,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
     "allin" should {
       "return true and update the game state when valid inputs are provided" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
 
@@ -143,7 +138,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
     "fold" should {
       "return true and update the game state when valid inputs are provided" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
 
@@ -160,7 +155,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
     "call" should {
       "return true and update the game state when valid inputs are provided" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
 
@@ -192,7 +187,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
     }
     "check" should {
       "return true and update the game state when valid inputs are provided" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
         controller.call
@@ -215,6 +210,6 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
     }
-     */
+
   }
 }

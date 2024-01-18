@@ -89,17 +89,16 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       }
       "throw an exception when the game has not been started" in {
         val amount = 100
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
-        controller.createGame(List("Player1", "Player2"), "10", "20")
 
         an[Exception] should be thrownBy {
           controller.bet(amount)
         }
       }
       "throw an exception when the player does not have enough balance" in {
-        val amount = 100
-        val gameState = mock[GameState]
+        val amount = 5000
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
 
@@ -108,7 +107,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
       "throw an exception when the bet size is too low" in {
-        val amount = 100
+        val amount = 1
         val gameState = mock[GameState]
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
@@ -128,7 +127,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         result shouldBe true
       }
       "throw an exception when the game has not been started" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
 
         an[Exception] should be thrownBy {
@@ -146,7 +145,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         result shouldBe true
       }
       "throw an exception when the game has not been started" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         an[Exception] should be thrownBy {
           controller.fold
@@ -163,23 +162,43 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         result shouldBe true
       }
       "throw an exception when the game has not been started" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         an[Exception] should be thrownBy {
           controller.call
         }
       }
       "throw an exception when the player does not have enough balance" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
+        controller.createGame(List("Player1", "Player2"), "10", "20")
 
+        val updatedPlayer = controller.gameState
+          .getPlayers(controller.gameState.playerAtTurn)
+          .copy(
+            balance = 0,
+            currentAmountBetted = controller.gameState
+              .getPlayers(controller.gameState.playerAtTurn)
+              .currentAmountBetted
+          )
+
+        val newPlayerList =
+          controller.gameState.getPlayers
+            .updated(controller.gameState.playerAtTurn, updatedPlayer)
+
+        controller.gameState = controller.gameState.copy(
+          players = Some(newPlayerList)
+        )
         an[Exception] should be thrownBy {
           controller.call
         }
       }
       "throw an exception when the player has already called" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
+        controller.createGame(List("Player1", "Player2"), "10", "20")
+        controller.call
+
         an[Exception] should be thrownBy {
           controller.call
         }
@@ -202,9 +221,10 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
           controller.check
         }
       }
-      "throw an exception when the player has already checked" in {
+      "throw an exception when the player can not check" in {
         val gameState = mock[GameState]
         val controller = new Controller(gameState)
+        controller.createGame(List("Player1", "Player2"), "10", "20")
         an[Exception] should be thrownBy {
           controller.check
         }

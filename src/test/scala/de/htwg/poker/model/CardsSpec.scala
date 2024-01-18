@@ -2,7 +2,7 @@ package de.htwg.poker.model
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-
+//
 class CardsSpec extends AnyWordSpec with Matchers {
 
   val ANSI_BLACK = "\u001b[30m"

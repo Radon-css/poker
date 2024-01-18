@@ -27,38 +27,6 @@ class EvaluatorSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       result should be("Flush")
     }
-    /*
-    "compare hands correctly" in {
-      val evaluator = new Evaluator()
 
-      val hand1 = (
-        List(
-          Card(Suit.Spades, Rank.Ace),
-          Card(Suit.Spades, Rank.King),
-          Card(Suit.Spades, Rank.Queen),
-          Card(Suit.Spades, Rank.Jack),
-          Card(Suit.Spades, Rank.Ten)
-        ),
-        evaluator.Type.StraightFlush
-      )
-
-      val hand2 = (
-        List(
-          Card(Suit.Hearts, Rank.Ace),
-          Card(Suit.Hearts, Rank.King),
-          Card(Suit.Hearts, Rank.Queen),
-          Card(Suit.Hearts, Rank.Jack),
-          Card(Suit.Hearts, Rank.Ten)
-        ),
-        evaluator.Type.StraightFlush
-      )
-
-      val hands = List(hand1, hand2)
-
-      val result = evaluator.compareHands(hands)
-
-      result should be(hand2._1)
-    }
-     */
   }
 }

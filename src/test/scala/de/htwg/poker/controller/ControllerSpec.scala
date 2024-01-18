@@ -164,6 +164,8 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       "throw an exception when the game has not been started" in {
         val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
+        controller.createGame(List("Player1", "Player2"), "10", "20")
+        controller.gameState = controller.gameState.copy(players = None)
         an[Exception] should be thrownBy {
           controller.call
         }

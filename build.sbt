@@ -11,7 +11,7 @@ lazy val root = project
         s.startsWith("de.htwg.poker.util") ||
         s.startsWith("de.htwg.poker.controller")
     ),
-    coverageExcludedPackages := "<.;de.htwg.poker.(?!model.|util.|controller.).*"
+    coverageExcludedPackages := "de\\.htwg\\.poker\\.aview\\..*"
   )
 
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test

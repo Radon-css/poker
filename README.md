@@ -7,15 +7,33 @@
 
 ![Alt text](image.png)
 
-In den prunkvollen Hallen der virtuellen Welt entfaltet sich ein majestätisches Schauspiel, das die Essenz des Luxus in ihrer reinsten Form verkörpert: Ein von meisterhafter Hand programmiertes Poker-Spiel, das die Grenzen der Realität zu überschreiten scheint.
+In digitalen Sälen, weit und breit,
+Wo Fantasie regiert mit Heiterkeit,
+Ein Poker-Spiel von Glanz durchzogen,
+In Lichtern, die wie Sterne flogen.
 
-Die digitalen Karten, gehalten in einem Tanz aus subtilen Lichtreflexionen, gleiten geschmeidig über den smaragdgrünen Filz des virtuellen Spieltisches. Jede Bewegung, jede Geste, wird von einem Hauch von Eleganz begleitet, der die Aura des Raumes durchdringt. Das gedämpfte Licht, das von funkelnden Kronleuchtern herabfällt, verleiht jedem Pixel auf dem Bildschirm einen Hauch von königlichem Glanz.
+Karten tanzen, fließend, leicht,
+Über Tische, smaragdreich.
+Jede Geste, Zauber pur,
+In diesem virtuellen Abenteuer nur.
 
-Die Klänge, die aus den virtuellen Lautsprechern emporsteigen, sind wie die Harmonien einer Symphonie, die von den Meistern der Audiogestaltung komponiert wurde. Das leise Klicken der digitalen Chips, das Rascheln der unsichtbaren Karten und das sanfte Murmeln der simulierten Konversation verschmelzen zu einem klangvollen Ballett, das die Sinne betört.
+Kronleuchter singen, leuchten hell,
+Erzählen Geschichten, wundervoll und schnell.
+Ihr Licht, ein Traum, so warm, so klar,
+Erhellt das Spiel, so wunderbar.
 
-In diesem eindrucksvollen Schöpfungsakt des digitalen Genies entfaltet sich ein Drama von strategischem Geschick und unvorhersehbaren Wendungen. Die visuelle Pracht des Designs lässt die Spieler in eine surreale Welt eintauchen, in der jede Runde zu einem Kunstwerk wird, von subtiler Schönheit und hochgradiger Raffinesse.
+Klänge steigen auf, eine Symphonie so rein,
+Von Chips, von Karten, im Einklang fein.
+Eine Melodie, die sanft die Seele küsst,
+Und jeden Spieler in den Bann nun schließt.
 
-Die Benutzeroberfläche, gestaltet mit der Finesse eines Kunsthandwerks, bietet einen nahtlosen Übergang zwischen Realität und digitaler Ästhetik. Die Auswahl von Optionen wird zu einem künstlerischen Ausdruck, bei dem jedes Detail darauf abzielt, den Spieler in einen Zustand der vollkommenen Hingabe an das Spiel zu versetzen.
+Programmiert mit Kunst, mit Sinn,
+Jedes Detail, ein magischer Gewinn.
+Die Oberfläche, ein Tanz, ein Spiel,
+Jede Wahl, ein ekstatisches Gefühl.
 
-Dieses Poker-Spiel, ein digitaler Monarch unter den Kartenspielen, erhebt sich über die Grenzen des Gewöhnlichen und öffnet die Pforten zu einer Welt, in der die Kunst der Programmierung und die Magie des Luxus zu einer einzigartigen Symbiose verschmelzen. Es ist mehr als nur ein Spiel - es ist ein Meisterwerk der digitalen Eleganz.
+Ein Spiel, das über das Gewöhnliche thront,
+In einem Reich, wo Phantasie belohnt.
+Mehr als nur ein Spiel im digitalen Glanz,
+Eine Odyssee, ein Sinnes-Tanz.
 

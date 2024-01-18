@@ -10,10 +10,10 @@ class Controller(var gameState: GameState) extends Observable {
   private val undoManager = new UndoManager
 
   /* the following methods are structured in this particular way:
-    first, check the action for errors and throw an exception if necessary.
+    first, check the user input for unallowed inputs and throw an exception if necessary.
     second, update the gameState.
     third, notify the observers.
-    additionally, for some actions like bet, call and fold it first has to be checked wether community cards need to be revealed.
+    additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
    */
 
   def createGame(
@@ -40,7 +40,7 @@ class Controller(var gameState: GameState) extends Observable {
       }
 
       gameState =
-        gameState.createGame(playerNameList, smallBlindInt, bigBlindInt)
+        gameState.createGame(playerNameList, smallBlindInt, bigBlindInt, 0)
       notifyObservers
       true
     } catch {
@@ -64,17 +64,6 @@ class Controller(var gameState: GameState) extends Observable {
 
     undoManager.doStep(gameState)
     gameState = gameState.bet(amount)
-    notifyObservers
-    true
-  }
-
-  def allin: Boolean = {
-    if (gameState.getPlayers.isEmpty) {
-      throw new Exception("Start a game first")
-    }
-
-    undoManager.doStep(gameState)
-    gameState = gameState.allIn
     notifyObservers
     true
   }
@@ -106,13 +95,6 @@ class Controller(var gameState: GameState) extends Observable {
         .currentAmountBetted == gameState.getHighestBetSize
     ) {
       throw new Exception("Cannot call")
-    } else if (
-      gameState.getAllInFlag == false &&
-      gameState
-        .getPlayers(gameState.getPlayerAtTurn)
-        .balance < gameState.getHighestBetSize
-    ) {
-      throw new Exception("Insufficient balance")
     }
 
     undoManager.doStep(gameState)

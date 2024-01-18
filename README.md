@@ -7,15 +7,21 @@
 
 ![Alt text](image.png)
 
-In den prunkvollen Hallen der virtuellen Welt entfaltet sich ein majestätisches Schauspiel, das die Essenz des Luxus in ihrer reinsten Form verkörpert: Ein von meisterhafter Hand programmiertes Poker-Spiel, das die Grenzen der Realität zu überschreiten scheint.
+##Overview
 
-Die digitalen Karten, gehalten in einem Tanz aus subtilen Lichtreflexionen, gleiten geschmeidig über den smaragdgrünen Filz des virtuellen Spieltisches. Jede Bewegung, jede Geste, wird von einem Hauch von Eleganz begleitet, der die Aura des Raumes durchdringt. Das gedämpfte Licht, das von funkelnden Kronleuchtern herabfällt, verleiht jedem Pixel auf dem Bildschirm einen Hauch von königlichem Glanz.
+Poker is a game developed by our team as part of the Software Engineering course at HTWG Konstanz. In this collaborative effort, we employed Scala 3 to meticulously craft a resilient Text User Interface and a sleek Graphical User Interface, enhancing the overall Poker gaming experience.
 
-Die Klänge, die aus den virtuellen Lautsprechern emporsteigen, sind wie die Harmonien einer Symphonie, die von den Meistern der Audiogestaltung komponiert wurde. Das leise Klicken der digitalen Chips, das Rascheln der unsichtbaren Karten und das sanfte Murmeln der simulierten Konversation verschmelzen zu einem klangvollen Ballett, das die Sinne betört.
+## Getting Started
 
-In diesem eindrucksvollen Schöpfungsakt des digitalen Genies entfaltet sich ein Drama von strategischem Geschick und unvorhersehbaren Wendungen. Die visuelle Pracht des Designs lässt die Spieler in eine surreale Welt eintauchen, in der jede Runde zu einem Kunstwerk wird, von subtiler Schönheit und hochgradiger Raffinesse.
+### Prerequisites
 
-Die Benutzeroberfläche, gestaltet mit der Finesse eines Kunsthandwerks, bietet einen nahtlosen Übergang zwischen Realität und digitaler Ästhetik. Die Auswahl von Optionen wird zu einem künstlerischen Ausdruck, bei dem jedes Detail darauf abzielt, den Spieler in einen Zustand der vollkommenen Hingabe an das Spiel zu versetzen.
+    - Scala 3
+    - sbt
+    - java 17
+    - Docker (optional)
 
-Dieses Poker-Spiel, ein digitaler Monarch unter den Kartenspielen, erhebt sich über die Grenzen des Gewöhnlichen und öffnet die Pforten zu einer Welt, in der die Kunst der Programmierung und die Magie des Luxus zu einer einzigartigen Symbiose verschmelzen. Es ist mehr als nur ein Spiel - es ist ein Meisterwerk der digitalen Eleganz.
+### Installation and Execution
 
+    1. Clone the repository.
+    2. Navigate to the project directory.
+    3. Start the game with sbt run.

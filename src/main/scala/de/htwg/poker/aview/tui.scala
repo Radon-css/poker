@@ -60,14 +60,6 @@ class TUI(controller: Controller) extends Observer {
           case Failure(exception) => println(s"Error: ${exception.getMessage}")
         }
         false
-      // bet all of your remaining chips. This way you are putting everything at stake for the current round.
-      case "allin" =>
-        val result: Try[Boolean] = Try(controller.allin)
-        result match {
-          case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
-        }
-        false
       // fold to to discard your hand and forfeit any further involvement in the current round. Do this if your hand is weak.
       case "fold" =>
         val result: Try[Boolean] = Try(controller.fold)

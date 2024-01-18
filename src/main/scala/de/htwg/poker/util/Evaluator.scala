@@ -27,8 +27,6 @@ class Evaluator() {
 
   def evaluate(playerCards: List[Card], boardCards: List[Card]): String = {
     val (bestHand, bestType) = evalHand(playerCards, boardCards)
-    bestHand.foreach(card => println(card.toString))
-    println(bestType.toString())
     bestType.toString
   }
 

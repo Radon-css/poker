@@ -11,7 +11,7 @@ import scala.concurrent.Future
 object Poker {
   // here we need to pass in a stub of a GameState in order to initially create our controller
   val controller = new Controller(
-    new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0, false)
+    new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
   val tui = new TUI(controller)
   val gui = new GUI(controller)

@@ -1,7 +1,7 @@
 package de.htwg.poker.model
 import scala.util.Random
 
-val ANSI_BLACK = "\u001b[30m"
+val ANSI_BLACK = "\u001b[90m"
 val ANSI_RED = "\u001b[31m"
 val ANSI_RESET = "\u001b[0m"
 
@@ -77,14 +77,14 @@ val deck: List[Card] = {
     rank <- Rank.values.toList
     suit <- Suit.values.toList
   } yield new Card(suit, rank)
-  }
+}
 
-  def shuffleDeck: List[Card] = {
-    val random = new Random
-    random.shuffle(deck)
-  }
+def shuffleDeck: List[Card] = {
+  val random = new Random
+  random.shuffle(deck)
+}
 
-  def removeCards(deck: List[Card], n: Int): List[Card] = {
-    val newCardList = deck.drop(n);
-    newCardList
-  }
+def removeCards(deck: List[Card], n: Int): List[Card] = {
+  val newCardList = deck.drop(n);
+  newCardList
+}

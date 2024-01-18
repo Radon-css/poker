@@ -8,6 +8,30 @@ import de.htwg.poker.model.*
   , Straight, Flush etc...). A Flush is worth more than a Straight which is worth more than triples etc...
   Furthermore, the Evaluator decides which player wins the pot at the end of every round.*/
 
+@main
+def run: Unit = {
+  val cards1 = (
+    List(
+      Card(Suit.Spades, Rank.Two),
+      Card(Suit.Spades, Rank.Three),
+      Card(Suit.Spades, Rank.Four),
+      Card(Suit.Spades, Rank.Five)
+    ),
+    0
+  )
+  val cards2 = (
+    List(
+      Card(Suit.Spades, Rank.Two),
+      Card(Suit.Spades, Rank.Three),
+      Card(Suit.Spades, Rank.Four),
+      Card(Suit.Spades, Rank.Ace)
+    ),
+    1
+  )
+  val evaluator = new Evaluator
+  print(evaluator.getHighestKicker(List(cards1, cards2)))
+}
+
 class Evaluator() {
 
   enum Type:
@@ -51,6 +75,8 @@ class Evaluator() {
 
   def evalFiveCards(combination: List[Card]): Type = {
 
+    var returnValue = Type.High
+
     val rankHistogramm: List[(Rank, Int)] = combination
       .map(_.rank)
       .groupBy(identity)
@@ -60,9 +86,9 @@ class Evaluator() {
 
     // check for Quads, FullHouse, Trips, TwoPair, Pair
     if (rankHistogramm(0)._2 == 4 && rankHistogramm(1)._2 == 1)
-      return Type.Quads
+      returnValue = Type.Quads
     if (rankHistogramm(0)._2 == 3 && rankHistogramm(1)._2 == 2)
-      return Type.FullHouse
+      returnValue = Type.FullHouse
     if (
       rankHistogramm(0)._2 == 3 && rankHistogramm(
         1
@@ -70,7 +96,7 @@ class Evaluator() {
         2
       )._2 == 1
     )
-      return Type.Triples
+      returnValue = Type.Triples
     if (
       rankHistogramm(0)._2 == 2 && rankHistogramm(
         1
@@ -78,9 +104,9 @@ class Evaluator() {
         2
       )._2 == 1
     )
-      return Type.TwoPair
+      returnValue = Type.TwoPair
     if (rankHistogramm.size == 4)
-      return Type.Pair
+      returnValue = Type.Pair
     // check for Flush
     if (
       combination(0).suit.id == combination(1).suit.id && combination(
@@ -93,7 +119,7 @@ class Evaluator() {
         4
       ).suit.id
     )
-      return Type.Flush
+      returnValue = Type.Flush
     // check for Straights
     val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse
     if (
@@ -101,7 +127,7 @@ class Evaluator() {
         1
       ).rank == Rank.Five
     )
-      return Type.Straight
+      returnValue = Type.Straight
     // check for StraightFlush
     if (
       combination(0).suit.id == combination(1).suit.id && combination(
@@ -118,8 +144,8 @@ class Evaluator() {
         ) == Rank.Five
       )
     )
-      return Type.StraightFlush
-    return Type.High
+      returnValue = Type.StraightFlush
+    returnValue
   }
 
   // Funktion um alle möglichen 5-Karten-Kombinationen meiner 7 Karten (2 Spielerkarten + 5 Boardkarten) zu bekommen
@@ -133,7 +159,22 @@ class Evaluator() {
       }
   }
 
-  def compareHands(hands: List[(List[Card], Type)]): List[Card] = {
+  def getWinner(players: List[Player], boardCards: List[Card]): List[Card] = {
+    val playerCards = players.map(player => (player.card1, player.card2))
+    val hands =
+      playerCards.map(playerCards => evalHand(playerCards.toList, boardCards))
+    val handsAndTypesWithIndexes = hands.zipWithIndex
+    val types = hands.map(_._2)
+    val highestType = types.maxBy(_.strength)
+    val handsWithHighestTypeWithType =
+      handsAndTypesWithIndexes.filter(_._1._2 == highestType)
+    val handsWithHighestType =
+      handsWithHighestTypeWithType.map(hand => (hand._1._1, hand._2))
+
+    /*if(handsWithHighestType.size == 1)
+      return getHighestKicker(handsWithHighestType)
+
+    if()
     val types: List[Type] = hands.map(_._2)
     val highestType: Type = types.maxBy(_.strength)
     val handsWithHighestType: List[List[Card]] =
@@ -143,21 +184,28 @@ class Evaluator() {
       return handsWithHighestType.head
     if (highestType == Type.High)
       return getHighestKicker(handsWithHighestType)
-    hands.head._1
+    hands.head._1*/
+    Nil
   }
 
-  def getHighestKicker(cards: List[List[Card]]): List[Card] = {
-    val sortedCardLists =
-      cards.map(list => list.sorted(Ordering.by(_.rank.strength)).reverse)
-    val highestKickerList =
-      cards.reduceLeft((acc, current) => {
-        val maxAcc = acc.map(_.rank.strength).max
-        val maxCurrent = current.map(_.rank.strength).max
+  def getHighestKicker(hands: List[(List[Card], Int)]): Int = {
+    def sortCardsInHand(hand: (List[Card], Int)): (List[Card], Int) = {
+      val index = hand._2
+      val cards = hand._1
+      val sortedCards = cards.sortWith(_.rank.strength > _.rank.strength)
+      (sortedCards, index)
+    }
+    def findHighestCard(hand: List[Card]): Card = {
+      hand.maxBy(_.rank.strength)
+    }
 
-        if (maxAcc > maxCurrent) acc
-        else if (maxAcc < maxCurrent) current
-        else Nil
-      })
-    highestKickerList
+    val sortedCards = hands.map(hand => sortCardsInHand(hand))
+
+    for (i <- 0 to hands(0).size) {
+      val currentIndexCards = sortedCards.map(cards => cards._1(i))
+      val sortedIndexCards =
+        currentIndexCards.sortWith(_.rank.strength > _.rank.strength)
+    }
+    0
   }
 }

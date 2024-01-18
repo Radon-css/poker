@@ -3,7 +3,7 @@ import scala.math
 import de.htwg.poker.util.Evaluator
 import de.htwg.poker.util.TUIView
 
-/* to depict the state of our game unambiguously, we need 10 different variables.
+/* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
 players: players participating in the current round
 deck: full card deck that has been shuffled for the current round

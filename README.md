@@ -24,4 +24,5 @@ Poker is a game developed by our team as part of the Software Engineering course
 
     1. Clone the repository.
     2. Navigate to the project directory.
-    3. Start the game with sbt run.
+    3. Set your Codepage to 65001 by executing "chcp 65001" to correctly display UTF-8 characters in the TUI.
+    4. Start the game with sbt run.

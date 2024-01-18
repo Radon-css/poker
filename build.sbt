@@ -11,8 +11,6 @@ lazy val root = project
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.14"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
-
-libraryDependencies += "org.scalafx" %% "scalafx" % "21.0.0-R32"
 libraryDependencies ++= {
   // Determine OS version of JavaFX binaries
   lazy val osName = System.getProperty("os.name") match {
@@ -25,10 +23,3 @@ libraryDependencies ++= {
     .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
 }
 
- //JavaFX in Docker:
- javaOptions in run ++= Seq(
-   "--module-path",
-   "/opt/javafx/javafx-sdk-21/lib",
-   "--add-modules",
-   "javafx.controls,javafx.fxml,javafx.web"
- )

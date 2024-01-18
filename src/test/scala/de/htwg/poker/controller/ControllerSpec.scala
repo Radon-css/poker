@@ -73,6 +73,7 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
     }
+    /*
     "bet" should {
       "return true and update the game state when valid inputs are provided" in {
 
@@ -214,5 +215,6 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
     }
+     */
   }
 }

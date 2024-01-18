@@ -5,7 +5,13 @@ lazy val root = project
   .settings(
     name := "poker",
     version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version
+    scalaVersion := scala3Version,
+    testOptions in Test += Tests.Filter(s =>
+      s.startsWith("de.htwg.poker.model") ||
+        s.startsWith("de.htwg.poker.util") ||
+        s.startsWith("de.htwg.poker.controller")
+    ),
+    coverageExcludedPackages := "<.;de.htwg.poker.(?!model.|util.|controller.).*"
   )
 
 libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test

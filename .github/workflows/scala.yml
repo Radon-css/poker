@@ -30,7 +30,7 @@ jobs:
           distribution: "temurin"
           cache: "sbt"
       - name: Run tests
-        run: sbt 'testOnly de.htwg.poker.controller.ControllerSpec de.htwg.poker.model.CardsSpec de.htwg.poker.model.GameStateSpec de.htwg.poker.model.PlayerSpec de.htwg.poker.util.EvaluatorSpec de.htwg.poker.util.ObserverSpec de.htwg.poker.util.UndoSpec'
+        run: sbt test
       - name: Coveralls
         run: sbt clean coverage test coverageReport
       - name: Upload coveralls

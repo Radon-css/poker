@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.poker.controller.Controller
 import de.htwg.poker.model.GameState
+//
 
 class UndoSpec extends AnyWordSpec with Matchers {
   "An UndoManager" when {

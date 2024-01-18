@@ -7,7 +7,7 @@
 
 ![Alt text](image.png)
 
-##Overview
+## Overview
 
 Poker is a game developed by our team as part of the Software Engineering course at HTWG Konstanz. In this collaborative effort, we employed Scala 3 to meticulously craft a resilient Text User Interface and a sleek Graphical User Interface, enhancing the overall Poker gaming experience.
 

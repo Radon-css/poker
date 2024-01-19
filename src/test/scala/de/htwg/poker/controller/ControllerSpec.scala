@@ -232,6 +232,5 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
     }
-
   }
 }

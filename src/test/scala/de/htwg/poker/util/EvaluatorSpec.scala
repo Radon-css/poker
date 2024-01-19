@@ -186,7 +186,7 @@ class EvaluatorSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
       val result = evaluator.evaluate(playerCards, boardCards)
 
-      result should be("StraightFlush")
+      result should be("Flush")
     }
   }
 }

@@ -1,7 +1,7 @@
 package de.htwg.poker.model
 import scala.math
 import de.htwg.poker.util.Evaluator
-import de.htwg.poker.util.TUIView
+import de.htwg.poker.aview.TUIView
 
 /* to depict the state of our game unambiguously, we need 10 different variables.
 original Players: players participating in the game

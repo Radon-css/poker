@@ -1,4 +1,4 @@
-package de.htwg.poker.util
+package de.htwg.poker.aview
 
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player

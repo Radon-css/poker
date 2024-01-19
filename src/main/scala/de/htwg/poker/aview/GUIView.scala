@@ -1,4 +1,4 @@
-package de.htwg.poker.util
+package de.htwg.poker.aview
 
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets

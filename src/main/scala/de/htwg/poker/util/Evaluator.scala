@@ -135,31 +135,4 @@ class Evaluator() {
       }
   }
 
-  def compareHands(hands: List[(List[Card], Type)]): List[Card] = {
-    val types: List[Type] = hands.map(_._2)
-    val highestType: Type = types.maxBy(_.strength)
-    val handsWithHighestType: List[List[Card]] =
-      hands.filter(_._2 == highestType).map(_._1)
-
-    if (handsWithHighestType.size == 1)
-      return handsWithHighestType.head
-    if (highestType == Type.High)
-      return getHighestKicker(handsWithHighestType)
-    hands.head._1
-  }
-
-  def getHighestKicker(cards: List[List[Card]]): List[Card] = {
-    val sortedCardLists =
-      cards.map(list => list.sorted(Ordering.by(_.rank.strength)).reverse)
-    val highestKickerList =
-      cards.reduceLeft((acc, current) => {
-        val maxAcc = acc.map(_.rank.strength).max
-        val maxCurrent = current.map(_.rank.strength).max
-
-        if (maxAcc > maxCurrent) acc
-        else if (maxAcc < maxCurrent) current
-        else Nil
-      })
-    highestKickerList
-  }
 }

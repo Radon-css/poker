@@ -43,7 +43,6 @@ case class GameState(
   def getSmallBlindPointer = smallBlindPointer
   def getAllInFlag = allInFlag
 
-  // see TUIView for toString implementation
   override def toString(): String = TUIView.update(this)
 
   /* in these following methods, we have to update the gamestate according to the certain action that has been taken.
@@ -185,7 +184,6 @@ case class GameState(
 
     def startRound: GameState = {
       val shuffledDeck = shuffleDeck
-
       val newPlayerList = getOriginalPlayers.zipWithIndex.map {
         case (player, index) =>
           Player(
@@ -226,11 +224,8 @@ case class GameState(
     }
 
     def flop: GameState = addCardsToBoard(3)
-
     def turn: GameState = addCardsToBoard(1)
-
     def river: GameState = addCardsToBoard(1)
-
     private def addCardsToBoard(cardsToAdd: Int): GameState = {
       val newBoard = getDeck.take(cardsToAdd)
       val newPlayerList = getPlayers.map(_.copy(currentAmountBetted = 0))

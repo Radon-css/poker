@@ -178,6 +178,5 @@ class Controller(var gameState: GameState) extends Observable {
   def handout_required_fold: Boolean = {
     gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required
   }
-
   override def toString: String = gameState.toString()
 }

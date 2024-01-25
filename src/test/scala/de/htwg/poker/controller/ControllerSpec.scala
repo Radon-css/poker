@@ -106,12 +106,23 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
           controller.bet(amount)
         }
       }
-      "throw an exception when the bet size is too low" in {
+      "throw an exception when the bet size lower than the big Blind" in {
         val amount = 1
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
 
+        an[Exception] should be thrownBy {
+          controller.bet(amount)
+        }
+      }
+      "throw an exception when the bet size lower than the highest Betsize" in {
+        val amount = 1
+        val gameState = new GameState(Nil, None, None)
+        val controller = new Controller(gameState)
+        controller.createGame(List("Player1", "Player2"), "10", "20")
+
+        controller.bet(100)
         an[Exception] should be thrownBy {
           controller.bet(amount)
         }
@@ -217,14 +228,14 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         result shouldBe true
       }
       "throw an exception when the game has not been started" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         an[Exception] should be thrownBy {
           controller.check
         }
       }
       "throw an exception when the player can not check" in {
-        val gameState = mock[GameState]
+        val gameState = new GameState(Nil, None, None)
         val controller = new Controller(gameState)
         controller.createGame(List("Player1", "Player2"), "10", "20")
         an[Exception] should be thrownBy {

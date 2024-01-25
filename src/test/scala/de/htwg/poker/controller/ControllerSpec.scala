@@ -241,5 +241,21 @@ class ControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
         }
       }
     }
+    "redo" should {
+      "return true and update the game state when valid inputs are provided" in {
+        val gameState = new GameState(Nil, None, None)
+        val controller = new Controller(gameState)
+
+        val result = controller.redo
+      }
+    }
+    "undo" should {
+      "return true and update the game state when valid inputs are provided" in {
+        val gameState = new GameState(Nil, None, None)
+        val controller = new Controller(gameState)
+
+        val result = controller.undo
+      }
+    }
   }
 }

@@ -25,10 +25,3 @@ libraryDependencies ++= {
     .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
 }
 
- //JavaFX in Docker:
- javaOptions in run ++= Seq(
-   "--module-path",
-   "/opt/javafx/javafx-sdk-21/lib",
-   "--add-modules",
-   "javafx.controls,javafx.fxml,javafx.web"
- )

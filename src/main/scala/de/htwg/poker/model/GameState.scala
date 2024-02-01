@@ -144,6 +144,8 @@ case class GameState(
     )
   }
 
+  def restartGame = UpdateBoard.startRound
+
   /* here we used a strategy pattern to update the community cards. If a handout of community cards is required,
     we can simply call the strategy method which then decides how many cards have to be revealed.
     If there were no community cards revealed, you reveal the first three cards.

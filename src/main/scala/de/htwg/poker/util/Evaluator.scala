@@ -10,26 +10,20 @@ import de.htwg.poker.model.*
 
 @main
 def run: Unit = {
-  val cards1 = (
-    List(
-      Card(Suit.Spades, Rank.Two),
-      Card(Suit.Spades, Rank.Three),
-      Card(Suit.Spades, Rank.Four),
-      Card(Suit.Spades, Rank.Five)
-    ),
-    0
-  )
-  val cards2 = (
-    List(
-      Card(Suit.Spades, Rank.Two),
-      Card(Suit.Spades, Rank.Three),
-      Card(Suit.Spades, Rank.Four),
-      Card(Suit.Spades, Rank.Ace)
-    ),
-    1
-  )
   val evaluator = new Evaluator
-  print(evaluator.getHighestKicker(List(cards1, cards2)))
+  val playerCards = List(
+    new Card(Suit.Spades, Rank.Seven),
+    new Card(Suit.Spades, Rank.Eight)
+  )
+  val boardCards = List(
+    new Card(Suit.Hearts, Rank.Ace),
+    new Card(Suit.Hearts, Rank.Four),
+    new Card(Suit.Spades, Rank.Five),
+    new Card(Suit.Spades, Rank.Four),
+    new Card(Suit.Spades, Rank.Six)
+  )
+  val result = evaluator.evaluate(playerCards, boardCards)
+  print(result)
 }
 
 class Evaluator() {
@@ -123,9 +117,11 @@ class Evaluator() {
     // check for Straights
     val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse
     if (
-      sortedCards.head.rank.strength - sortedCards.last.rank.strength == 4 || sortedCards.head.rank == Rank.Ace && sortedCards(
-        1
-      ).rank == Rank.Five
+      sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
+      && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
+      && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
+      && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
+      || sortedCards.head.rank == Rank.Ace && sortedCards(1).rank == Rank.Five
     )
       returnValue = Type.Straight
     // check for StraightFlush
@@ -139,9 +135,13 @@ class Evaluator() {
       ).suit.id && combination(3).suit.id == combination(
         4
       ).suit.id && (
-        sortedCards.head.rank.strength - sortedCards.last.rank.strength == 4 || sortedCards.head.rank == Rank.Ace && sortedCards(
-          1
-        ) == Rank.Five
+        sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
+          && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
+          && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
+          && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
+          || sortedCards.head.rank == Rank.Ace && sortedCards(
+            1
+          ).rank == Rank.Five
       )
     )
       returnValue = Type.StraightFlush

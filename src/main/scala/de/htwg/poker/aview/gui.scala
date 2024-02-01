@@ -86,6 +86,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     def undo(): Unit = controller.undo
     def redo(): Unit = controller.redo
     def bet(amount: Int): Unit = controller.bet(amount)
+    def restartGame(): Unit = controller.restartGame
 
     /* we need the toList method so that a user of our game can
       enter playerNames as well as the amount of the big and smallBlind

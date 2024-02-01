@@ -59,7 +59,7 @@ object GUIView {
               <h1 class="text-gray-100">Current Hand:</h1>
               <h1 class="text-red-500">${gameState.getCurrentHand}</h1>
               </div>
-                <button class="flex justify-start space-x-2 items-center mt-4 mr-4 font-bold h-12 w-36 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20" onclick="startGame()">
+                <button class="flex justify-start space-x-2 items-center mt-4 mr-4 font-bold h-12 w-36 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20" onclick="restartGame()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-clockwise ml-4" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
                 <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
@@ -195,6 +195,9 @@ object GUIView {
                 }
                 function bet() {
                   invoke.bet(document.getElementById("betInput").value);
+                }
+                function restartGame() {
+                  invoke.restartGame();
                 }
               </script>
               </body>

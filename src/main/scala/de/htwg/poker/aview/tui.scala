@@ -42,7 +42,7 @@ class TUI(controller: Controller) extends Observer {
       case "x" =>
         val result: Try[Boolean] = Try(
           controller.createGame(
-            List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
+            List("Henrik", "Julian", "Till", "Julian2", "Dominik", "Luuk"),
             "10",
             "20"
           )

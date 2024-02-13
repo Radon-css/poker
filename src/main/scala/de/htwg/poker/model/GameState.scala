@@ -160,6 +160,11 @@ case class GameState(
       else startRound
 
     def startRound: GameState = {
+
+      val winnerEvaluation = Evaluator.getWinner(getPlayers,getBoard)
+
+      val winningAmount = getPot / winnerEvaluation.size
+
       val shuffledDeck = shuffleDeck
 
       val newPlayerList = getOriginalPlayers.zipWithIndex.map {
@@ -188,8 +193,16 @@ case class GameState(
       val playerListWithBlinds =
         newPlayerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
 
+      val finalPlayerList: List[Player] = playerListWithBlinds.map { player =>
+      if (winnerEvaluation.contains(player.playername)) {
+        player.copy(balance = player.balance + winningAmount)
+      } else {
+        player
+      }
+    }
+
       copy(
-        players = Some(playerListWithBlinds),
+        players = Some(finalPlayerList),
         deck = Some(newShuffledDeck),
         playerAtTurn = if (getOriginalPlayers.size < 3) 0 else 2,
         currentHighestBetSize = getBigBlind,
@@ -233,7 +246,7 @@ case class GameState(
     if (getPlayerAtTurn == 0) getPlayers.length - 1 else getPlayerAtTurn - 1
 
   def getCurrentHand: String = {
-    new Evaluator()
+    Evaluator
       .evaluate(
         List(
           getPlayers(getPlayerAtTurn).card1,

@@ -159,7 +159,7 @@ class Evaluator() {
       }
   }
 
-  def getWinner(players: List[Player], boardCards: List[Card]): List[Card] = {
+  def getWinner(players: List[Player], boardCards: List[Card]): List[String] = {
     val playerCards = players.map(player => (player.card1, player.card2))
     val hands =
       playerCards.map(playerCards => evalHand(playerCards.toList, boardCards))
@@ -168,44 +168,11 @@ class Evaluator() {
     val highestType = types.maxBy(_.strength)
     val handsWithHighestTypeWithType =
       handsAndTypesWithIndexes.filter(_._1._2 == highestType)
-    val handsWithHighestType =
-      handsWithHighestTypeWithType.map(hand => (hand._1._1, hand._2))
-
-    /*if(handsWithHighestType.size == 1)
-      return getHighestKicker(handsWithHighestType)
-
-    if()
-    val types: List[Type] = hands.map(_._2)
-    val highestType: Type = types.maxBy(_.strength)
-    val handsWithHighestType: List[List[Card]] =
-      hands.filter(_._2 == highestType).map(_._1)
-
-    if (handsWithHighestType.size == 1)
-      return handsWithHighestType.head
-    if (highestType == Type.High)
-      return getHighestKicker(handsWithHighestType)
-    hands.head._1*/
-    Nil
+    val winnerIndexes = handsAndTypesWithIndexes.map(hand => hand._2)
+    val winnerPlayers: List[String] = players.zipWithIndex
+    .filter { case (_, index) => winnerIndexes.contains(index) }
+    .map { case (player, _) => player.playername }
+    winnerPlayers
   }
 
-  def getHighestKicker(hands: List[(List[Card], Int)]): Int = {
-    def sortCardsInHand(hand: (List[Card], Int)): (List[Card], Int) = {
-      val index = hand._2
-      val cards = hand._1
-      val sortedCards = cards.sortWith(_.rank.strength > _.rank.strength)
-      (sortedCards, index)
-    }
-    def findHighestCard(hand: List[Card]): Card = {
-      hand.maxBy(_.rank.strength)
-    }
-
-    val sortedCards = hands.map(hand => sortCardsInHand(hand))
-
-    for (i <- 0 to hands(0).size) {
-      val currentIndexCards = sortedCards.map(cards => cards._1(i))
-      val sortedIndexCards =
-        currentIndexCards.sortWith(_.rank.strength > _.rank.strength)
-    }
-    0
-  }
 }

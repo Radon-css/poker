@@ -10,7 +10,6 @@ import de.htwg.poker.model.*
 
 @main
 def run: Unit = {
-  val evaluator = new Evaluator
   val playerCards = List(
     new Card(Suit.Spades, Rank.Seven),
     new Card(Suit.Spades, Rank.Eight)
@@ -22,11 +21,11 @@ def run: Unit = {
     new Card(Suit.Spades, Rank.Four),
     new Card(Suit.Spades, Rank.Six)
   )
-  val result = evaluator.evaluate(playerCards, boardCards)
+  val result = Evaluator.evaluate(playerCards, boardCards)
   print(result)
 }
 
-class Evaluator() {
+object Evaluator {
 
   enum Type:
     case High, Pair, TwoPair, Triples, Straight, Flush, FullHouse, Quads,
@@ -170,8 +169,8 @@ class Evaluator() {
       handsAndTypesWithIndexes.filter(_._1._2 == highestType)
     val winnerIndexes = handsAndTypesWithIndexes.map(hand => hand._2)
     val winnerPlayers: List[String] = players.zipWithIndex
-    .filter { case (_, index) => winnerIndexes.contains(index) }
-    .map { case (player, _) => player.playername }
+      .filter { case (_, index) => winnerIndexes.contains(index) }
+      .map { case (player, _) => player.playername }
     winnerPlayers
   }
 

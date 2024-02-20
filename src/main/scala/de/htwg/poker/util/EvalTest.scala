@@ -1,22 +1,40 @@
 package de.htwg.poker.util
+
 import scala.io.Source
 import de.htwg.poker.model.*
 import de.htwg.poker.util.Ranks
 
-class HashEval {
+@main
+def run: Unit = {
+  val playerCards = List(
+    (Card(Suit.Spades, Rank.Ace), Card(Suit.Clubs, Rank.Four)),
+    (Card(Suit.Hearts, Rank.Five), Card(Suit.Hearts, Rank.Four)),
+    (Card(Suit.Diamonds, Rank.Three), Card(Suit.Hearts, Rank.Ten))
+  )
+  val boardCards = List(
+    Card(Suit.Spades, Rank.Three),
+    Card(Suit.Spades, Rank.Jack),
+    Card(Suit.Hearts, Rank.Queen),
+    Card(Suit.Clubs, Rank.Seven),
+    Card(Suit.Diamonds, Rank.Nine)
+  )
 
-  def calcWinner(players: List[Player], boardCards: List[Card]): Player = {
-    var playerHandRanks: List[(String, Int)] = List()
+  val evalTest = new EvalTest
 
-    for (player <- players) {
+  evalTest.calcWinner(playerCards, boardCards)
+}
+
+class EvalTest {
+
+  def calcWinner(
+      playerCards: List[(Card, Card)],
+      boardCards: List[Card]
+  ): Unit = {
+
+    for (playerHand <- playerCards) {
       var bestRank = Integer.MAX_VALUE
 
-      val playerID =
-        players
-          .map(player => player.card1.toString + player.card2.toString)
-          .mkString
-      val playerCards = List(player.card1, player.card2)
-      val cards = boardCards ++ playerCards
+      val cards = boardCards ++ playerHand.toList
       val combinations = getCombinations(5, cards)
       val uniqueValues =
         combinations.map(combination => combination.map(_.rank.prime).product)
@@ -42,9 +60,8 @@ class HashEval {
             bestRank = rank
         }
       }
-
+      println(bestRank)
     }
-    players(1)
   }
 
   def binarySearch(list: List[(Int, String, Int)], target: Int): Int = {

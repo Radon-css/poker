@@ -38,6 +38,21 @@ enum Rank:
     case King  => 12
     case Ace   => 13
   }
+  def prime: Int = this match {
+    case Two   => 2
+    case Three => 3
+    case Four  => 5
+    case Five  => 7
+    case Six   => 11
+    case Seven => 13
+    case Eight => 17
+    case Nine  => 19
+    case Ten   => 23
+    case Jack  => 29
+    case Queen => 31
+    case King  => 37
+    case Ace   => 41
+  }
 
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts

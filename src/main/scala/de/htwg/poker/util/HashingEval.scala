@@ -32,13 +32,13 @@ class HashEval {
             4
           ).suit.id
         ) {
-          val rank = binarySearch(flush, value)
-          if (rank < bestRank)
-            bestRank = rank
+          // val rank = binarySearch(flush, value)
+          // if (rank < bestRank)
+          // bestRank = rank
         } else {
-          val rank = binarySearch(Ranks.notflush, value)
-          if (rank < bestRank)
-            bestRank = rank
+          // val rank = binarySearch(Ranks.notflush, value)
+          // if (rank < bestRank)
+          //  bestRank = rank
         }
       }
 

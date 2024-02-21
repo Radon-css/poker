@@ -57,13 +57,23 @@ class Controller(var gameState: GameState) extends Observable {
     ) {
       throw new Exception("Insufficient balance")
     } else if (
+      amount == gameState
+        .getPlayers(gameState.getPlayerAtTurn)
+        .balance && gameState.getHighestBetSize >= amount
+    ) {
+      gameState = gameState.allIn
+    } else if (
       gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount
     ) {
       throw new Exception("Bet size is too low")
     }
 
     undoManager.doStep(gameState)
-    gameState = gameState.bet(amount)
+    if (amount == gameState.getPlayers(gameState.getPlayerAtTurn).balance) {
+      gameState = gameState.allIn
+    } else {
+      gameState = gameState.bet(amount)
+    }
     notifyObservers
     true
   }

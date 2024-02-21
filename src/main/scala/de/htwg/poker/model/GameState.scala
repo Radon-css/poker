@@ -98,6 +98,24 @@ case class GameState(
 
   def check: GameState = copy(playerAtTurn = getNextPlayer)
 
+  def allIn: GameState = {
+    val allInSize = getCurrentPlayer.balance
+    val updatedPlayer = getCurrentPlayer.copy(
+      balance = 0,
+      currentAmountBetted = getCurrentPlayer.currentAmountBetted + allInSize
+    )
+    val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
+    copy(
+      players = Some(newPlayerList),
+      playerAtTurn = getNextPlayer,
+      currentHighestBetSize = math.max(
+        getHighestBetSize,
+        getCurrentPlayer.currentAmountBetted
+      ),
+      pot = getPot + allInSize
+    )
+  }
+
   // construct an initial gameState to start the Game
   def createGame(
       playerNameList: List[String],
@@ -161,7 +179,7 @@ case class GameState(
 
     def startRound: GameState = {
 
-      val winnerEvaluation = Evaluator.getWinner(getPlayers,getBoard)
+      val winnerEvaluation = Evaluator.getWinner(getPlayers, getBoard)
 
       val winningAmount = getPot / winnerEvaluation.size
 
@@ -194,12 +212,12 @@ case class GameState(
         newPlayerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
 
       val finalPlayerList: List[Player] = playerListWithBlinds.map { player =>
-      if (winnerEvaluation.contains(player.playername)) {
-        player.copy(balance = player.balance + winningAmount)
-      } else {
-        player
+        if (winnerEvaluation.contains(player.playername)) {
+          player.copy(balance = player.balance + winningAmount)
+        } else {
+          player
+        }
       }
-    }
 
       copy(
         players = Some(finalPlayerList),

@@ -1,7 +1,7 @@
 package de.htwg.poker.util
 import scala.io.Source
 import de.htwg.poker.model.*
-import de.htwg.poker.util.Ranks
+import de.htwg.poker.util.
 
 class HashEval {
 

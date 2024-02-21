@@ -1,6 +1,6 @@
 package de.htwg.poker.util
 
-object FLush {
+object Flush {
   var flush = List(
     (9, "SF", 2310),
     (1599, "F", 27307854),

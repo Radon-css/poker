@@ -1,6 +1,7 @@
 package de.htwg.poker.util
 
-var flush = List(
+object Flush {
+  var flush = List(
   (9, "SF", 2310),
   (1599, "F", 27307854),
   (1595, "F", 3570),
@@ -1289,3 +1290,4 @@ var flush = List(
   (323, "F", 25911877),
   (1, "SF", 31367009)
 )
+}

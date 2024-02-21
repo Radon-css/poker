@@ -1,5 +1,6 @@
 package de.htwg.poker.util
 
+object NotFlush2 {
 var notflush2 = List(
   (7356, "HC", 437437),
   (6411, "HC", 438495),
@@ -3098,3 +3099,4 @@ var notflush2 = List(
   (167, "FH", 94352849),
   (11, "4k", 104553157)
 )
+}

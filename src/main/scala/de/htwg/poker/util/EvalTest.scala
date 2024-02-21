@@ -2,6 +2,9 @@ package de.htwg.poker.util
 
 import scala.io.Source
 import de.htwg.poker.model.*
+import de.htwg.poker.util.Flush
+import de.htwg.poker.util.NotFlush2
+import de.htwg.poker.util.NotFlush1
 
 @main
 def run2: Unit = {
@@ -50,13 +53,17 @@ class EvalTest {
             4
           ).suit.id
         ) {
-          val rank = binarySearch(Ranks.flush, value)
+          val rank = binarySearch(Flush.flush, value)
           if (rank < bestRank)
             bestRank = rank
+        } else if (value <= 437255){
+          val rank = binarySearch(NotFlush1.notflush1, value)
+          if (rank < bestRank)
+          bestRank = rank
         } else {
-          val rank = binarySearch(Ranks.notflush, value)
+          val rank = binarySearch(NotFlush2.notflush2, value)
           if (rank < bestRank)
-            bestRank = rank
+          bestRank = rank
         }
       }
       println(bestRank)

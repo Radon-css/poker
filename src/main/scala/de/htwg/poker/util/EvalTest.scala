@@ -5,7 +5,7 @@ import de.htwg.poker.model.*
 import de.htwg.poker.util.Ranks
 
 @main
-def run: Unit = {
+def run2: Unit = {
   val playerCards = List(
     (Card(Suit.Spades, Rank.Ace), Card(Suit.Clubs, Rank.Four)),
     (Card(Suit.Hearts, Rank.Five), Card(Suit.Hearts, Rank.Four)),

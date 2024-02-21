@@ -5,6 +5,8 @@ import de.htwg.poker.model.*
 import de.htwg.poker.util.Flush
 import de.htwg.poker.util.NotFlush2
 import de.htwg.poker.util.NotFlush1
+import de.htwg.poker.util.NotFlush3
+import de.htwg.poker.util.NotFlush4
 
 @main
 def run2: Unit = {
@@ -60,8 +62,16 @@ class EvalTest {
           val rank = binarySearch(NotFlush1.notflush1, value)
           if (rank < bestRank)
           bestRank = rank
-        } else {
+        } else if (value <= 437437){
           val rank = binarySearch(NotFlush2.notflush2, value)
+          if (rank < bestRank)
+          bestRank = rank
+        } else if (value <= 2052665){
+          val rank = binarySearch(NotFlush3.notflush3, value)
+          if (rank < bestRank)
+          bestRank = rank
+        } else {
+          val rank = binarySearch(NotFlush4.notflush4, value)
           if (rank < bestRank)
           bestRank = rank
         }
@@ -72,20 +82,26 @@ class EvalTest {
 
   def binarySearch(list: List[(Int, String, Int)], target: Int): Int = {
     def binarySearchR(low: Int, high: Int): Int = {
-      val mid = low + (high - low) / 2
-      val midValue = list(mid)._3
-      if (midValue == target) {
-        list(mid)._1 // Element gefunden
-      } else if (midValue < target) {
-        binarySearchR(mid + 1, high)
-      } else {
-        binarySearchR(low, mid - 1)
-      }
+  if (low <= high) {
+    val mid = low + (high - low) / 2
+    val midValue = list(mid)._3
+    if (midValue == target) {
+      list(mid)._1 // Element gefunden
+    } else if (midValue < target) {
+      binarySearchR(mid + 1, high)
+    } else {
+      binarySearchR(low, mid - 1)
     }
+  } else {
+    if (target < list.head._3) {
+      list.head._1 // Zielnummer kleiner als das erste Element
+    } else {
+      list.last._1 // Zielnummer größer als das letzte Element
+    }
+  }
+}
 
-    val sortedList =
-      list.sortBy(_._3) // Liste nach dem dritten Eintrag sortieren
-    binarySearchR(0, sortedList.length - 1)
+    binarySearchR(0, list.length - 1)
   }
 
   def getCombinations[T](n: Int, lst: List[T]): List[List[T]] = {

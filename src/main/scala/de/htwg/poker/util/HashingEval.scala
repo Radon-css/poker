@@ -4,6 +4,8 @@ import de.htwg.poker.model.*
 import de.htwg.poker.util.Flush
 import de.htwg.poker.util.NotFlush2
 import de.htwg.poker.util.NotFlush1
+import de.htwg.poker.util.NotFlush3
+import de.htwg.poker.util.NotFlush4
 
 class HashEval {
 
@@ -42,8 +44,16 @@ class HashEval {
           val rank = binarySearch(NotFlush1.notflush1, value)
           if (rank < bestRank)
           bestRank = rank
-        } else {
+        } else if (value <= 437437){
           val rank = binarySearch(NotFlush2.notflush2, value)
+          if (rank < bestRank)
+          bestRank = rank
+        } else if (value <= 2052665){
+          val rank = binarySearch(NotFlush3.notflush3, value)
+          if (rank < bestRank)
+          bestRank = rank
+        } else {
+          val rank = binarySearch(NotFlush4.notflush4, value)
           if (rank < bestRank)
           bestRank = rank
         }

@@ -1,7 +1,6 @@
 package de.htwg.poker.util
 import scala.io.Source
 import de.htwg.poker.model.*
-import de.htwg.poker.util.
 
 class HashEval {
 
@@ -33,7 +32,7 @@ class HashEval {
             4
           ).suit.id
         ) {
-          val rank = binarySearch(Ranks.flush, value)
+          val rank = binarySearch(flush, value)
           if (rank < bestRank)
             bestRank = rank
         } else {

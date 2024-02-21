@@ -2,7 +2,6 @@ package de.htwg.poker.util
 
 import scala.io.Source
 import de.htwg.poker.model.*
-import de.htwg.poker.util.Ranks
 
 @main
 def run2: Unit = {

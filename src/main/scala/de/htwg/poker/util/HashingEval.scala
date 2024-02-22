@@ -14,7 +14,6 @@ class HashEval {
 
     for (player <- players) {
       var bestRank = Integer.MAX_VALUE
-
       val playerID =
         players
           .map(player => player.card1.toString + player.card2.toString)
@@ -22,43 +21,42 @@ class HashEval {
       val playerCards = List(player.card1, player.card2)
       val cards = boardCards ++ playerCards
       val combinations = getCombinations(5, cards)
-      val uniqueValues =
-        combinations.map(combination => combination.map(_.rank.prime).product)
 
-      for (value <- uniqueValues) {
+      for (combination <- combinations) {
+        val value = combination.map(_.rank.prime).product
         if (
-          cards(0).suit.id == cards(1).suit.id && cards(
+          combination(0).suit.id == combination(1).suit.id && cards(
             1
-          ).suit.id == cards(2).suit.id && cards(
+          ).suit.id == combination(2).suit.id && combination(
             2
-          ).suit.id == cards(
+          ).suit.id == combination(
             3
-          ).suit.id && cards(3).suit.id == cards(
+          ).suit.id && combination(3).suit.id == combination(
             4
           ).suit.id
         ) {
           val rank = binarySearch(Flush.flush, value)
           if (rank < bestRank)
-          bestRank = rank
-        } else if (value <= 437255){
+            bestRank = rank
+        } else if (value <= 78625) {
           val rank = binarySearch(NotFlush1.notflush1, value)
           if (rank < bestRank)
-          bestRank = rank
-        } else if (value <= 437437){
+            bestRank = rank
+        } else if (value <= 437437) {
           val rank = binarySearch(NotFlush2.notflush2, value)
           if (rank < bestRank)
-          bestRank = rank
-        } else if (value <= 2052665){
+            bestRank = rank
+        } else if (value <= 2052665) {
           val rank = binarySearch(NotFlush3.notflush3, value)
           if (rank < bestRank)
-          bestRank = rank
+            bestRank = rank
         } else {
           val rank = binarySearch(NotFlush4.notflush4, value)
           if (rank < bestRank)
-          bestRank = rank
+            bestRank = rank
         }
       }
-
+      playerHandRanks = playerHandRanks :+ (playerID, bestRank)
     }
     players(1)
   }

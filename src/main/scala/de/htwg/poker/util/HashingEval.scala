@@ -9,7 +9,10 @@ import de.htwg.poker.util.NotFlush4
 
 class HashEval {
 
-  def calcWinner(players: List[Player], boardCards: List[Card]): Player = {
+  def calcWinner(
+      players: List[Player],
+      boardCards: List[Card]
+  ): List[Player] = {
     var playerHandRanks: List[(String, Int)] = List()
 
     for (player <- players) {
@@ -58,7 +61,16 @@ class HashEval {
       }
       playerHandRanks = playerHandRanks :+ (playerID, bestRank)
     }
-    players(1)
+    val bestRank = playerHandRanks.map(_._2).min
+    val winners = playerHandRanks.filter { case (_, rank) =>
+      rank == bestRank
+    }
+    val winnerPlayers = players.filter { case player =>
+      playerHandRanks.exists { case (str, _) =>
+        str == (player.card1.toString + player.card2.toString).mkString
+      }
+    }
+    winnerPlayers
   }
 
   def binarySearch(list: List[(Int, String, Int)], target: Int): Int = {

@@ -2,6 +2,7 @@ package de.htwg.poker.model
 import scala.math
 import de.htwg.poker.util.Evaluator
 import de.htwg.poker.util.TUIView
+import de.htwg.poker.util.Eval
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -61,9 +62,20 @@ case class GameState(
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + amount
     )
     val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
+    val updatePlayer = getPlayers(getPlayerAtTurn).playername
+    val newOriginalPlayerList = getOriginalPlayers.map {
+      case Player(card1, card2, updatePlayer, balance, currentAmountBetted) =>
+        Player(
+          card1,
+          card2,
+          updatePlayer,
+          getCurrentPlayer.balance - amount,
+          currentAmountBetted
+        )
+    }
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer,
+      playerAtTurn = getNextPlayer(getPlayerAtTurn),
       currentHighestBetSize = amount,
       pot = getPot + amount
     )
@@ -90,13 +102,13 @@ case class GameState(
 
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer,
+      playerAtTurn = getNextPlayer(getPlayerAtTurn),
       currentHighestBetSize = getHighestBetSize,
       pot = getPot + callSize
     )
   }
 
-  def check: GameState = copy(playerAtTurn = getNextPlayer)
+  def check: GameState = copy(playerAtTurn = getNextPlayer(getPlayerAtTurn))
 
   def allIn: GameState = {
     val allInSize = getCurrentPlayer.balance
@@ -107,7 +119,7 @@ case class GameState(
     val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer,
+      playerAtTurn = getNextPlayer(getPlayerAtTurn),
       currentHighestBetSize = math.max(
         getHighestBetSize,
         getCurrentPlayer.currentAmountBetted
@@ -179,9 +191,13 @@ case class GameState(
 
     def startRound: GameState = {
 
-      val winnerEvaluation = Evaluator.getWinner(getPlayers, getBoard)
+      val winners = Eval.calcWinner(getPlayers, getBoard)
 
-      val winningAmount = getPot / winnerEvaluation.size
+      val winnerNames = winners.map(winner => winner.playername)
+      for (players <- winnerNames)
+        println(players)
+      val winningAmount = getPot / winners.size
+      println(winningAmount)
 
       val shuffledDeck = shuffleDeck
 
@@ -195,24 +211,28 @@ case class GameState(
           )
       }
 
-      val smallBlindPlayer = newPlayerList.head.copy(
-        balance = newPlayerList.head.balance - smallBlind,
-        currentAmountBetted =
-          newPlayerList.head.currentAmountBetted + smallBlind
+      val smallBlindPlayer = newPlayerList(getNextSmallBlindPlayer).copy(
+        balance = newPlayerList(getNextSmallBlindPlayer).balance - smallBlind,
+        currentAmountBetted = newPlayerList(
+          getNextSmallBlindPlayer
+        ).currentAmountBetted + smallBlind
       )
 
-      val bigBlindPlayer = newPlayerList(1).copy(
-        balance = newPlayerList(1).balance - bigBlind,
-        currentAmountBetted = newPlayerList(1).currentAmountBetted + bigBlind
+      val bigBlindPlayer = newPlayerList(getNextBigBlindPlayer).copy(
+        balance = newPlayerList(getNextBigBlindPlayer).balance - bigBlind,
+        currentAmountBetted =
+          newPlayerList(getNextBigBlindPlayer).currentAmountBetted + bigBlind
       )
 
       val newShuffledDeck = shuffledDeck.drop(newPlayerList.size * 2)
 
       val playerListWithBlinds =
-        newPlayerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
+        newPlayerList
+          .updated(getNextSmallBlindPlayer, smallBlindPlayer)
+          .updated(getNextBigBlindPlayer, bigBlindPlayer)
 
       val finalPlayerList: List[Player] = playerListWithBlinds.map { player =>
-        if (winnerEvaluation.contains(player.playername)) {
+        if (winnerNames.contains(player.playername)) {
           player.copy(balance = player.balance + winningAmount)
         } else {
           player
@@ -222,13 +242,13 @@ case class GameState(
       copy(
         players = Some(finalPlayerList),
         deck = Some(newShuffledDeck),
-        playerAtTurn = if (getOriginalPlayers.size < 3) 0 else 2,
+        playerAtTurn = getNewRoundPlayerAtTurn,
         currentHighestBetSize = getBigBlind,
         board = Nil,
         pot = getSmallBlind + getBigBlind,
         smallBlind = getSmallBlind,
         bigBlind = getBigBlind,
-        smallBlindPointer = getSmallBlindPointer
+        smallBlindPointer = getNextSmallBlindPlayer
       )
     }
 
@@ -244,7 +264,7 @@ case class GameState(
       copy(
         players = Some(newPlayerList),
         deck = Some(getDeck.drop(cardsToAdd)),
-        playerAtTurn = 0,
+        playerAtTurn = getSmallBlindPointer,
         currentHighestBetSize = 0,
         board = getBoard ::: newBoard
       )
@@ -252,8 +272,8 @@ case class GameState(
   }
 
   // helper methods
-  def getNextPlayer: Int =
-    if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn + 1
+  def getNextPlayer(current: Int): Int =
+    if (getPlayers.length - 1 == current) 0 else current + 1
 
   def getNextPlayerWhenFold: Int =
     if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn
@@ -262,6 +282,18 @@ case class GameState(
 
   def getPreviousPlayer: Int =
     if (getPlayerAtTurn == 0) getPlayers.length - 1 else getPlayerAtTurn - 1
+
+  def getNextSmallBlindPlayer: Int =
+    if (getOriginalPlayers.length - 1 == getSmallBlindPointer) 0
+    else getSmallBlindPointer + 1
+
+  def getNextBigBlindPlayer: Int =
+    if (getOriginalPlayers.length - 1 == getNextSmallBlindPlayer) 0
+    else getNextSmallBlindPlayer + 1
+
+  def getNewRoundPlayerAtTurn: Int =
+    if (getOriginalPlayers.length - 1 == getNextBigBlindPlayer) 0
+    else getNextBigBlindPlayer + 1
 
   def getCurrentHand: String = {
     Evaluator

@@ -12,7 +12,7 @@ import de.htwg.poker.util.Flush
 def run2: Unit = {
   val playerCards = List(
     (Card(Suit.Spades, Rank.Ace), Card(Suit.Spades, Rank.Four)),
-    (Card(Suit.Hearts, Rank.Five), Card(Suit.Hearts, Rank.Four)),
+    (Card(Suit.Hearts, Rank.Jack), Card(Suit.Hearts, Rank.Queen)),
     (Card(Suit.Diamonds, Rank.Three), Card(Suit.Hearts, Rank.Ten))
   )
   val boardCards = List(
@@ -75,6 +75,7 @@ class EvalTest {
             bestRank = rank
         }
       }
+      println(bestRank)
     }
   }
 

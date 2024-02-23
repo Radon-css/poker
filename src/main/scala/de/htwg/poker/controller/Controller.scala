@@ -25,6 +25,10 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("Minimum two players required")
     }
 
+    if (checkDuplicateName(playerNameList)) {
+      throw new Exception("All player names must be unique")
+    }
+
     try {
       val smallBlindInt = smallBlind.toInt
       val bigBlindInt = bigBlind.toInt
@@ -165,8 +169,9 @@ class Controller(var gameState: GameState) extends Observable {
       gameState.getPlayers.forall(player =>
         player.currentAmountBetted == gameState.getBigBlind
       ))
-    && (gameState.getPlayers.size > 2 && gameState.getPlayerAtTurn == 2
-      || gameState.getPlayers.size < 3 && gameState.getPlayerAtTurn == 0)
+    && gameState.getPlayerAtTurn == gameState.getNextPlayer(
+      gameState.getNextPlayer(gameState.getSmallBlindPointer)
+    )
     // case es wird erhöht -> bigBlindPlayer hat kein recht zu erhöhen
     || (gameState.getBoard.size == 0 && gameState.getHighestBetSize > gameState.getBigBlind
       && gameState.getPlayers.forall(player =>
@@ -179,7 +184,7 @@ class Controller(var gameState: GameState) extends Observable {
       && gameState.getPlayers.forall(player =>
         player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
       )
-      && gameState.playerAtTurn == 0)
+      && gameState.playerAtTurn == gameState.getSmallBlindPointer)
     // es wird erhöht -> dann austeilen, wenn jeder gleich viel gebetted hat
     || (gameState.getBoard.size != 0
       && gameState.getHighestBetSize != 0
@@ -205,4 +210,9 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   override def toString: String = gameState.toString()
+
+  def checkDuplicateName(liste: List[String]): Boolean = {
+    val gruppiert = liste.groupBy(identity).mapValues(_.size)
+    gruppiert.values.exists(_ > 1)
+  }
 }

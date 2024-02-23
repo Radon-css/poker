@@ -13,7 +13,7 @@ object TUIView {
     val Print = new Print(gameState)
 
     // clear console
-    print("\u001b[2J\u001b[H")
+    // print("\u001b[2J\u001b[H")
     // case mehr als 3 Spieler
     if (gameState.getPlayers.size > 3) {
       val TopRowPlayerList =

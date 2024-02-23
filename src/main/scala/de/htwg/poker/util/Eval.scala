@@ -7,20 +7,16 @@ import de.htwg.poker.util.NotFlush1
 import de.htwg.poker.util.NotFlush3
 import de.htwg.poker.util.NotFlush4
 
-class HashEval {
+object Eval {
 
   def calcWinner(
       players: List[Player],
       boardCards: List[Card]
   ): List[Player] = {
     var playerHandRanks: List[(String, Int)] = List()
-
+    println("Hallo")
     for (player <- players) {
       var bestRank = Integer.MAX_VALUE
-      val playerID =
-        players
-          .map(player => player.card1.toString + player.card2.toString)
-          .mkString
       val playerCards = List(player.card1, player.card2)
       val cards = boardCards ++ playerCards
       val combinations = getCombinations(5, cards)
@@ -59,17 +55,19 @@ class HashEval {
             bestRank = rank
         }
       }
-      playerHandRanks = playerHandRanks :+ (playerID, bestRank)
+      playerHandRanks = playerHandRanks :+ (player.playername, bestRank)
     }
     val bestRank = playerHandRanks.map(_._2).min
     val winners = playerHandRanks.filter { case (_, rank) =>
       rank == bestRank
     }
     val winnerPlayers = players.filter { case player =>
-      playerHandRanks.exists { case (str, _) =>
-        str == (player.card1.toString + player.card2.toString).mkString
+      winners.exists { case (str, _) =>
+        str == player.playername
       }
     }
+    for (player <- winnerPlayers)
+      println(player.playername)
     winnerPlayers
   }
 

@@ -206,10 +206,8 @@ case class GameState(
       val winners = Eval.calcWinner(getPlayers, getBoard)
 
       val winnerNames = winners.map(winner => winner.playername)
-      for (players <- winnerNames)
-        println(players)
+
       val winningAmount = getPot / winners.size
-      println(winningAmount)
 
       val shuffledDeck = shuffleDeck
 

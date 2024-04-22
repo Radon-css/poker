@@ -162,7 +162,7 @@ object GUIView {
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-right-circle ml-2" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
                 </svg>
-                <div class="flex justify-center items-center">CALL ${gameState.getHighestBetSize + "$"}</div>
+                <div class="flex justify-center items-center">CALL ${gameState.getHighestBetSize - gameState.getCurrentPlayer.currentAmountBetted + "$"}</div>
               </button>
               <form onsubmit="bet()" class="flex flex-row items-center">
                 <button type="submit" class="flex justify-start space-x-2 items-center w-28 h-12 font-bold my-5 bg-yellow-600/20 text-yellow-400 rounded-l-full hover:bg-yellow-600/10">

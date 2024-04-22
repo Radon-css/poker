@@ -120,7 +120,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
         }
       } else {
         controller.createGame(
-          List("Henrik", "Julian", "Till", "Julian", "Dominik", "Luuk"),
+          List("Henrik", "Julian", "Till", "Noah", "Dominik", "Luuk"),
           "10",
           "20"
         )

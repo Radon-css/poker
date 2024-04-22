@@ -175,9 +175,6 @@ object GUIView {
               </form>
               </div>
               <script>
-                function startGame() {
-                  invoke.startGame();
-                }
                 function call() {
                   invoke.call();
                 }
@@ -300,7 +297,7 @@ object GUIView {
   </div>
     </div>
     <div class="flex space-x-8 items-center">
-     <button id="outerDiv7"type="submit" class="w-28 h-12 font-bold my-5 bg-gray-300/80 text-slate-700 rounded-full hover:text-gray-100 hover:bg-gray-600 shadow-lg" onclick="startGame()">
+     <button id="outerDiv7"type="submit" class="w-28 h-12 font-bold my-5 bg-gray-300/80 text-slate-700 rounded-full hover:text-gray-100 hover:bg-gray-600 shadow-lg">
       <div class="flex justify-center items-center space-x-1">
       <svg id="innerDiv7" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-play-fill hover:w-10 hover:h-10" viewBox="0 0 16 16">
         <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>

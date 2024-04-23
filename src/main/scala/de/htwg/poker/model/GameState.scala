@@ -2,7 +2,7 @@ package de.htwg.poker.model
 import scala.math
 import de.htwg.poker.util.Evaluator
 import de.htwg.poker.util.TUIView
-import de.htwg.poker.util.Eval
+import de.htwg.poker.util.HandInfo
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -203,7 +203,7 @@ case class GameState(
 
     def startRound: GameState = {
 
-      val winners = Eval.calcWinner(getPlayers, getBoard)
+      val winners = Evaluator.calcWinner(getPlayers, getBoard)
 
       val winnerNames = winners.map(winner => winner.playername)
 
@@ -315,7 +315,7 @@ case class GameState(
     else getNextBigBlindPlayer + 1
 
   def getCurrentHand: String = {
-    Evaluator
+    HandInfo
       .evaluate(
         List(
           getPlayers(getPlayerAtTurn).card1,

@@ -83,27 +83,9 @@ class Evaluator() {
       return Type.TwoPair
     if (rankHistogramm.size == 4)
       return Type.Pair
-    // check for Flush
-    if (
-      combination(0).suit.id == combination(1).suit.id && combination(
-        1
-      ).suit.id == combination(2).suit.id && combination(
-        2
-      ).suit.id == combination(
-        3
-      ).suit.id && combination(3).suit.id == combination(
-        4
-      ).suit.id
-    )
-      return Type.Flush
-    // check for Straights
+
     val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse
-    if (
-      sortedCards.head.rank.strength - sortedCards.last.rank.strength == 4 || sortedCards.head.rank == Rank.Ace && sortedCards(
-        1
-      ).rank == Rank.Five
-    )
-      return Type.Straight
+
     // check for StraightFlush
     if (
       combination(0).suit.id == combination(1).suit.id && combination(
@@ -121,6 +103,28 @@ class Evaluator() {
       )
     )
       return Type.StraightFlush
+
+    // check for Flush
+    if (
+      combination(0).suit.id == combination(1).suit.id && combination(
+        1
+      ).suit.id == combination(2).suit.id && combination(
+        2
+      ).suit.id == combination(
+        3
+      ).suit.id && combination(3).suit.id == combination(
+        4
+      ).suit.id
+    )
+      return Type.Flush
+    // check for Straights
+    if (
+      sortedCards.head.rank.strength - sortedCards.last.rank.strength == 4 || sortedCards.head.rank == Rank.Ace && sortedCards(
+        1
+      ).rank == Rank.Five
+    )
+      return Type.Straight
+
     return Type.High
   }
 

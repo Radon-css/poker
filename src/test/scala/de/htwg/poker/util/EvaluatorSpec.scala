@@ -8,7 +8,7 @@ import de.htwg.poker.model.{Card, Rank, Suit}
 class EvaluatorSpec extends AnyWordSpec with Matchers with MockitoSugar {
 
   "Evaluator" should {
-    "evaluate the best hand correctly" in {
+    "evaluate the best hand correctly(Flush)" in {
       val evaluator = new Evaluator()
 
       val playerCards = List(
@@ -26,6 +26,42 @@ class EvaluatorSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result = evaluator.evaluate(playerCards, boardCards)
 
       result should be("Flush")
+    }
+    "evaluate the best hand correctly(Straight)" in {
+      val evaluator = new Evaluator()
+
+      val playerCards = List(
+        Card(Suit.Clubs, Rank.Ace),
+        Card(Suit.Clubs, Rank.King)
+      )
+      val boardCards = List(
+        Card(Suit.Clubs, Rank.Ten),
+        Card(Suit.Spades, Rank.Jack),
+        Card(Suit.Spades, Rank.Queen),
+        Card(Suit.Clubs, Rank.King),
+        Card(Suit.Diamonds, Rank.Nine)
+      )
+
+      val result = evaluator.evaluate(playerCards, boardCards)
+
+      result should be("Straight")
+    }
+    "evaluate the best hand correctly(random)" in {
+      val evaluator = new Evaluator()
+
+      val playerCards =
+        List(Card(Suit.Hearts, Rank.Seven), Card(Suit.Diamonds, Rank.Seven))
+      val boardCards = List(
+        Card(Suit.Clubs, Rank.Four),
+        Card(Suit.Spades, Rank.Five),
+        Card(Suit.Hearts, Rank.Three),
+        Card(Suit.Diamonds, Rank.Two),
+        Card(Suit.Clubs, Rank.Ace)
+      )
+
+      val result = evaluator.evaluate(playerCards, boardCards)
+
+      result should be("StraightFlush")
     }
     "eval high card correctly" in {
       val evaluator = new Evaluator()

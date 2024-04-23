@@ -1,8 +1,23 @@
 package de.htwg.poker.util
 import scala.io.Source
+import scala.math.Ordering
 import de.htwg.poker.model.*
 
 object Evaluator {
+
+  val categoryComparator = new Ordering[String] {
+    val orderList =
+      List("HC", "1P", "2P", "3K", "S", "F", "FH", "4K", "SF")
+    private val orderMap = orderList.zipWithIndex.toMap
+    def compare(x: String, y: String): Int = {
+      val xIndex = orderMap.getOrElse(
+        x,
+        -1
+      )
+      val yIndex = orderMap.getOrElse(y, -1)
+      xIndex.compare(yIndex)
+    }
+  }
 
   var flushHash: List[(Int, String, Int)] = Nil
   var nonFlushHash: List[(Int, String, Int)] = Nil
@@ -43,6 +58,7 @@ object Evaluator {
     var playerHandRanks: List[(String, Int)] = List()
     for (player <- players) {
       var bestRank = Integer.MAX_VALUE
+      var bestCategory = "HC"
       val playerCards = List(player.card1, player.card2)
       val cards = boardCards ++ playerCards
       val combinations = getCombinations(5, cards)
@@ -60,12 +76,22 @@ object Evaluator {
             4
           ).suit.id
         ) {
-          val rank = binarySearch(flushHash, value)
-          if (rank < bestRank)
+          val (rank, category) = binarySearch(flushHash, value)
+          if (
+            rank < bestRank && categoryComparator.compare(
+              category,
+              bestCategory
+            ) >= 0
+          )
             bestRank = rank
         } else {
-          val rank = binarySearch(nonFlushHash, value)
-          if (rank < bestRank)
+          val (rank, category) = binarySearch(nonFlushHash, value)
+          if (
+            rank < bestRank && categoryComparator.compare(
+              category,
+              bestCategory
+            ) >= 0
+          )
             bestRank = rank
         }
       }
@@ -85,12 +111,15 @@ object Evaluator {
     winnerPlayers
   }
 
-  def binarySearch(list: List[(Int, String, Int)], target: Int): Int = {
-    def binarySearchR(low: Int, high: Int): Int = {
+  def binarySearch(
+      list: List[(Int, String, Int)],
+      target: Int
+  ): (Int, String) = {
+    def binarySearchR(low: Int, high: Int): (Int, String) = {
       val mid = low + (high - low) / 2
       val midValue = list(mid)._3
       if (midValue == target) {
-        list(mid)._1 // Element gefunden
+        (list(mid)._1, list(mid)._2) // Element gefunden
       } else if (midValue < target) {
         binarySearchR(mid + 1, high)
       } else {
@@ -115,5 +144,4 @@ object Evaluator {
           )
       }
   }
-
 }

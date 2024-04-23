@@ -97,7 +97,7 @@ class Controller(var gameState: GameState) extends Observable {
     notifyObservers
     true
   }
-
+//test
   def call: Boolean = {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("Start a game first")

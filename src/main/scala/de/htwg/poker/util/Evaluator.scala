@@ -55,7 +55,7 @@ object Evaluator {
       players: List[Player],
       boardCards: List[Card]
   ): List[Player] = {
-    var playerHandRanks: List[(String, Int)] = List()
+    var playerHandRanks: List[(String, String, Int)] = List()
     for (player <- players) {
       var bestRank = Integer.MAX_VALUE
       var bestCategory = "HC"
@@ -84,6 +84,7 @@ object Evaluator {
             ) >= 0
           )
             bestRank = rank
+            bestCategory = category
         } else {
           val (rank, category) = binarySearch(nonFlushHash, value)
           if (
@@ -93,21 +94,30 @@ object Evaluator {
             ) >= 0
           )
             bestRank = rank
+            bestCategory = category
         }
       }
-      playerHandRanks = playerHandRanks :+ (player.playername, bestRank)
+      playerHandRanks =
+        playerHandRanks :+ (player.playername, bestCategory, bestRank)
     }
-    val bestRank = playerHandRanks.map(_._2).min
-    val winners = playerHandRanks.filter { case (_, rank) =>
-      rank == bestRank
+    val bestRank = playerHandRanks.map(_._3).min
+    val bestCategory = playerHandRanks.map(_._2).max(categoryComparator)
+    val playersWithBestCategory = playerHandRanks.filter {
+      case (name, category, rank) =>
+        category == bestCategory
     }
+    var winners = playersWithBestCategory
+    if (playersWithBestCategory.length != 1) {
+      winners = playersWithBestCategory.filter { case (name, category, rank) =>
+        rank == bestRank
+      }
+    }
+
     val winnerPlayers = players.filter { case player =>
-      winners.exists { case (str, _) =>
+      winners.exists { case (str, _, _) =>
         str == player.playername
       }
     }
-    for (player <- winnerPlayers)
-      println(player.playername)
     winnerPlayers
   }
 

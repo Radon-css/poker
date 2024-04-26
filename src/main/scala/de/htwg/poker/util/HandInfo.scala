@@ -77,19 +77,11 @@ object HandInfo {
       .toList
       .sortBy(-_._2)
 
-    // check for Quads, FullHouse, Trips, TwoPair, Pair
-    if (rankHistogramm(0)._2 == 4 && rankHistogramm(1)._2 == 1)
-      returnValue = Type.Quads
-    if (rankHistogramm(0)._2 == 3 && rankHistogramm(1)._2 == 2)
-      returnValue = Type.FullHouse
-    if (
-      rankHistogramm(0)._2 == 3 && rankHistogramm(
-        1
-      )._2 == 1 && rankHistogramm(
-        2
-      )._2 == 1
-    )
-      returnValue = Type.Triples
+    // check for Pair
+    if (rankHistogramm.size == 4)
+      returnValue = Type.Pair
+
+    // check for TwoPair
     if (
       rankHistogramm(0)._2 == 2 && rankHistogramm(
         1
@@ -98,9 +90,35 @@ object HandInfo {
       )._2 == 1
     )
       returnValue = Type.TwoPair
-    if (rankHistogramm.size == 4)
-      returnValue = Type.Pair
-    // check for Flush
+
+      // check for Triples
+      if (
+        rankHistogramm(0)._2 == 3 && rankHistogramm(
+          1
+        )._2 == 1 && rankHistogramm(
+          2
+        )._2 == 1
+      )
+        returnValue = Type.Triples
+
+    // check for Straights
+    val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse
+    if (
+      sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
+      && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
+      && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
+      && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
+      || (sortedCards.head.rank == Rank.Ace && sortedCards(
+        1
+      ).rank == Rank.Five && sortedCards(2).rank == Rank.Four && sortedCards(
+        3
+      ).rank == Rank.Three && sortedCards(
+        4
+      ).rank == Rank.Two)
+    )
+      returnValue = Type.Straight
+
+      // check for Flush
     if (
       combination(0).suit.id == combination(1).suit.id && combination(
         1
@@ -113,16 +131,14 @@ object HandInfo {
       ).suit.id
     )
       returnValue = Type.Flush
-    // check for Straights
-    val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse
-    if (
-      sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
-      && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
-      && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
-      && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
-      || sortedCards.head.rank == Rank.Ace && sortedCards(1).rank == Rank.Five
-    )
-      returnValue = Type.Straight
+
+      // check for FullHouse
+      if (rankHistogramm(0)._2 == 3 && rankHistogramm(1)._2 == 2)
+        returnValue = Type.FullHouse
+
+      // check for Quads
+      if (rankHistogramm(0)._2 == 4 && rankHistogramm(1)._2 == 1)
+        returnValue = Type.Quads
     // check for StraightFlush
     if (
       combination(0).suit.id == combination(1).suit.id && combination(
@@ -138,9 +154,15 @@ object HandInfo {
           && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
           && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
           && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
-          || sortedCards.head.rank == Rank.Ace && sortedCards(
+          || (sortedCards.head.rank == Rank.Ace && sortedCards(
             1
-          ).rank == Rank.Five
+          ).rank == Rank.Five && sortedCards(
+            2
+          ).rank == Rank.Four && sortedCards(
+            3
+          ).rank == Rank.Three && sortedCards(
+            4
+          ).rank == Rank.Two)
       )
     )
       returnValue = Type.StraightFlush

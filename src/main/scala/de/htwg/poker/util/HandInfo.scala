@@ -8,23 +8,6 @@ import de.htwg.poker.model.*
   , Straight, Flush etc...). A Flush is worth more than a Straight which is worth more than triples etc...
   Furthermore, the Evaluator decides which player wins the pot at the end of every round.*/
 
-@main
-def run: Unit = {
-  val playerCards = List(
-    new Card(Suit.Spades, Rank.Seven),
-    new Card(Suit.Spades, Rank.Eight)
-  )
-  val boardCards = List(
-    new Card(Suit.Hearts, Rank.Ace),
-    new Card(Suit.Hearts, Rank.Four),
-    new Card(Suit.Spades, Rank.Five),
-    new Card(Suit.Spades, Rank.Four),
-    new Card(Suit.Spades, Rank.Six)
-  )
-  val result = HandInfo.evaluate(playerCards, boardCards)
-  print(result)
-}
-
 object HandInfo {
 
   enum Type:

@@ -65,9 +65,14 @@ case class GameState(
     val updatePlayer = getPlayers(getPlayerAtTurn).playername
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = getCurrentPlayer.balance - amount
-    val updatedPlayersAndBalances = getPlayersAndBalances.map {
-      case (playerToUpdate, _) => (playerToUpdate, newPlayerBalance)
+    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+      if (player._1 == playerToUpdate) {
+        player.copy(player._1, newPlayerBalance)
+      } else {
+        player
+      }
     }
+    println(updatedPlayersAndBalances)
     copy(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
@@ -97,8 +102,12 @@ case class GameState(
     val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = getCurrentPlayer.balance - callSize
-    val updatedPlayersAndBalances = getPlayersAndBalances.map {
-      case (playerToUpdate, _) => (playerToUpdate, newPlayerBalance)
+    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+      if (player._1 == playerToUpdate) {
+        player.copy(player._1, newPlayerBalance)
+      } else {
+        player
+      }
     }
 
     copy(
@@ -121,8 +130,12 @@ case class GameState(
     val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = 0
-    val updatedPlayersAndBalances = getPlayersAndBalances.map {
-      case (playerToUpdate, _) => (playerToUpdate, newPlayerBalance)
+    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+      if (player._1 == playerToUpdate) {
+        player.copy(player._1, newPlayerBalance)
+      } else {
+        player
+      }
     }
     copy(
       playersAndBalances = updatedPlayersAndBalances,
@@ -251,11 +264,12 @@ case class GameState(
 
       val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
         if (winnerNames.contains(player._1)) {
-          (player._1, player._2 + winningAmount)
+          player.copy(player._1, player._2 + winningAmount)
         } else {
           player
         }
       }
+      println(updatedPlayersAndBalances)
 
       copy(
         playersAndBalances = updatedPlayersAndBalances,

@@ -16,7 +16,19 @@ class Controller(var gameState: GameState) extends Observable {
     additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
    */
 
-  def createGame(     playerNameList: List[String],
+  object UpdateBoard {
+    val strategy =
+      if (gameState.getBoard.size == 0) addCardsToBoard(3)
+      else if (gameState.getBoard.size == 3) addCardsToBoard(1)
+      else if (gameState.getBoard.size == 4) addCardsToBoard(1)
+      else {
+        gameState = gameState.startRound
+        notifyObservers
+      }
+  }
+
+  def createGame(
+      playerNameList: List[String],
       smallBlind: String,
       bigBlind: String
   ): Boolean = {
@@ -98,7 +110,7 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required_fold) {
-      gameState = gameState.UpdateBoard.strategy
+      UpdateBoard.strategy
     }
     notifyObservers
     true
@@ -122,7 +134,7 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
-      gameState = gameState.UpdateBoard.strategy
+      UpdateBoard.strategy
     }
     notifyObservers
     true
@@ -144,7 +156,7 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
-      gameState = gameState.UpdateBoard.strategy
+      UpdateBoard.strategy
     }
     notifyObservers
     true
@@ -161,8 +173,38 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def restartGame: Unit = {
-    gameState = gameState.restartGame
+    UpdateBoard.strategy
     notifyObservers
+  }
+
+  def skipPlayers = {
+    var current = gameState.getPlayerAtTurn
+
+    if (!hasAtLeastTwoWithGreaterThanZeroBalance) {
+      // handout remaining cards and start new Round
+      if (gameState.getBoard.size == 0) addCardsToBoard(5)
+      else if (gameState.getBoard.size == 3) addCardsToBoard(2)
+      else if (gameState.getBoard.size == 4) addCardsToBoard(1)
+      gameState = gameState.startRound
+      notifyObservers
+    } else {
+      // the next player whose balance is greater than 0 is at turn
+      while (gameState.getPlayers(current).balance == 0) {
+        current = gameState.getNextPlayer(current)
+      }
+      gameState = gameState.copy(
+        playerAtTurn = current
+      )
+      notifyObservers
+    }
+  }
+
+  def addCardsToBoard(amount: Int) = {
+    for (i <- 0 until amount) {
+      Thread.sleep(500)
+      gameState = gameState.addCardToBoard
+      notifyObservers
+    }
   }
 
   // helper methods
@@ -184,7 +226,7 @@ class Controller(var gameState: GameState) extends Observable {
         player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
       ))
     // postflop handout
-    // jeder checkt durch -> bei Spieler 0 austeilen
+    // jeder checkt durch -> bei SmallBlindSpieler austeilen
     || (gameState.getBoard.size != 0
       && gameState.getHighestBetSize == 0
       && gameState.getPlayers.forall(player =>
@@ -199,15 +241,10 @@ class Controller(var gameState: GameState) extends Observable {
       ))
 
   }
-  // check if handout is required after a fold
-  def handout_required_fold: Boolean = {
-    gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required
-  }
 
-  override def toString: String = gameState.toString()
-
-  def checkDuplicateName(liste: List[String]): Boolean = {
-    val gruppiert = liste.groupBy(identity).mapValues(_.size)
-    gruppiert.values.exists(_ > 1)
+  def hasAtLeastTwoWithGreaterThanZeroBalance: Boolean = {
+    val playersWithGreaterThanZeroBalance =
+      gameState.getPlayers.filter(player => player.balance != 0)
+    playersWithGreaterThanZeroBalance.length >= 2
   }
 }

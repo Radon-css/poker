@@ -61,17 +61,10 @@ class Controller(var gameState: GameState) extends Observable {
     ) {
       throw new Exception("Insufficient balance")
     } else if (
-      amount == gameState
-        .getPlayers(gameState.getPlayerAtTurn)
-        .balance && gameState.getHighestBetSize >= amount
-    ) {
-      gameState = gameState.allIn
-    } else if (
       gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount
     ) {
       throw new Exception("Bet size is too low")
     }
-
     undoManager.doStep(gameState)
     if (amount == gameState.getPlayers(gameState.getPlayerAtTurn).balance) {
       gameState = gameState.allIn
@@ -192,17 +185,6 @@ class Controller(var gameState: GameState) extends Observable {
         player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
       ))
 
-    /* gameState.getPlayers.forall(player =>
-      gameState.getBoard.size == 0 && player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
-        && gameState.getPlayers.head.currentAmountBetted != 0
-        && (gameState.getPlayers.size > 2 && gameState.getPlayerAtTurn == 2
-          || gameState.getPlayers.size < 3 && gameState.getPlayerAtTurn == 0)
-    ) ||
-    gameState.getPlayers.forall(player =>
-      gameState.getBoard.size != 0 &&
-        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
-    ) && gameState.playerAtTurn == 0
-  }*/
   }
   // check if handout is required after a fold
   def handout_required_fold: Boolean = {

@@ -16,8 +16,7 @@ class Controller(var gameState: GameState) extends Observable {
     additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
    */
 
-  def createGame(
-      playerNameList: List[String],
+  def createGame(     playerNameList: List[String],
       smallBlind: String,
       bigBlind: String
   ): Boolean = {
@@ -56,21 +55,35 @@ class Controller(var gameState: GameState) extends Observable {
   def bet(amount: Int): Boolean = {
     if (gameState.getPlayers.isEmpty) {
       throw new Exception("Start a game first")
-    } else if (
-      gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount
-    ) {
-      throw new Exception("Insufficient balance")
-    } else if (
-      gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount
-    ) {
-      throw new Exception("Bet size is too low")
     }
     undoManager.doStep(gameState)
+
+    // distinguish allIn and normal bet
     if (amount == gameState.getPlayers(gameState.getPlayerAtTurn).balance) {
       gameState = gameState.allIn
+
     } else {
+      if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
+        throw new Exception("Insufficient balance")
+      }
+      if (
+        gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount
+      ) {
+        throw new Exception("Bet size is too low")
+      }
       gameState = gameState.bet(amount)
     }
+    notifyObservers
+    true
+  }
+
+  def allIn(): Boolean = {
+    if (gameState.getPlayers.isEmpty) {
+      throw new Exception("Start a game first")
+    }
+
+    undoManager.doStep(gameState)
+    gameState = gameState.allIn
     notifyObservers
     true
   }

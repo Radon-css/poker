@@ -77,7 +77,10 @@ case class GameState(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
       playerAtTurn = getNextPlayer(getPlayerAtTurn),
-      currentHighestBetSize = amount,
+      currentHighestBetSize = math.max(
+        getHighestBetSize,
+        amount
+      ),
       pot = getPot + amount
     )
   }
@@ -123,27 +126,30 @@ case class GameState(
 
   def allIn: GameState = {
     val allInSize = getCurrentPlayer.balance
+
     val updatedPlayer = getCurrentPlayer.copy(
       balance = 0,
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + allInSize
     )
-    val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
+
+    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
+
     val playerToUpdate = getCurrentPlayer.playername
-    val newPlayerBalance = 0
     val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
       if (player._1 == playerToUpdate) {
-        player.copy(player._1, newPlayerBalance)
+        player.copy(player._1, 0)
       } else {
         player
       }
     }
+
     copy(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
       playerAtTurn = getNextPlayer(getPlayerAtTurn),
       currentHighestBetSize = math.max(
         getHighestBetSize,
-        getCurrentPlayer.currentAmountBetted
+        allInSize
       ),
       pot = getPot + allInSize
     )

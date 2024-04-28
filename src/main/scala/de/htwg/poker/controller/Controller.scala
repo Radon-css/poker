@@ -23,7 +23,6 @@ class Controller(var gameState: GameState) extends Observable {
       else if (gameState.getBoard.size == 4) addCardsToBoard(1)
       else {
         gameState = gameState.startRound
-        Thread.sleep(750)
         notifyObservers
       }
   }
@@ -86,9 +85,6 @@ class Controller(var gameState: GameState) extends Observable {
       }
       gameState = gameState.bet(amount)
     }
-    if (shouldSkipPlayer) {
-      skipPlayers
-    }
     notifyObservers
     true
   }
@@ -100,9 +96,6 @@ class Controller(var gameState: GameState) extends Observable {
 
     undoManager.doStep(gameState)
     gameState = gameState.allIn
-    if (shouldSkipPlayer) {
-      skipPlayers
-    }
     notifyObservers
     true
   }
@@ -116,9 +109,7 @@ class Controller(var gameState: GameState) extends Observable {
     gameState = gameState.fold
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
-    if (shouldSkipPlayer) {
-      skipPlayers
-    } else if (handout_required_fold) {
+    if (handout_required_fold) {
       UpdateBoard.strategy
     }
     notifyObservers
@@ -142,9 +133,7 @@ class Controller(var gameState: GameState) extends Observable {
     gameState = gameState.call
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
-    if (shouldSkipPlayer) {
-      skipPlayers
-    } else if (handout_required) {
+    if (handout_required) {
       UpdateBoard.strategy
     }
     notifyObservers
@@ -166,9 +155,7 @@ class Controller(var gameState: GameState) extends Observable {
     gameState = gameState.check
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
-    if (shouldSkipPlayer) {
-      skipPlayers
-    } else if (handout_required) {
+    if (handout_required) {
       UpdateBoard.strategy
     }
     notifyObservers
@@ -214,9 +201,7 @@ class Controller(var gameState: GameState) extends Observable {
 
   def addCardsToBoard(amount: Int) = {
     for (i <- 0 until amount) {
-      if (i != 0) {
-        Thread.sleep(500)
-      }
+      Thread.sleep(500)
       gameState = gameState.addCardToBoard
       notifyObservers
     }
@@ -261,21 +246,5 @@ class Controller(var gameState: GameState) extends Observable {
     val playersWithGreaterThanZeroBalance =
       gameState.getPlayers.filter(player => player.balance != 0)
     playersWithGreaterThanZeroBalance.length >= 2
-  }
-
-  // check if handout is required after a fold
-  def handout_required_fold: Boolean = {
-    gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required
-  }
-
-  override def toString: String = gameState.toString()
-
-  def checkDuplicateName(liste: List[String]): Boolean = {
-    val gruppiert = liste.groupBy(identity).mapValues(_.size)
-    gruppiert.values.exists(_ > 1)
-  }
-
-  def shouldSkipPlayer: Boolean = {
-    return gameState.getCurrentPlayer.balance == 0
   }
 }

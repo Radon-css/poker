@@ -70,7 +70,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   // here we call GUIView.render to update our GUI
   override def update: Unit = {
-    Platform.runLater(() => webEngine.loadContent(GUIView.render))
+    // Platform.runLater(() => webEngine.loadContent(GUIView.render))
+    webEngine.loadContent(GUIView.render)
+    print("updated")
   }
 
   /* Because we used Html and Javascript for our GUI, we need to make upcalls
@@ -157,6 +159,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   def updateBoardHtml(gameState: GameState): List[String] = {
     val boardList = gameState.getBoard
+    println(boardList)
     val newBoardList = boardList.map(_.toHtml)
     val invisBoardList = List.fill(5)(HiddenHtml)
     val hiddenBoardList =

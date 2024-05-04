@@ -9,42 +9,14 @@ class Controller(var gameState: GameState) extends Observable {
 
   private val undoManager = new UndoManager
 
-  /* this is an object to determine what amount of cards need to be revealed or if
-    a new round has to be started */
-  object Handout {
-    val strategy: GameState =
-      if (gameState.getBoard.size == 0) reveal(3)
-      else if (gameState.getBoard.size == 3) reveal(1)
-      else if (gameState.getBoard.size == 4) reveal(1)
-      else gameState.startRound
-  }
-
-  def reveal(cardsToAdd: Int): GameState = {
-    if (cardsToAdd < 1 || cardsToAdd > 5) {
-      println("false request to handout less than 1 or more than 5 boardCards")
-      return gameState
-    }
-
-    var returnGameState: GameState = null
-    for (i <- 0 until cardsToAdd) {
-      gameState = gameState.revealCard()
-      returnGameState = gameState
-      if (i != 0) {
-        Thread.sleep(650)
-      }
-      notifyObservers
-    }
-    returnGameState
-  }
-
   /* the following methods are structured in this particular way:
-      first, check the user input for unallowed inputs and throw an exception if necessary.
-      second, update the gameState.
-      third, notify the observers.
-      additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
+    first, check the user input for unallowed inputs and throw an exception if necessary.
+    second, update the gameState.
+    third, notify the observers.
+    additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
    */
-  def createGame(
-      playerNameList: List[String],
+
+  def createGame(     playerNameList: List[String],
       smallBlind: String,
       bigBlind: String
   ): Boolean = {
@@ -126,7 +98,7 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required_fold) {
-      gameState = Handout.strategy
+      gameState = gameState.UpdateBoard.strategy
     }
     notifyObservers
     true
@@ -150,7 +122,7 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
-      gameState = Handout.strategy
+      gameState = gameState.UpdateBoard.strategy
     }
     notifyObservers
     true
@@ -172,7 +144,7 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
-      gameState = Handout.strategy
+      gameState = gameState.UpdateBoard.strategy
     }
     notifyObservers
     true
@@ -189,7 +161,7 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def restartGame: Unit = {
-    gameState = gameState.startRound
+    gameState = gameState.restartGame
     notifyObservers
   }
 

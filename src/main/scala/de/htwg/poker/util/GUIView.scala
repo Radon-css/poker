@@ -25,7 +25,7 @@ import de.htwg.poker.Poker.controller
 
 object GUIView {
   def render: String = {
-    println("rendered")
+
     val gameState = controller.gameState
     val playerListHtml = gui.updatePlayersHtml(gameState)
     val cardListHtml = gui.updateCardsHtml(gameState)

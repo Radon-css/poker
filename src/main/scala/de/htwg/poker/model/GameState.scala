@@ -205,93 +205,109 @@ case class GameState(
     )
   }
 
+  def restartGame = UpdateBoard.startRound
+
   /* here we used a strategy pattern to update the community cards. If a handout of community cards is required,
     we can simply call the strategy method which then decides how many cards have to be revealed.
     If there were no community cards revealed, you reveal the first three cards.
     If there are three or four community cards revealed, you reveal another card.
     If there are five community cards revealed, you can start the next round.*/
 
-  def startRound: GameState = {
+  object UpdateBoard {
+    val strategy: GameState =
+      if (getBoard.size == 0) flop
+      else if (getBoard.size == 3) turn
+      else if (getBoard.size == 4) river
+      else startRound
 
-    val winners = Evaluator.calcWinner(getPlayers, getBoard)
+    def startRound: GameState = {
 
-    val winnerNames = winners.map(winner => winner.playername)
+      val winners = Evaluator.calcWinner(getPlayers, getBoard)
 
-    val winningAmount = getPot / winners.size
+      val winnerNames = winners.map(winner => winner.playername)
 
-    val shuffledDeck = shuffleDeck
+      val winningAmount = getPot / winners.size
 
-    val newPlayerList = getPlayersAndBalances.zipWithIndex.map {
-      case (player, index) =>
-        Player(
-          shuffledDeck(index * 2),
-          shuffledDeck(index * 2 + 1),
-          player._1,
-          player._2
-        )
-    }
+      val shuffledDeck = shuffleDeck
 
-    val smallBlindPlayer = newPlayerList(getNextSmallBlindPlayer).copy(
-      balance = newPlayerList(getNextSmallBlindPlayer).balance - smallBlind,
-      currentAmountBetted = newPlayerList(
-        getNextSmallBlindPlayer
-      ).currentAmountBetted + smallBlind
-    )
-
-    val bigBlindPlayer = newPlayerList(getNextBigBlindPlayer).copy(
-      balance = newPlayerList(getNextBigBlindPlayer).balance - bigBlind,
-      currentAmountBetted =
-        newPlayerList(getNextBigBlindPlayer).currentAmountBetted + bigBlind
-    )
-
-    val newShuffledDeck = shuffledDeck.drop(newPlayerList.size * 2)
-
-    val playerListWithBlinds =
-      newPlayerList
-        .updated(getNextSmallBlindPlayer, smallBlindPlayer)
-        .updated(getNextBigBlindPlayer, bigBlindPlayer)
-
-    val finalPlayerList: List[Player] = playerListWithBlinds.map { player =>
-      if (winnerNames.contains(player.playername)) {
-        player.copy(balance = player.balance + winningAmount)
-      } else {
-        player
+      val newPlayerList = getPlayersAndBalances.zipWithIndex.map {
+        case (player, index) =>
+          Player(
+            shuffledDeck(index * 2),
+            shuffledDeck(index * 2 + 1),
+            player._1,
+            player._2
+          )
       }
-    }
 
-    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
-      if (winnerNames.contains(player._1)) {
-        player.copy(player._1, player._2 + winningAmount)
-      } else {
-        player
+      val smallBlindPlayer = newPlayerList(getNextSmallBlindPlayer).copy(
+        balance = newPlayerList(getNextSmallBlindPlayer).balance - smallBlind,
+        currentAmountBetted = newPlayerList(
+          getNextSmallBlindPlayer
+        ).currentAmountBetted + smallBlind
+      )
+
+      val bigBlindPlayer = newPlayerList(getNextBigBlindPlayer).copy(
+        balance = newPlayerList(getNextBigBlindPlayer).balance - bigBlind,
+        currentAmountBetted =
+          newPlayerList(getNextBigBlindPlayer).currentAmountBetted + bigBlind
+      )
+
+      val newShuffledDeck = shuffledDeck.drop(newPlayerList.size * 2)
+
+      val playerListWithBlinds =
+        newPlayerList
+          .updated(getNextSmallBlindPlayer, smallBlindPlayer)
+          .updated(getNextBigBlindPlayer, bigBlindPlayer)
+
+      val finalPlayerList: List[Player] = playerListWithBlinds.map { player =>
+        if (winnerNames.contains(player.playername)) {
+          player.copy(balance = player.balance + winningAmount)
+        } else {
+          player
+        }
       }
+
+      val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+        if (winnerNames.contains(player._1)) {
+          player.copy(player._1, player._2 + winningAmount)
+        } else {
+          player
+        }
+      }
+      println(updatedPlayersAndBalances)
+
+      copy(
+        playersAndBalances = updatedPlayersAndBalances,
+        players = Some(finalPlayerList),
+        deck = Some(newShuffledDeck),
+        playerAtTurn = getNewRoundPlayerAtTurn,
+        currentHighestBetSize = getBigBlind,
+        board = Nil,
+        pot = getSmallBlind + getBigBlind,
+        smallBlind = getSmallBlind,
+        bigBlind = getBigBlind,
+        smallBlindPointer = getNextSmallBlindPlayer
+      )
     }
-    println(updatedPlayersAndBalances)
 
-    copy(
-      playersAndBalances = updatedPlayersAndBalances,
-      players = Some(finalPlayerList),
-      deck = Some(newShuffledDeck),
-      playerAtTurn = getNewRoundPlayerAtTurn,
-      currentHighestBetSize = getBigBlind,
-      board = Nil,
-      pot = getSmallBlind + getBigBlind,
-      smallBlind = getSmallBlind,
-      bigBlind = getBigBlind,
-      smallBlindPointer = getNextSmallBlindPlayer
-    )
-  }
+    def flop: GameState = addCardsToBoard(3)
 
-  def revealCard(): GameState = {
-    val newBoard = getDeck.take(1)
-    val newPlayerList = getPlayers.map(_.copy(currentAmountBetted = 0))
-    copy(
-      players = Some(newPlayerList),
-      deck = Some(getDeck.drop(1)),
-      playerAtTurn = getSmallBlindPointer,
-      currentHighestBetSize = 0,
-      board = getBoard ::: newBoard
-    )
+    def turn: GameState = addCardsToBoard(1)
+
+    def river: GameState = addCardsToBoard(1)
+
+    private def addCardsToBoard(cardsToAdd: Int): GameState = {
+      val newBoard = getDeck.take(cardsToAdd)
+      val newPlayerList = getPlayers.map(_.copy(currentAmountBetted = 0))
+      copy(
+        players = Some(newPlayerList),
+        deck = Some(getDeck.drop(cardsToAdd)),
+        playerAtTurn = getSmallBlindPointer,
+        currentHighestBetSize = 0,
+        board = getBoard ::: newBoard
+      )
+    }
   }
 
   // helper methods

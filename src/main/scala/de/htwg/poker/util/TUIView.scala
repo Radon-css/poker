@@ -74,20 +74,18 @@ class Print(gameState: GameState) {
 
   def printPlayerNames(indexedPlayerList: List[(Player, Int)]): String = {
     val sb = new StringBuilder
-    val ANSI_COLORED = "\u001b[34m"
-    val ANSI_RESET = "\u001b[0m"
     for (playerWithIndex <- indexedPlayerList) {
       if (playerWithIndex._2 == gameState.getPlayerAtTurn) {
         val boldPlayer = playerWithIndex._1.playername
         if (playerWithIndex == indexedPlayerList.last) {
           sb.append(
-            s"$ANSI_COLORED$boldPlayer$ANSI_RESET"
+            s"$boldPlayer"
           )
         } else {
           val spaces =
             " " * (14 - playerWithIndex._1.playername.length)
           sb.append(
-            s"$ANSI_COLORED$boldPlayer$ANSI_RESET$spaces"
+            s"$boldPlayer$spaces"
           )
         }
       } else {

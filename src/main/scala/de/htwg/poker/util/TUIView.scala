@@ -6,8 +6,6 @@ import de.htwg.poker.model.Card
 
 object TUIView {
   def update(gameState: GameState): String = {
-    val ANSI_COLORED = "\u001b[34m"
-    val ANSI_RESET = "\u001b[0m"
     val stringBuilder = new StringBuilder
     val indexedPlayerList = gameState.getPlayers.zipWithIndex
     val Print = new Print(gameState)
@@ -79,13 +77,13 @@ class Print(gameState: GameState) {
         val boldPlayer = playerWithIndex._1.playername
         if (playerWithIndex == indexedPlayerList.last) {
           sb.append(
-            s"$boldPlayer"
+            s">$boldPlayer<"
           )
         } else {
           val spaces =
             " " * (14 - playerWithIndex._1.playername.length)
           sb.append(
-            s"$boldPlayer$spaces"
+            s">$boldPlayer<$spaces"
           )
         }
       } else {
@@ -105,7 +103,7 @@ class Print(gameState: GameState) {
     val sb = new StringBuilder
     for (player <- playerList) {
       val spaces =
-        " " * (14 - (player.card1.toString.length - 9) - (player.card2.toString.length - 9))
+        " " * (14 - (player.card1.toString.length) - (player.card2.toString.length))
       sb.append(
         s"${player.card1.toString}${player.card2.toString}$spaces"
       )

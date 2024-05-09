@@ -1,10 +1,6 @@
 package de.htwg.poker.model
 import scala.util.Random
 
-val ANSI_BLACK = "\u001b[90m"
-val ANSI_RED = "\u001b[31m"
-val ANSI_RESET = "\u001b[0m"
-
 enum Rank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
     King, Ace
@@ -57,10 +53,10 @@ enum Rank:
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
   override def toString: String = this match {
-    case Clubs    => s"$ANSI_BLACK♣$ANSI_RESET"
-    case Spades   => s"$ANSI_BLACK♠$ANSI_RESET"
-    case Diamonds => s"$ANSI_RED♢$ANSI_RESET"
-    case Hearts   => s"$ANSI_RED♡$ANSI_RESET"
+    case Clubs    => s"♣"
+    case Spades   => s"♠"
+    case Diamonds => s"♢"
+    case Hearts   => s"♡"
   }
   def id: Int = this match {
     case Clubs    => 1

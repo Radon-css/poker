@@ -72,7 +72,6 @@ case class GameState(
         player
       }
     }
-    println(updatedPlayersAndBalances)
     copy(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
@@ -275,7 +274,6 @@ case class GameState(
           player
         }
       }
-      println(updatedPlayersAndBalances)
 
       copy(
         playersAndBalances = updatedPlayersAndBalances,

@@ -13,7 +13,7 @@ enum Rank:
     case Seven => "7"
     case Eight => "8"
     case Nine  => "9"
-    case Ten   => "10"
+    case Ten   => "T"
     case Jack  => "J"
     case Queen => "Q"
     case King  => "K"

@@ -15,10 +15,9 @@ object WappFunctions {
       coinValue match {
         case 1000 => tupleToAppend = ("#FFFFFF", "#5F5F5F")
         case 500  => tupleToAppend = ("#FFFFFF", "#763968")
-        case 250  => tupleToAppend = ("#FFFFFF", "#242424")
-        case 100  => tupleToAppend = ("#FFFFFF", "#286343")
-        case 50   => tupleToAppend = ("#FFFFFF", "#1E5FBF")
-        case 10   => tupleToAppend = ("#FFFFFF", "#B15D5D")
+        case 100  => tupleToAppend = ("#FFFFFF", "#242424")
+        case 50   => tupleToAppend = ("#FFFFFF", "#286343")
+        case 10   => tupleToAppend = ("#FFFFFF", "#1E5FBF")
       }
 
       val tuplesToAppend = Seq.fill(amountOfCoins)(tupleToAppend)

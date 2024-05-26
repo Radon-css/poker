@@ -1,10 +1,15 @@
 package de.htwg.poker.util
 
+@main
+def run: Unit = {
+  print(WappFunctions.calculateCoins(10))
+  print(WappFunctions.calculateCoins(20))
+}
 object WappFunctions {
   def calculateCoins(amount: Int): Seq[(String, String)] = {
     var amountLeft = amount
     var returnValue: Seq[(String, String)] = Nil
-    val coinValues: List[Int] = List(1000, 500, 250, 100, 50, 10)
+    val coinValues: List[Int] = List(1000, 500, 100, 50, 10)
 
     for (coinValue <- coinValues) {
       val amountOfCoins = math.floor(amountLeft / coinValue).toInt

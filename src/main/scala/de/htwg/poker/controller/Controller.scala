@@ -16,7 +16,8 @@ class Controller(var gameState: GameState) extends Observable {
     additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
    */
 
-  def createGame(     playerNameList: List[String],
+  def createGame(
+      playerNameList: List[String],
       smallBlind: String,
       bigBlind: String
   ): Boolean = {
@@ -97,8 +98,19 @@ class Controller(var gameState: GameState) extends Observable {
     gameState = gameState.fold
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
-    if (handout_required_fold) {
+    if (handout_required) {
+      // set all players checkedThisRound attribute to false
+      gameState = gameState.copy(
+        players = Some(
+          gameState.getPlayers.map(player =>
+            player.copy(checkedThisRound = false)
+          )
+        )
+      )
       gameState = gameState.UpdateBoard.strategy
+    }
+    if (playerWonBeforeShowdown) {
+      gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
     true
@@ -122,7 +134,18 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
+      // set all players checkedThisRound attribute to false
+      gameState = gameState.copy(
+        players = Some(
+          gameState.getPlayers.map(player =>
+            player.copy(checkedThisRound = false)
+          )
+        )
+      )
       gameState = gameState.UpdateBoard.strategy
+    }
+    if (playerWonBeforeShowdown) {
+      gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
     true
@@ -144,7 +167,18 @@ class Controller(var gameState: GameState) extends Observable {
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
+      // set all players checkedThisRound attribute to false
+      gameState = gameState.copy(
+        players = Some(
+          gameState.getPlayers.map(player =>
+            player.copy(checkedThisRound = false)
+          )
+        )
+      )
       gameState = gameState.UpdateBoard.strategy
+    }
+    if (playerWonBeforeShowdown) {
+      gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
     true
@@ -173,7 +207,7 @@ class Controller(var gameState: GameState) extends Observable {
     // case jeder called big Blind -> bigBlindPlayer hat recht zu erhöhen
     (gameState.getBoard.size == 0 &&
       gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getBigBlind
+        player.currentAmountBetted == gameState.getBigBlind || player.folded
       ))
     && gameState.getPlayerAtTurn == gameState.getNextPlayer(
       gameState.getNextPlayer(gameState.getSmallBlindPointer)
@@ -181,28 +215,25 @@ class Controller(var gameState: GameState) extends Observable {
     // case es wird erhöht -> bigBlindPlayer hat kein recht zu erhöhen
     || (gameState.getBoard.size == 0 && gameState.getHighestBetSize > gameState.getBigBlind
       && gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
+        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted || player.folded
       ))
     // postflop handout
-    // jeder checkt durch -> bei Spieler 0 austeilen
+    // jeder checkt durch
     || (gameState.getBoard.size != 0
       && gameState.getHighestBetSize == 0
       && gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
-      )
-      && gameState.playerAtTurn == gameState.getSmallBlindPointer)
+        player.checkedThisRound || player.folded
+      ))
     // es wird erhöht -> dann austeilen, wenn jeder gleich viel gebetted hat
     || (gameState.getBoard.size != 0
       && gameState.getHighestBetSize != 0
       && gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted
+        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted || player.folded
       ))
+  }
 
-  }
-  // check if handout is required after a fold
-  def handout_required_fold: Boolean = {
-    gameState.getPlayerAtTurn == gameState.getPlayers.size - 1 && handout_required
-  }
+  def playerWonBeforeShowdown =
+    gameState.getPlayers.filter(player => !player.folded).length == 1
 
   override def toString: String = gameState.toString()
 

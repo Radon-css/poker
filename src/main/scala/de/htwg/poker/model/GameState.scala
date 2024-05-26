@@ -85,10 +85,12 @@ case class GameState(
   }
 
   def fold: GameState = {
-    val newPlayerList = getPlayers.patch(playerAtTurn, Nil, 1)
+    val foldedPlayer = getCurrentPlayer.copy(folded = true)
+    val newPlayerList = getPlayers.updated(playerAtTurn, foldedPlayer)
+
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayerWhenFold
+      playerAtTurn = getNextPlayer(playerAtTurn)
     )
   }
 
@@ -121,7 +123,14 @@ case class GameState(
     )
   }
 
-  def check: GameState = copy(playerAtTurn = getNextPlayer(getPlayerAtTurn))
+  def check: GameState = {
+    val playerChecked = getCurrentPlayer.copy(checkedThisRound = true)
+    val newPlayerList = getPlayers.updated(playerAtTurn, playerChecked)
+    copy(
+      players = Some(newPlayerList),
+      playerAtTurn = getNextPlayer(getPlayerAtTurn)
+    )
+  }
 
   def allIn: GameState = {
     val allInSize = getCurrentPlayer.balance
@@ -221,7 +230,7 @@ case class GameState(
 
     def startRound: GameState = {
 
-      val winners = Evaluator.calcWinner(getPlayers, getBoard)
+      val winners = Evaluator.calcWinner(getPlayers.filter(player => !player.folded), getBoard)
 
       val winnerNames = winners.map(winner => winner.playername)
 
@@ -309,11 +318,17 @@ case class GameState(
   }
 
   // helper methods
-  def getNextPlayer(current: Int): Int =
-    if (getPlayers.length - 1 == current) 0 else current + 1
+  def getNextPlayer(current: Int): Int = {
+    val players = getPlayers
+    val totalPlayers = players.length
 
-  def getNextPlayerWhenFold: Int =
-    if (getPlayers.length - 1 == getPlayerAtTurn) 0 else getPlayerAtTurn
+    def findNextIndex(index: Int): Int = {
+      val nextIndex = (index + 1) % totalPlayers
+      if (!players(nextIndex).folded) nextIndex else findNextIndex(nextIndex)
+    }
+
+    findNextIndex(current)
+  }
 
   def getCurrentPlayer: Player = getPlayers(playerAtTurn)
 

@@ -5,7 +5,9 @@ case class Player(
     val card2: Card,
     val playername: String,
     val balance: Int = 1000,
-    val currentAmountBetted: Int = 0
+    val currentAmountBetted: Int = 0,
+    val folded: Boolean = false,
+    val checkedThisRound: Boolean = false
 ) {
   def balanceToString = "(" + balance + "$)"
 

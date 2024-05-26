@@ -7,15 +7,15 @@ object WappFunctions {
     val coinValues: List[Int] = List(1000, 500, 250, 100, 50, 10)
 
     for (coinValue <- coinValues) {
-      val amountOfCoins = math.floor(amount / coinValue).toInt
+      val amountOfCoins = math.floor(amountLeft / coinValue).toInt
       amountLeft = amountLeft - amountOfCoins * coinValue
 
       var tupleToAppend: (String, String) = null
 
       coinValue match {
-        case 1000 => tupleToAppend = ("#FFFFFF", "#763968")
-        case 500  => tupleToAppend = ("#FFFFFF", "#242424")
-        case 250  => tupleToAppend = ("#1E5FBF", "#FFFFFF")
+        case 1000 => tupleToAppend = ("#FFFFFF", "#5F5F5F")
+        case 500  => tupleToAppend = ("#FFFFFF", "#763968")
+        case 250  => tupleToAppend = ("#FFFFFF", "#242424")
         case 100  => tupleToAppend = ("#FFFFFF", "#286343")
         case 50   => tupleToAppend = ("#FFFFFF", "#1E5FBF")
         case 10   => tupleToAppend = ("#FFFFFF", "#B15D5D")
@@ -32,19 +32,19 @@ object WappFunctions {
     var color: String = null
 
     id match {
-        case 1 =>
-            suit = "bi-suit-club-fill"
-            color = "black-text"
-        case 2 =>
-            suit = "bi-suit-spade-fill"
-            color = "black-text"
-        case 3 =>
-            suit = "bi-suit-diamond-fill"
-            color = "red-text"
-        case 4 =>
-            suit = "bi-suit-heart-fill"
-            color = "red-text"
+      case 1 =>
+        suit = "bi-suit-club-fill"
+        color = "black-text"
+      case 2 =>
+        suit = "bi-suit-spade-fill"
+        color = "black-text"
+      case 3 =>
+        suit = "bi-suit-diamond-fill"
+        color = "red-text"
+      case 4 =>
+        suit = "bi-suit-heart-fill"
+        color = "red-text"
     }
-    (suit,color)
+    (suit, color)
   }
 }

@@ -23,10 +23,8 @@ object Evaluator {
   var nonFlushHash: List[(Int, String, Int)] = Nil
 
   def readHashes = {
-    val flushHashName = "src/main/scala/de/htwg/poker/util/FlushHash.txt"
-    val nonFlushHashName = "src/main/scala/de/htwg/poker/util/nonFlushHash.txt"
-    val sourceFlushHash = Source.fromFile(flushHashName)
-    val sourceNonFlushHash = Source.fromFile(nonFlushHashName)
+    val sourceFlushHash = Source.fromResource("FlushHash.txt")
+    val sourceNonFlushHash = Source.fromResource("NonFlushHash.txt")
 
     val flushHashList = sourceFlushHash.getLines().toList.map { line =>
       val values = line.split(",")

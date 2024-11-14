@@ -200,8 +200,18 @@ case class GameState(
     val playerListWithBlinds =
       playerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
 
+    val updatedPlayersAndBalances = InitialPlayersAndBalances.map { player =>
+      if(player._1 == smallBlindPlayer.playername) {
+        player.copy(player._1, player._2 - smallBlind)
+      } else if(player._1 == bigBlindPlayer.playername) {
+        player.copy(player._1, player._2 - bigBlind)
+      } else {
+        player
+      }
+    }
+
     GameState(
-      InitialPlayersAndBalances,
+      updatedPlayersAndBalances,
       Some(playerListWithBlinds),
       Some(newShuffledDeck),
       if (playerList.size < 3) 0 else 2,
@@ -234,7 +244,11 @@ case class GameState(
 
       val winnerNames = winners.map(winner => winner.playername)
 
+      println("winner names: " + winnerNames)
+
       val winningAmount = getPot / winners.size
+
+      println("winning amount: " + winningAmount)
 
       val shuffledDeck = shuffleDeck
 
@@ -278,7 +292,17 @@ case class GameState(
 
       val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
         if (winnerNames.contains(player._1)) {
+          if (player._1 == smallBlindPlayer.playername) {
+          player.copy(player._1, player._2 - smallBlind + winningAmount)
+          } else if (player._1 == bigBlindPlayer.playername) {
+          player.copy(player._1, player._2 - bigBlind + winningAmount)
+          } else {
           player.copy(player._1, player._2 + winningAmount)
+          }
+        } else if (player._1 == smallBlindPlayer.playername) {
+          player.copy(player._1, player._2 - smallBlind)
+        } else if (player._1 == bigBlindPlayer.playername) {
+          player.copy(player._1, player._2 - bigBlind)
         } else {
           player
         }

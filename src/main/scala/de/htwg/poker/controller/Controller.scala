@@ -5,12 +5,7 @@ import model.GameState
 import util.Observable
 import util.UndoManager
 
-import scala.swing.Publisher
-import scala.swing.event.Event
-
-class GameStateChanged extends Event
-
-class Controller(var gameState: GameState) extends Observable with Publisher {
+class Controller(var gameState: GameState) extends Observable {
 
   private val undoManager = new UndoManager
 
@@ -80,7 +75,6 @@ class Controller(var gameState: GameState) extends Observable with Publisher {
       gameState = gameState.bet(amount)
     }
     notifyObservers
-    publish(new GameStateChanged)
     true
   }
 
@@ -92,7 +86,6 @@ class Controller(var gameState: GameState) extends Observable with Publisher {
     undoManager.doStep(gameState)
     gameState = gameState.allIn
     notifyObservers
-    publish(new GameStateChanged)
     true
   }
 
@@ -120,7 +113,6 @@ class Controller(var gameState: GameState) extends Observable with Publisher {
       gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
-    publish(new GameStateChanged)
     true
   }
 //test
@@ -156,7 +148,6 @@ class Controller(var gameState: GameState) extends Observable with Publisher {
       gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
-    publish(new GameStateChanged)
     true
   }
 
@@ -190,7 +181,6 @@ class Controller(var gameState: GameState) extends Observable with Publisher {
       gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
-    publish(new GameStateChanged)
     true
   }
 

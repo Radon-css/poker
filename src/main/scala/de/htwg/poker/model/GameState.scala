@@ -78,7 +78,7 @@ case class GameState(
       playerAtTurn = getNextPlayer(getPlayerAtTurn),
       currentHighestBetSize = math.max(
         getHighestBetSize,
-        amount
+        getCurrentPlayer.currentAmountBetted + amount
       ),
       pot = getPot + amount
     )
@@ -244,11 +244,7 @@ case class GameState(
 
       val winnerNames = winners.map(winner => winner.playername)
 
-      println("winner names: " + winnerNames)
-
       val winningAmount = getPot / winners.size
-
-      println("winning amount: " + winningAmount)
 
       val shuffledDeck = shuffleDeck
 

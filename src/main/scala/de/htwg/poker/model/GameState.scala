@@ -367,12 +367,12 @@ case class GameState(
     if (getPlayersAndBalances.length - 1 == getNextBigBlindPlayer) 0
     else getNextBigBlindPlayer + 1
 
-  def getCurrentHand: String = {
+  def getHandEval(player: Int): String = {
     HandInfo
       .evaluate(
         List(
-          getPlayers(getPlayerAtTurn).card1,
-          getPlayers(getPlayerAtTurn).card2
+          getPlayers(player).card1,
+          getPlayers(player).card2
         ),
         getBoard
       )

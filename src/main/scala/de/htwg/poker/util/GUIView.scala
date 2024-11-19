@@ -57,7 +57,7 @@ object GUIView {
               </div>
               <div class="flex flex-col items-center justify-center">
               <h1 class="text-gray-100">Current Hand:</h1>
-              <h1 class="text-red-500">${gameState.getCurrentHand}</h1>
+              <h1 class="text-red-500">${gameState.getHandEval(gameState.getPlayerAtTurn)}</h1>
               </div>
                 <button class="flex justify-start space-x-2 items-center mt-4 mr-4 font-bold h-12 w-36 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20" onclick="restartGame()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-clockwise ml-4" viewBox="0 0 16 16">

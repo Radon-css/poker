@@ -12,8 +12,9 @@ case class Player(
   def balanceToString = "(" + balance + "$)"
 
   def toHtml = {
+    val opacityClass = if (folded) "opacity-50" else ""
     s"""<div class=\"flex flex-col items-center justify-center space-x-2\">
-                <div class=\"rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5\">
+                <div class=\"rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5 ${opacityClass}\">
                   <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\" fill=\"currentColor\" class=\"bi bi-person-fill\" viewBox=\"0 0 16 16\">
                     <path d=\"M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6\"/>
                   </svg>

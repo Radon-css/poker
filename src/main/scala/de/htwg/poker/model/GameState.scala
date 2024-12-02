@@ -28,7 +28,8 @@ case class GameState(
     pot: Int = 30,
     smallBlind: Int = 10,
     bigBlind: Int = 20,
-    smallBlindPointer: Int = 0
+    smallBlindPointer: Int = 0,
+    newRoundStarted: Boolean = true
 ) {
 
   def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
@@ -41,6 +42,7 @@ case class GameState(
   def getPot: Int = pot
   def getPlayersAndBalances: List[(String, Int)] = playersAndBalances
   def getSmallBlindPointer = smallBlindPointer
+  def getNewRoundStarted = newRoundStarted
 
   // see TUIView for toString implementation
   override def toString(): String = TUIView.update(this)
@@ -80,7 +82,8 @@ case class GameState(
         getHighestBetSize,
         getCurrentPlayer.currentAmountBetted + amount
       ),
-      pot = getPot + amount
+      pot = getPot + amount,
+      newRoundStarted = false
     )
   }
 
@@ -90,7 +93,8 @@ case class GameState(
 
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer(playerAtTurn)
+      playerAtTurn = getNextPlayer(playerAtTurn),
+      newRoundStarted = false
     )
   }
 
@@ -119,7 +123,8 @@ case class GameState(
       players = Some(newPlayerList),
       playerAtTurn = getNextPlayer(getPlayerAtTurn),
       currentHighestBetSize = getHighestBetSize,
-      pot = getPot + callSize
+      pot = getPot + callSize,
+      newRoundStarted = false
     )
   }
 
@@ -128,7 +133,8 @@ case class GameState(
     val newPlayerList = getPlayers.updated(playerAtTurn, playerChecked)
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer(getPlayerAtTurn)
+      playerAtTurn = getNextPlayer(getPlayerAtTurn),
+      newRoundStarted = false
     )
   }
 
@@ -159,7 +165,8 @@ case class GameState(
         getHighestBetSize,
         allInSize
       ),
-      pot = getPot + allInSize
+      pot = getPot + allInSize,
+      newRoundStarted = false
     )
   }
 
@@ -219,7 +226,9 @@ case class GameState(
       Nil,
       smallBlind + bigBlind,
       smallBlind,
-      bigBlind
+      bigBlind,
+      0,
+      true
     )
   }
 
@@ -314,7 +323,8 @@ case class GameState(
         pot = getSmallBlind + getBigBlind,
         smallBlind = getSmallBlind,
         bigBlind = getBigBlind,
-        smallBlindPointer = getNextSmallBlindPlayer
+        smallBlindPointer = getNextSmallBlindPlayer,
+        newRoundStarted = true
       )
     }
 

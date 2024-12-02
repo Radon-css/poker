@@ -46,6 +46,7 @@ class Controller(var gameState: GameState) extends Observable {
       gameState =
         gameState.createGame(playerNameList, smallBlindInt, bigBlindInt, 0)
       notifyObservers
+      println("newRoundStarted:" + gameState.newRoundStarted)
       true
     } catch {
       case _: NumberFormatException =>
@@ -75,6 +76,7 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.bet(amount)
     }
     notifyObservers
+    println("newRoundStarted:" + gameState.newRoundStarted)
     true
   }
 
@@ -113,6 +115,7 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
+    println("newRoundStarted:" + gameState.newRoundStarted)
     true
   }
 //test
@@ -148,6 +151,7 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
+    println("newRoundStarted:" + gameState.newRoundStarted)
     true
   }
 
@@ -181,6 +185,7 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.UpdateBoard.startRound
     }
     notifyObservers
+    println("newRoundStarted:" + gameState.newRoundStarted)
     true
   }
 

@@ -340,7 +340,7 @@ case class GameState(
       copy(
         players = Some(newPlayerList),
         deck = Some(getDeck.drop(cardsToAdd)),
-        playerAtTurn = getSmallBlindPointer,
+        playerAtTurn = getNextPlayer(getSmallBlindPointer),
         currentHighestBetSize = 0,
         board = getBoard ::: newBoard
       )

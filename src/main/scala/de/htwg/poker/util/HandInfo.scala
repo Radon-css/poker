@@ -115,13 +115,13 @@ object HandInfo {
     )
       returnValue = Type.Flush
 
-      // check for FullHouse
-      if (rankHistogramm(0)._2 == 3 && rankHistogramm(1)._2 == 2)
-        returnValue = Type.FullHouse
+    // check for FullHouse
+    if (rankHistogramm(0)._2 == 3 && rankHistogramm(1)._2 == 2)
+      returnValue = Type.FullHouse
 
-      // check for Quads
-      if (rankHistogramm(0)._2 == 4 && rankHistogramm(1)._2 == 1)
-        returnValue = Type.Quads
+    // check for Quads
+    if (rankHistogramm(0)._2 == 4 && rankHistogramm(1)._2 == 1)
+      returnValue = Type.Quads
     // check for StraightFlush
     if (
       combination(0).suit.id == combination(1).suit.id && combination(

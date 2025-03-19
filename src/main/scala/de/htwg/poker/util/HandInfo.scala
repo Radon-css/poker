@@ -74,15 +74,15 @@ object HandInfo {
     )
       returnValue = Type.TwoPair
 
-      // check for Triples
-      if (
-        rankHistogramm(0)._2 == 3 && rankHistogramm(
-          1
-        )._2 == 1 && rankHistogramm(
-          2
-        )._2 == 1
-      )
-        returnValue = Type.Triples
+    // check for Triples
+    if (
+      rankHistogramm(0)._2 == 3 && rankHistogramm(
+        1
+      )._2 == 1 && rankHistogramm(
+        2
+      )._2 == 1
+    )
+      returnValue = Type.Triples
 
     // check for Straights
     val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse

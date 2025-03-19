@@ -15,39 +15,29 @@ object WappFunctions {
       val amountOfCoins = math.floor(amountLeft / coinValue).toInt
       amountLeft = amountLeft - amountOfCoins * coinValue
 
-      var tupleToAppend: (String, String) = null
-
-      coinValue match {
-        case 1000 => tupleToAppend = ("#FFFFFF", "#5F5F5F")
-        case 500  => tupleToAppend = ("#FFFFFF", "#763968")
-        case 100  => tupleToAppend = ("#FFFFFF", "#242424")
-        case 50   => tupleToAppend = ("#FFFFFF", "#286343")
-        case 10   => tupleToAppend = ("#FFFFFF", "#1E5FBF")
+      val tupleToAppend: Option[(String, String)] = coinValue match {
+        case 1000 => Some(("#FFFFFF", "#5F5F5F"))
+        case 500  => Some(("#FFFFFF", "#763968"))
+        case 100  => Some(("#FFFFFF", "#242424"))
+        case 50   => Some(("#FFFFFF", "#286343"))
+        case 10   => Some(("#FFFFFF", "#1E5FBF"))
+        case _    => None
       }
 
-      val tuplesToAppend = Seq.fill(amountOfCoins)(tupleToAppend)
+      val tuplesToAppend =
+        tupleToAppend.map(Seq.fill(amountOfCoins)(_)).getOrElse(Seq.empty)
       returnValue = returnValue ++ tuplesToAppend
     }
     returnValue
   }
 
   def getSuitStyle(id: Int): (String, String) = {
-    var suit: String = null
-    var color: String = null
-
-    id match {
-      case 1 =>
-        suit = "bi-suit-club-fill"
-        color = "black-text"
-      case 2 =>
-        suit = "bi-suit-spade-fill"
-        color = "black-text"
-      case 3 =>
-        suit = "bi-suit-diamond-fill"
-        color = "red-text"
-      case 4 =>
-        suit = "bi-suit-heart-fill"
-        color = "red-text"
+    val (suit, color) = id match {
+      case 1 => ("bi-suit-club-fill", "black-text")
+      case 2 => ("bi-suit-spade-fill", "black-text")
+      case 3 => ("bi-suit-diamond-fill", "red-text")
+      case 4 => ("bi-suit-heart-fill", "red-text")
+      case _ => ("unknown-suit", "unknown-color")
     }
     (suit, color)
   }

@@ -98,6 +98,7 @@ object Evaluator {
       playerHandRanks =
         playerHandRanks :+ (player.playername, bestCategory, bestRank)
     }
+    // chaining
     val bestRank = playerHandRanks.map(_._3).min
     val bestCategory = playerHandRanks.map(_._2).max(categoryComparator)
     val playersWithBestCategory = playerHandRanks.filter {

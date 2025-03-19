@@ -1,5 +1,8 @@
-package de.htwg.poker.model
+package de.htwg.poker.util
 import de.htwg.poker.model.GameState
+import de.htwg.poker.model.Player
+import de.htwg.poker.model.Card
+import de.htwg.poker.model.shuffleDeck
 import de.htwg.poker.util.Evaluator
 
 
@@ -12,23 +15,23 @@ import de.htwg.poker.util.Evaluator
   object UpdateBoard {
 
     def strategy(gameState: GameState): GameState = {
-      if (gameState.getBoard.size == 0) flop(gameState)
-      else if (gameState.getBoard.size == 3) turn(gameState)
-      else if (gameState.getBoard.size == 4) river(gameState)
+      if (gameState.board.size == 0) flop(gameState)
+      else if (gameState.board.size == 3) turn(gameState)
+      else if (gameState.board.size == 4) river(gameState)
       else startRound(gameState)
     }
 
     def startRound(gameState: GameState): GameState = {
 
-      val winners = Evaluator.calcWinner(gameState.getPlayers.filter(player => !player.folded), gameState.getBoard)
+      val winners = Evaluator.calcWinner(gameState.players.getOrElse(List.empty[Player]).filter(player => !player.folded), gameState.board)
 
       val winnerNames = winners.map(winner => winner.playername)
 
-      val winningAmount = gameState.getPot / winners.size
+      val winningAmount = gameState.pot / winners.size
 
       val shuffledDeck = shuffleDeck
 
-      val newPlayerList = gameState.getPlayersAndBalances.zipWithIndex.map {
+      val newPlayerList = gameState.playersAndBalances.zipWithIndex.map {
         case (player, index) =>
           Player(
             shuffledDeck(index * 2),
@@ -39,16 +42,16 @@ import de.htwg.poker.util.Evaluator
       }
 
       val smallBlindPlayer = newPlayerList(gameState.getNextSmallBlindPlayer).copy(
-        balance = newPlayerList(gameState.getNextSmallBlindPlayer).balance - gameState.getSmallBlind,
+        balance = newPlayerList(gameState.getNextSmallBlindPlayer).balance - gameState.smallBlind,
         currentAmountBetted = newPlayerList(
           gameState.getNextSmallBlindPlayer
-        ).currentAmountBetted + gameState.getSmallBlind
+        ).currentAmountBetted + gameState.smallBlind
       )
 
       val bigBlindPlayer = newPlayerList(gameState.getNextBigBlindPlayer).copy(
-        balance = newPlayerList(gameState.getNextBigBlindPlayer).balance - gameState.getBigBlind,
+        balance = newPlayerList(gameState.getNextBigBlindPlayer).balance - gameState.bigBlind,
         currentAmountBetted =
-          newPlayerList(gameState.getNextBigBlindPlayer).currentAmountBetted + gameState.getBigBlind
+          newPlayerList(gameState.getNextBigBlindPlayer).currentAmountBetted + gameState.bigBlind
       )
 
       val newShuffledDeck = shuffledDeck.drop(newPlayerList.size * 2)
@@ -66,19 +69,19 @@ import de.htwg.poker.util.Evaluator
         }
       }
 
-      val updatedPlayersAndBalances = gameState.getPlayersAndBalances.map { player =>
+      val updatedPlayersAndBalances = gameState.playersAndBalances.map { player =>
         if (winnerNames.contains(player._1)) {
           if (player._1 == smallBlindPlayer.playername) {
-          player.copy(player._1, player._2 - gameState.getSmallBlind + winningAmount)
+          player.copy(player._1, player._2 - gameState.smallBlind + winningAmount)
           } else if (player._1 == bigBlindPlayer.playername) {
-          player.copy(player._1, player._2 - gameState.getBigBlind + winningAmount)
+          player.copy(player._1, player._2 - gameState.bigBlind + winningAmount)
           } else {
           player.copy(player._1, player._2 + winningAmount)
           }
         } else if (player._1 == smallBlindPlayer.playername) {
-          player.copy(player._1, player._2 - gameState.getSmallBlind)
+          player.copy(player._1, player._2 - gameState.smallBlind)
         } else if (player._1 == bigBlindPlayer.playername) {
-          player.copy(player._1, player._2 - gameState.getBigBlind)
+          player.copy(player._1, player._2 - gameState.bigBlind)
         } else {
           player
         }
@@ -89,11 +92,11 @@ import de.htwg.poker.util.Evaluator
         players = Some(finalPlayerList),
         deck = Some(newShuffledDeck),
         playerAtTurn = gameState.getNewRoundPlayerAtTurn,
-        currentHighestBetSize = gameState.getBigBlind,
+        currentHighestBetSize = gameState.bigBlind,
         board = Nil,
-        pot = gameState.getSmallBlind + gameState.getBigBlind,
-        smallBlind = gameState.getSmallBlind,
-        bigBlind = gameState.getBigBlind,
+        pot = gameState.smallBlind + gameState.bigBlind,
+        smallBlind = gameState.smallBlind,
+        bigBlind = gameState.bigBlind,
         smallBlindPointer = gameState.getNextSmallBlindPlayer,
         newRoundStarted = true
       )
@@ -106,15 +109,15 @@ import de.htwg.poker.util.Evaluator
     def river(gameState: GameState): GameState = addCardsToBoard(1, gameState)
 
     private def addCardsToBoard(cardsToAdd: Int, gameState: GameState): GameState = {
-      val newBoard = gameState.getDeck.take(cardsToAdd)
-      val newPlayerList = gameState.getPlayers.map(_.copy(currentAmountBetted = 0))
+      val newBoard = gameState.deck.getOrElse(List.empty[Card]).take(cardsToAdd)
+      val newPlayerList = gameState.players.getOrElse(List.empty[Player]).map(_.copy(currentAmountBetted = 0))
 
       gameState.copy(
         players = Some(newPlayerList),
-        deck = Some(gameState.getDeck.drop(cardsToAdd)),
-        playerAtTurn = gameState.getNextPlayer(gameState.getSmallBlindPointer),
+        deck = Some(gameState.deck.getOrElse(List.empty[Card]).drop(cardsToAdd)),
+        playerAtTurn = gameState.getNextPlayer(gameState.smallBlindPointer),
         currentHighestBetSize = 0,
-        board = gameState.getBoard ::: newBoard
+        board = gameState.board ::: newBoard
       )
     }
   }

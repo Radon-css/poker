@@ -3,7 +3,7 @@ import scala.math
 import de.htwg.poker.util.Evaluator
 import de.htwg.poker.util.TUIView
 import de.htwg.poker.util.HandInfo
-import de.htwg.poker.model.UpdateBoard
+import de.htwg.poker.util.UpdateBoard
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -33,17 +33,17 @@ case class GameState(
     newRoundStarted: Boolean = true
 ) {
 
-  def getPlayers: List[Player] = players.getOrElse(List.empty[Player])
-  def getDeck: List[Card] = deck.getOrElse(List.empty[Card])
-  def getPlayerAtTurn: Int = playerAtTurn
-  def getHighestBetSize: Int = currentHighestBetSize
-  def getBoard: List[Card] = board
-  def getSmallBlind: Int = smallBlind
-  def getBigBlind: Int = bigBlind
-  def getPot: Int = pot
-  def getPlayersAndBalances: List[(String, Int)] = playersAndBalances
-  def getSmallBlindPointer = smallBlindPointer
-  def getNewRoundStarted = newRoundStarted
+  /*def players.getOrElse(List.empty[Player]): List[Player] = players.getOrElse(List.empty[Player])
+  def deck.getOrElse(List.empty[Card]): List[Card] = deck.getOrElse(List.empty[Card])
+  def playerAtTurn: Int = playerAtTurn
+  def currentHighestBetSize: Int = currentHighestBetSize
+  def board: List[Card] = board
+  def smallBlind: Int = smallBlind
+  def bigBlind: Int = bigBlind
+  def pot: Int = pot
+  def playersAndBalances: List[(String, Int)] = playersAndBalances
+  def smallBlindPointer = smallBlindPointer
+  def newRoundStarted = newRoundStarted */
 
   // see TUIView for toString implementation
   override def toString(): String = TUIView.update(this)
@@ -64,11 +64,11 @@ case class GameState(
       balance = getCurrentPlayer.balance - amount,
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + amount
     )
-    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
-    val updatePlayer = getPlayers(getPlayerAtTurn).playername
+    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
+    val updatePlayer = players.getOrElse(List.empty[Player])(playerAtTurn).playername
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = getCurrentPlayer.balance - amount
-    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+    val updatedPlayersAndBalances = playersAndBalances.map { player =>
       if (player._1 == playerToUpdate) {
         player.copy(player._1, newPlayerBalance)
       } else {
@@ -78,19 +78,19 @@ case class GameState(
     copy(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer(getPlayerAtTurn),
+      playerAtTurn = getNextPlayer(playerAtTurn),
       currentHighestBetSize = math.max(
-        getHighestBetSize,
+        currentHighestBetSize,
         getCurrentPlayer.currentAmountBetted + amount
       ),
-      pot = getPot + amount,
+      pot = pot + amount,
       newRoundStarted = false
     )
   }
 
   def fold: GameState = {
     val foldedPlayer = getCurrentPlayer.copy(folded = true)
-    val newPlayerList = getPlayers.updated(playerAtTurn, foldedPlayer)
+    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, foldedPlayer)
 
     copy(
       players = Some(newPlayerList),
@@ -101,17 +101,17 @@ case class GameState(
 
   def call: GameState = {
     val callSize =
-      getHighestBetSize - getCurrentPlayer.currentAmountBetted
+      currentHighestBetSize - getCurrentPlayer.currentAmountBetted
 
     val updatedPlayer = getCurrentPlayer.copy(
       balance = getCurrentPlayer.balance - callSize,
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + callSize
     )
 
-    val newPlayerList = getPlayers.updated(playerAtTurn, updatedPlayer)
+    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = getCurrentPlayer.balance - callSize
-    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+    val updatedPlayersAndBalances = playersAndBalances.map { player =>
       if (player._1 == playerToUpdate) {
         player.copy(player._1, newPlayerBalance)
       } else {
@@ -122,19 +122,19 @@ case class GameState(
     copy(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer(getPlayerAtTurn),
-      currentHighestBetSize = getHighestBetSize,
-      pot = getPot + callSize,
+      playerAtTurn = getNextPlayer(playerAtTurn),
+      currentHighestBetSize = currentHighestBetSize,
+      pot = pot + callSize,
       newRoundStarted = false
     )
   }
 
   def check: GameState = {
     val playerChecked = getCurrentPlayer.copy(checkedThisRound = true)
-    val newPlayerList = getPlayers.updated(playerAtTurn, playerChecked)
+    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, playerChecked)
     copy(
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer(getPlayerAtTurn),
+      playerAtTurn = getNextPlayer(playerAtTurn),
       newRoundStarted = false
     )
   }
@@ -147,10 +147,10 @@ case class GameState(
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + allInSize
     )
 
-    val newPlayerList = getPlayers.updated(getPlayerAtTurn, updatedPlayer)
+    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
 
     val playerToUpdate = getCurrentPlayer.playername
-    val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
+    val updatedPlayersAndBalances = playersAndBalances.map { player =>
       if (player._1 == playerToUpdate) {
         player.copy(player._1, 0)
       } else {
@@ -161,12 +161,12 @@ case class GameState(
     copy(
       playersAndBalances = updatedPlayersAndBalances,
       players = Some(newPlayerList),
-      playerAtTurn = getNextPlayer(getPlayerAtTurn),
+      playerAtTurn = getNextPlayer(playerAtTurn),
       currentHighestBetSize = math.max(
-        getHighestBetSize,
+        currentHighestBetSize,
         allInSize
       ),
-      pot = getPot + allInSize,
+      pot = pot + allInSize,
       newRoundStarted = false
     )
   }
@@ -235,42 +235,41 @@ case class GameState(
 
   // helper methods
   def getNextPlayer(current: Int): Int = {
-    val players = getPlayers
-    val totalPlayers = players.length
+    val totalPlayers = players.getOrElse(List.empty[Player]).length
 
     def findNextIndex(index: Int): Int = {
       val nextIndex = (index + 1) % totalPlayers
-      if (!players(nextIndex).folded) nextIndex else findNextIndex(nextIndex)
+      if (!players.getOrElse(List.empty[Player])(nextIndex).folded) nextIndex else findNextIndex(nextIndex)
     }
 
     findNextIndex(current)
   }
 
-  def getCurrentPlayer: Player = getPlayers(playerAtTurn)
+  def getCurrentPlayer: Player = players.getOrElse(List.empty[Player])(playerAtTurn)
 
   def getPreviousPlayer: Int =
-    if (getPlayerAtTurn == 0) getPlayers.length - 1 else getPlayerAtTurn - 1
+    if (playerAtTurn == 0) players.getOrElse(List.empty[Player]).length - 1 else playerAtTurn - 1
 
   def getNextSmallBlindPlayer: Int =
-    if (getPlayersAndBalances.length - 1 == getSmallBlindPointer) 0
-    else getSmallBlindPointer + 1
+    if (playersAndBalances.length - 1 == smallBlindPointer) 0
+    else smallBlindPointer + 1
 
   def getNextBigBlindPlayer: Int =
-    if (getPlayersAndBalances.length - 1 == getNextSmallBlindPlayer) 0
+    if (playersAndBalances.length - 1 == getNextSmallBlindPlayer) 0
     else getNextSmallBlindPlayer + 1
 
   def getNewRoundPlayerAtTurn: Int =
-    if (getPlayersAndBalances.length - 1 == getNextBigBlindPlayer) 0
+    if (playersAndBalances.length - 1 == getNextBigBlindPlayer) 0
     else getNextBigBlindPlayer + 1
 
   def getHandEval(player: Int): String = {
     HandInfo
       .evaluate(
         List(
-          getPlayers(player).card1,
-          getPlayers(player).card2
+          players.getOrElse(List.empty[Player])(player).card1,
+          players.getOrElse(List.empty[Player])(player).card2
         ),
-        getBoard
+        board
       )
   }
 }

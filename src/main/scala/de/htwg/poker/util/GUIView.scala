@@ -13,6 +13,7 @@ import scalafx.scene.control.Button
 import de.htwg.poker.controller.Controller
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Card
+import de.htwg.poker.model.Player
 import de.htwg.poker.util.Observer
 import scalafx.application.Platform
 import scala.util.{Try, Success, Failure}
@@ -31,7 +32,7 @@ object GUIView {
     val cardListHtml = gui.updateCardsHtml(gameState)
     val boardListHtml = gui.updateBoardHtml(gameState)
     val betListHtml = gui.updateBetsHtml(gameState)
-    val gameStarted = gameState.getPlayers.size != 0
+    val gameStarted = gameState.players.getOrElse(List.empty[Player]).size != 0
 
     return s"""
     ${
@@ -57,7 +58,7 @@ object GUIView {
               </div>
               <div class="flex flex-col items-center justify-center">
               <h1 class="text-gray-100">Current Hand:</h1>
-              <h1 class="text-red-500">${gameState.getHandEval(gameState.getPlayerAtTurn)}</h1>
+              <h1 class="text-red-500">${gameState.getHandEval(gameState.playerAtTurn)}</h1>
               </div>
                 <button class="flex justify-start space-x-2 items-center mt-4 mr-4 font-bold h-12 w-36 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20" onclick="restartGame()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-clockwise ml-4" viewBox="0 0 16 16">
@@ -101,7 +102,7 @@ object GUIView {
                     </div>
 
                       <div class="flex flex-col items-center space-y-2">
-                        <p class="rounded-full bg-slate-100 px-2">${gameState.getPot + "$"}
+                        <p class="rounded-full bg-slate-100 px-2">${gameState.pot + "$"}
                         </p>
                         <div class="flex px-16">
                         ${boardListHtml(0)}
@@ -162,7 +163,7 @@ object GUIView {
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-right-circle ml-2" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
                 </svg>
-                <div class="flex justify-center items-center">CALL ${gameState.getHighestBetSize - gameState.getCurrentPlayer.currentAmountBetted + "$"}</div>
+                <div class="flex justify-center items-center">CALL ${gameState.currentHighestBetSize - gameState.getCurrentPlayer.currentAmountBetted + "$"}</div>
               </button>
               <form onsubmit="bet()" class="flex flex-row items-center">
                 <button type="submit" class="flex justify-start space-x-2 items-center w-28 h-12 font-bold my-5 bg-yellow-600/20 text-yellow-400 rounded-l-full hover:bg-yellow-600/10">

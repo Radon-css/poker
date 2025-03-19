@@ -175,8 +175,8 @@ class ControllerSpec extends AnyWordSpec with Matchers {
           )
         val controller = new Controller(gameState)
         controller.bet(amount)
-        gameState.getPlayers(0).balance should be(900)
-        gameState.getPlayers(0).currentAmountBetted should be(100)
+        gameState.players.getOrElse(List.empty[Player])(0).balance should be(900)
+        gameState.players.getOrElse(List.empty[Player])(0).currentAmountBetted should be(100)
       }
       "throw an exception if the amount is greater than the player's balance" in {
         val amount = 1001
@@ -324,8 +324,8 @@ class ControllerSpec extends AnyWordSpec with Matchers {
           )
         val controller = new Controller(gameState)
         controller.call
-        gameState.getPlayers(0).balance should be(1000)
-        gameState.getPlayers(0).currentAmountBetted should be(20)
+        gameState.players.getOrElse(List.empty[Player])(0).balance should be(1000)
+        gameState.players.getOrElse(List.empty[Player])(0).currentAmountBetted should be(20)
       }
       "throw an exception if a players call before any bet was made" in {
         val gameState =

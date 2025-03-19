@@ -14,6 +14,7 @@ import scalafx.scene.control.Button
 import controller.Controller
 import model.GameState
 import model.Card
+import model.Player
 import util.Observer
 import scalafx.application.Platform
 import scala.util.{Try, Success, Failure}
@@ -132,15 +133,15 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
      in GUIView, we then simply pass the new Html Code that has been created by these methods into our static Html code with the help of String Variables.*/
 
   def updatePlayersHtml(gameState: GameState): List[String] = {
-    val newPlayerList = gameState.getPlayers.map(_.toHtml)
+    val newPlayerList = gameState.players.getOrElse(List.empty[Player]).map(_.toHtml)
     List
       .fill(6)(HiddenHtml)
       .patch(0, newPlayerList, newPlayerList.size)
   }
 
   def updateCardsHtml(gameState: GameState): List[(String, String)] = {
-    val playerList = gameState.getPlayers.zipWithIndex
-    val playerAtTurn = gameState.getPlayerAtTurn
+    val playerList = gameState.players.getOrElse(List.empty[Player]).zipWithIndex
+    val playerAtTurn = gameState.playerAtTurn
     val newCardList = playerList.map {
       case (player, index) if index == playerAtTurn =>
         (player.card1.toHtml, player.card2.toHtml)
@@ -156,18 +157,18 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
   }
 
   def updateBoardHtml(gameState: GameState): List[String] = {
-    val boardList = gameState.getBoard
+    val boardList = gameState.board
     val newBoardList = boardList.map(_.toHtml)
     val invisBoardList = List.fill(5)(HiddenHtml)
     val hiddenBoardList =
       List.fill(5)(HiddenBoardCardHtml)
 
-    if (gameState.getPlayers.isEmpty) invisBoardList
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) invisBoardList
     else hiddenBoardList.patch(0, newBoardList, newBoardList.size)
   }
 
   def updateBetsHtml(gameState: GameState): List[String] = {
-    val playerList = gameState.getPlayers
+    val playerList = gameState.players.getOrElse(List.empty[Player])
     val newBetList = playerList.map(_.betSizeToHtml)
     val hiddenBetList = List.fill(6)(HiddenHtml)
 

@@ -2,6 +2,7 @@ package de.htwg.poker
 package controller
 import model.Player
 import model.GameState
+import model.UpdateBoard
 import util.Observable
 import util.UndoManager
 
@@ -107,10 +108,10 @@ class Controller(var gameState: GameState) extends Observable {
           )
         )
       )
-      gameState = gameState.UpdateBoard.strategy
+      gameState = UpdateBoard.strategy(gameState)
     }
     if (playerWonBeforeShowdown) {
-      gameState = gameState.UpdateBoard.startRound
+      gameState = UpdateBoard.startRound(gameState)
     }
     notifyObservers
     true
@@ -142,10 +143,10 @@ class Controller(var gameState: GameState) extends Observable {
           )
         )
       )
-      gameState = gameState.UpdateBoard.strategy
+      gameState = UpdateBoard.strategy(gameState)
     }
     if (playerWonBeforeShowdown) {
-      gameState = gameState.UpdateBoard.startRound
+      gameState = UpdateBoard.startRound(gameState)
     }
     notifyObservers
     true
@@ -175,10 +176,10 @@ class Controller(var gameState: GameState) extends Observable {
           )
         )
       )
-      gameState = gameState.UpdateBoard.strategy
+      gameState = UpdateBoard.strategy(gameState)
     }
     if (playerWonBeforeShowdown) {
-      gameState = gameState.UpdateBoard.startRound
+      gameState = UpdateBoard.startRound(gameState)
     }
     notifyObservers
     true
@@ -195,7 +196,7 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def restartGame: Unit = {
-    gameState = gameState.restartGame
+    gameState = UpdateBoard.startRound(gameState)
     notifyObservers
   }
 

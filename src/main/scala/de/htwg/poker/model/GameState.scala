@@ -3,6 +3,7 @@ import scala.math
 import de.htwg.poker.util.Evaluator
 import de.htwg.poker.util.TUIView
 import de.htwg.poker.util.HandInfo
+import de.htwg.poker.model.UpdateBoard
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -230,121 +231,6 @@ case class GameState(
       0,
       true
     )
-  }
-
-  def restartGame = UpdateBoard.startRound
-
-  /* here we used a strategy pattern to update the community cards. If a handout of community cards is required,
-    we can simply call the strategy method which then decides how many cards have to be revealed.
-    If there were no community cards revealed, you reveal the first three cards.
-    If there are three or four community cards revealed, you reveal another card.
-    If there are five community cards revealed, you can start the next round.*/
-
-  object UpdateBoard {
-    val strategy: GameState =
-      if (getBoard.size == 0) flop
-      else if (getBoard.size == 3) turn
-      else if (getBoard.size == 4) river
-      else startRound
-
-    def startRound: GameState = {
-
-      val winners = Evaluator.calcWinner(getPlayers.filter(player => !player.folded), getBoard)
-
-      val winnerNames = winners.map(winner => winner.playername)
-
-      val winningAmount = getPot / winners.size
-
-      val shuffledDeck = shuffleDeck
-
-      val newPlayerList = getPlayersAndBalances.zipWithIndex.map {
-        case (player, index) =>
-          Player(
-            shuffledDeck(index * 2),
-            shuffledDeck(index * 2 + 1),
-            player._1,
-            player._2
-          )
-      }
-
-      val smallBlindPlayer = newPlayerList(getNextSmallBlindPlayer).copy(
-        balance = newPlayerList(getNextSmallBlindPlayer).balance - smallBlind,
-        currentAmountBetted = newPlayerList(
-          getNextSmallBlindPlayer
-        ).currentAmountBetted + smallBlind
-      )
-
-      val bigBlindPlayer = newPlayerList(getNextBigBlindPlayer).copy(
-        balance = newPlayerList(getNextBigBlindPlayer).balance - bigBlind,
-        currentAmountBetted =
-          newPlayerList(getNextBigBlindPlayer).currentAmountBetted + bigBlind
-      )
-
-      val newShuffledDeck = shuffledDeck.drop(newPlayerList.size * 2)
-
-      val playerListWithBlinds =
-        newPlayerList
-          .updated(getNextSmallBlindPlayer, smallBlindPlayer)
-          .updated(getNextBigBlindPlayer, bigBlindPlayer)
-
-      val finalPlayerList: List[Player] = playerListWithBlinds.map { player =>
-        if (winnerNames.contains(player.playername)) {
-          player.copy(balance = player.balance + winningAmount)
-        } else {
-          player
-        }
-      }
-
-      val updatedPlayersAndBalances = getPlayersAndBalances.map { player =>
-        if (winnerNames.contains(player._1)) {
-          if (player._1 == smallBlindPlayer.playername) {
-          player.copy(player._1, player._2 - smallBlind + winningAmount)
-          } else if (player._1 == bigBlindPlayer.playername) {
-          player.copy(player._1, player._2 - bigBlind + winningAmount)
-          } else {
-          player.copy(player._1, player._2 + winningAmount)
-          }
-        } else if (player._1 == smallBlindPlayer.playername) {
-          player.copy(player._1, player._2 - smallBlind)
-        } else if (player._1 == bigBlindPlayer.playername) {
-          player.copy(player._1, player._2 - bigBlind)
-        } else {
-          player
-        }
-      }
-
-      copy(
-        playersAndBalances = updatedPlayersAndBalances,
-        players = Some(finalPlayerList),
-        deck = Some(newShuffledDeck),
-        playerAtTurn = getNewRoundPlayerAtTurn,
-        currentHighestBetSize = getBigBlind,
-        board = Nil,
-        pot = getSmallBlind + getBigBlind,
-        smallBlind = getSmallBlind,
-        bigBlind = getBigBlind,
-        smallBlindPointer = getNextSmallBlindPlayer,
-        newRoundStarted = true
-      )
-    }
-
-    def flop: GameState = addCardsToBoard(3)
-
-    def turn: GameState = addCardsToBoard(1)
-
-    def river: GameState = addCardsToBoard(1)
-
-    private def addCardsToBoard(cardsToAdd: Int): GameState = {
-      val newBoard = getDeck.take(cardsToAdd)
-      val newPlayerList = getPlayers.map(_.copy(currentAmountBetted = 0))
-      copy(
-        players = Some(newPlayerList),
-        deck = Some(getDeck.drop(cardsToAdd)),
-        playerAtTurn = getNextPlayer(getSmallBlindPointer),
-        currentHighestBetSize = 0,
-        board = getBoard ::: newBoard
-      )
-    }
   }
 
   // helper methods

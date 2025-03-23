@@ -136,6 +136,7 @@ class Controller(var gameState: GameState) extends Observable {
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
       // set all players checkedThisRound attribute to false
+      // function as parameter
       gameState = gameState.copy(
         players = Some(
           gameState.players.getOrElse(List.empty[Player]).map(player =>

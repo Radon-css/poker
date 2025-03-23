@@ -94,8 +94,3 @@ def shuffleDeck: List[Card] = {
   val random = new Random
   random.shuffle(deck)
 }
-
-def removeCards(deck: List[Card], n: Int): List[Card] = {
-  val newCardList = deck.drop(n);
-  newCardList
-}

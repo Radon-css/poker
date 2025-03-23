@@ -53,6 +53,7 @@ object HandInfo {
 
     var returnValue = Type.High
 
+    // chaining
     val rankHistogramm: List[(Rank, Int)] = combination
       .map(_.rank)
       .groupBy(identity)

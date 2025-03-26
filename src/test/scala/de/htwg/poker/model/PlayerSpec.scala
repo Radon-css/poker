@@ -13,7 +13,11 @@ class PlayerSpec extends AnyWordSpec with Matchers {
     val currentAmountBetted = 0
     val player = Player(card1, card2, playername, balance, currentAmountBetted)
     val gameState =
-      GameState(List(player), Some(List(player)), Some(List(card1, card2)))
+      GameState(
+        List((player.playername, player.balance)),
+        Some(List(player)),
+        Some(List(card1, card2))
+      )
     val controller = new Controller(gameState)
 
     "created" should {

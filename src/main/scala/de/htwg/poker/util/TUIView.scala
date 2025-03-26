@@ -7,20 +7,20 @@ import de.htwg.poker.model.Card
 object TUIView {
   def update(gameState: GameState): String = {
     val stringBuilder = new StringBuilder
-    val indexedPlayerList = gameState.getPlayers.zipWithIndex
+    val indexedPlayerList = gameState.players.getOrElse(List.empty[Player]).zipWithIndex
     val Print = new Print(gameState)
 
     // clear console
     // print("\u001b[2J\u001b[H")
     // case mehr als 3 Spieler
-    if (gameState.getPlayers.size > 3) {
+    if (gameState.players.getOrElse(List.empty[Player]).size > 3) {
       val TopRowPlayerList =
-        gameState.getPlayers.take(
-          scala.math.ceil(gameState.getPlayers.size.toDouble / 2).toInt
+        gameState.players.getOrElse(List.empty[Player]).take(
+          scala.math.ceil(gameState.players.getOrElse(List.empty[Player]).size.toDouble / 2).toInt
         )
       val BottomRowPlayerList =
-        gameState.getPlayers.drop(
-          scala.math.ceil(gameState.getPlayers.size.toDouble / 2).toInt
+        gameState.players.getOrElse(List.empty[Player]).drop(
+          scala.math.ceil(gameState.players.getOrElse(List.empty[Player]).size.toDouble / 2).toInt
         )
       val TopRowIndexedPlayerList = TopRowPlayerList.zipWithIndex
       val BottomRowIndexedPlayerList = BottomRowPlayerList.zipWithIndex.map {
@@ -35,7 +35,7 @@ object TUIView {
       sb.append(Print.printPlayerCards(TopRowPlayerList))
       sb.append(Print.printPlayerBets(TopRowPlayerList))
       sb.append(Print.printPot(TopRowApproxLength))
-      sb.append(Print.printBoard(gameState.getBoard, TopRowApproxLength))
+      sb.append(Print.printBoard(gameState.board, TopRowApproxLength))
       sb.append(Print.printPlayerBets(BottomRowPlayerList))
       sb.append(Print.printPlayerCards(BottomRowPlayerList))
       sb.append(Print.printPlayerNames(BottomRowIndexedPlayerList))
@@ -43,7 +43,7 @@ object TUIView {
       sb.toString
       // case weniger als 3 Spieler
     } else {
-      val TopRowPlayerList = gameState.getPlayers
+      val TopRowPlayerList = gameState.players.getOrElse(List.empty[Player])
       val TopRowIndexedPlayerList = TopRowPlayerList.zipWithIndex
       val TopRowApproxLength =
         (TopRowIndexedPlayerList.size - 1) * 14 + 7
@@ -54,7 +54,7 @@ object TUIView {
       sb.append(Print.printPlayerCards(TopRowPlayerList))
       sb.append(Print.printPlayerBets(TopRowPlayerList))
       sb.append(Print.printPot(TopRowApproxLength))
-      sb.append(Print.printBoard(gameState.getBoard, TopRowApproxLength))
+      sb.append(Print.printBoard(gameState.board, TopRowApproxLength))
       sb.toString
     }
   }
@@ -73,7 +73,7 @@ class Print(gameState: GameState) {
   def printPlayerNames(indexedPlayerList: List[(Player, Int)]): String = {
     val sb = new StringBuilder
     for (playerWithIndex <- indexedPlayerList) {
-      if (playerWithIndex._2 == gameState.getPlayerAtTurn) {
+      if (playerWithIndex._2 == gameState.playerAtTurn) {
         val boldPlayer = playerWithIndex._1.playername
         if (playerWithIndex == indexedPlayerList.last) {
           sb.append(
@@ -125,12 +125,12 @@ class Print(gameState: GameState) {
 
   def printPot(playerLengthApprox: Int): String = {
     val sb = new StringBuilder
-    val potLength = gameState.getPot.toString.length + 3
+    val potLength = gameState.pot.toString.length + 3
     val padding =
       math.max(0, playerLengthApprox - potLength) / 2
     sb.append("\n")
     sb.append(" " * padding)
-    sb.append("(" + gameState.getPot + "$)")
+    sb.append("(" + gameState.pot + "$)")
     sb.append("\n")
     sb.toString
   }

@@ -2,6 +2,7 @@ package de.htwg.poker
 package controller
 import model.Player
 import model.GameState
+import util.UpdateBoard
 import util.Observable
 import util.UndoManager
 
@@ -54,21 +55,21 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def bet(amount: Int): Boolean = {
-    if (gameState.getPlayers.isEmpty) {
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) {
       throw new Exception("Start a game first")
     }
     undoManager.doStep(gameState)
 
     // distinguish allIn and normal bet
-    if (amount == gameState.getPlayers(gameState.getPlayerAtTurn).balance) {
+    if (amount == gameState.players.getOrElse(List.empty[Player])(gameState.playerAtTurn).balance) {
       gameState = gameState.allIn
 
     } else {
-      if (gameState.getPlayers(gameState.getPlayerAtTurn).balance < amount) {
+      if (gameState.players.getOrElse(List.empty[Player])(gameState.playerAtTurn).balance < amount) {
         throw new Exception("Insufficient balance")
       }
       if (
-        gameState.getBigBlind >= amount || gameState.getHighestBetSize >= amount
+        gameState.bigBlind >= amount || gameState.currentHighestBetSize >= amount
       ) {
         throw new Exception("Bet size is too low")
       }
@@ -79,7 +80,7 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def allIn(): Boolean = {
-    if (gameState.getPlayers.isEmpty) {
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) {
       throw new Exception("Start a game first")
     }
 
@@ -90,7 +91,7 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def fold: Boolean = {
-    if (gameState.getPlayers.isEmpty) {
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) {
       throw new Exception("Start a game first")
     }
 
@@ -102,29 +103,29 @@ class Controller(var gameState: GameState) extends Observable {
       // set all players checkedThisRound attribute to false
       gameState = gameState.copy(
         players = Some(
-          gameState.getPlayers.map(player =>
+          gameState.players.getOrElse(List.empty[Player]).map(player =>
             player.copy(checkedThisRound = false)
           )
         )
       )
-      gameState = gameState.UpdateBoard.strategy
+      gameState = UpdateBoard.strategy(gameState)
     }
     if (playerWonBeforeShowdown) {
-      gameState = gameState.UpdateBoard.startRound
+      gameState = UpdateBoard.startRound(gameState)
     }
     notifyObservers
     true
   }
 //test
   def call: Boolean = {
-    if (gameState.getPlayers.isEmpty) {
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) {
       throw new Exception("Start a game first")
-    } else if (gameState.getHighestBetSize == 0) {
+    } else if (gameState.currentHighestBetSize == 0) {
       throw new Exception("Invalid call before bet")
     } else if (
       gameState
-        .getPlayers(gameState.getPlayerAtTurn)
-        .currentAmountBetted == gameState.getHighestBetSize
+        .players.getOrElse(List.empty[Player])(gameState.playerAtTurn)
+        .currentAmountBetted == gameState.currentHighestBetSize
     ) {
       throw new Exception("Cannot call")
     }
@@ -135,29 +136,30 @@ class Controller(var gameState: GameState) extends Observable {
     // Check if handout is required and if so, call updateBoard to reveal board cards
     if (handout_required) {
       // set all players checkedThisRound attribute to false
+      // function as parameter
       gameState = gameState.copy(
         players = Some(
-          gameState.getPlayers.map(player =>
+          gameState.players.getOrElse(List.empty[Player]).map(player =>
             player.copy(checkedThisRound = false)
           )
         )
       )
-      gameState = gameState.UpdateBoard.strategy
+      gameState = UpdateBoard.strategy(gameState)
     }
     if (playerWonBeforeShowdown) {
-      gameState = gameState.UpdateBoard.startRound
+      gameState = UpdateBoard.startRound(gameState)
     }
     notifyObservers
     true
   }
 
   def check: Boolean = {
-    if (gameState.getPlayers.isEmpty) {
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) {
       throw new Exception("Start a game first")
     } else if (
       gameState
-        .getPlayers(gameState.getPlayerAtTurn)
-        .currentAmountBetted != gameState.getHighestBetSize
+        .players.getOrElse(List.empty[Player])(gameState.playerAtTurn)
+        .currentAmountBetted != gameState.currentHighestBetSize
     ) {
       throw new Exception("Cannot check")
     }
@@ -170,15 +172,15 @@ class Controller(var gameState: GameState) extends Observable {
       // set all players checkedThisRound attribute to false
       gameState = gameState.copy(
         players = Some(
-          gameState.getPlayers.map(player =>
+          gameState.players.getOrElse(List.empty[Player]).map(player =>
             player.copy(checkedThisRound = false)
           )
         )
       )
-      gameState = gameState.UpdateBoard.strategy
+      gameState = UpdateBoard.strategy(gameState)
     }
     if (playerWonBeforeShowdown) {
-      gameState = gameState.UpdateBoard.startRound
+      gameState = UpdateBoard.startRound(gameState)
     }
     notifyObservers
     true
@@ -195,7 +197,7 @@ class Controller(var gameState: GameState) extends Observable {
   }
 
   def restartGame: Unit = {
-    gameState = gameState.restartGame
+    gameState = UpdateBoard.startRound(gameState)
     notifyObservers
   }
 
@@ -205,35 +207,35 @@ class Controller(var gameState: GameState) extends Observable {
   def handout_required: Boolean = {
     // preflop handout
     // case jeder called big Blind -> bigBlindPlayer hat recht zu erhöhen
-    (gameState.getBoard.size == 0 &&
-      gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getBigBlind || player.folded
+    (gameState.board.size == 0 &&
+      gameState.players.getOrElse(List.empty[Player]).forall(player =>
+        player.currentAmountBetted == gameState.bigBlind || player.folded
       ))
-    && gameState.getPlayerAtTurn == gameState.getNextPlayer(
-      gameState.getNextPlayer(gameState.getSmallBlindPointer)
+    && gameState.playerAtTurn == gameState.getNextPlayer(
+      gameState.getNextPlayer(gameState.smallBlindPointer)
     )
     // case es wird erhöht -> bigBlindPlayer hat kein recht zu erhöhen
-    || (gameState.getBoard.size == 0 && gameState.getHighestBetSize > gameState.getBigBlind
-      && gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted || player.folded
+    || (gameState.board.size == 0 && gameState.currentHighestBetSize > gameState.bigBlind
+      && gameState.players.getOrElse(List.empty[Player]).forall(player =>
+        player.currentAmountBetted == gameState.players.getOrElse(List.empty[Player]).head.currentAmountBetted || player.folded
       ))
     // postflop handout
     // jeder checkt durch
-    || (gameState.getBoard.size != 0
-      && gameState.getHighestBetSize == 0
-      && gameState.getPlayers.forall(player =>
+    || (gameState.board.size != 0
+      && gameState.currentHighestBetSize == 0
+      && gameState.players.getOrElse(List.empty[Player]).forall(player =>
         player.checkedThisRound || player.folded
       ))
     // es wird erhöht -> dann austeilen, wenn jeder gleich viel gebetted hat
-    || (gameState.getBoard.size != 0
-      && gameState.getHighestBetSize != 0
-      && gameState.getPlayers.forall(player =>
-        player.currentAmountBetted == gameState.getPlayers.head.currentAmountBetted || player.folded
+    || (gameState.board.size != 0
+      && gameState.currentHighestBetSize != 0
+      && gameState.players.getOrElse(List.empty[Player]).forall(player =>
+        player.currentAmountBetted == gameState.players.getOrElse(List.empty[Player]).head.currentAmountBetted || player.folded
       ))
   }
 
   def playerWonBeforeShowdown =
-    gameState.getPlayers.filter(player => !player.folded).length == 1
+    gameState.players.getOrElse(List.empty[Player]).filter(player => !player.folded).length == 1
 
   override def toString: String = gameState.toString()
 

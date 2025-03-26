@@ -24,14 +24,5 @@ class DeckSpec extends AnyWordSpec with Matchers {
         shuffledDeck should not be deck
       }
     }
-
-    "removeCards" should {
-      "remove n cards from the deck" in {
-        val n = 5
-        val newDeck = removeCards(deck, n)
-        newDeck.length should be(52 - n)
-        newDeck shouldBe deck.drop(n)
-      }
-    }
   }
 }

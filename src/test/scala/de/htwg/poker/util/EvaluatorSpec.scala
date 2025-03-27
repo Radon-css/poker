@@ -7,7 +7,7 @@ import de.htwg.poker.model._
 class EvaluatorSpec extends AnyWordSpec with Matchers {
 
   "An Evaluator" should {
-    val evaluator = new Evaluator
+    val handInfo = HandInfo
 
     "evaluate the best hand correctly" in {
       val playerCards = List(
@@ -21,7 +21,7 @@ class EvaluatorSpec extends AnyWordSpec with Matchers {
         new Card(Suit.Spades, Rank.Ten),
         new Card(Suit.Spades, Rank.Six)
       )
-      val result = evaluator.evaluate(playerCards, boardCards)
+      val result = handInfo.evaluate(playerCards, boardCards)
       result shouldBe "Flush"
     }
 
@@ -37,7 +37,7 @@ class EvaluatorSpec extends AnyWordSpec with Matchers {
         new Card(Suit.Spades, Rank.Ten),
         new Card(Suit.Spades, Rank.Six)
       )
-      val result = evaluator.evaluate(playerCards, boardCards)
+      val result = handInfo.evaluate(playerCards, boardCards)
       result shouldBe "High"
     }
 

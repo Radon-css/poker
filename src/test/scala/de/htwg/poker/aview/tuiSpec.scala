@@ -105,9 +105,13 @@ class TUISpec extends AnyWordSpec with Matchers {
             1000
           )
         )
+        val playersAndBalances = List(
+          ("Frank", 1000),
+          ("Tom", 1000)
+        )
         val gameState =
           new GameState(
-            players,
+            playersAndBalances,
             Some(players),
             None,
             0,
@@ -139,9 +143,13 @@ class TUISpec extends AnyWordSpec with Matchers {
             1000
           )
         )
+        val playersAndBalances = List(
+          ("Frank", 1000),
+          ("Tom", 1000)
+        )
         val gameState =
           new GameState(
-            players,
+            playersAndBalances,
             Some(players),
             None,
             0,

@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import de.htwg.poker.controller.Controller
 import de.htwg.poker.model._
+import de.htwg.poker.util.UpdateBoard
 
 class GameStateSpec extends AnyWordSpec with Matchers {
   "A GameState" when {
@@ -11,9 +12,10 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     val card2 = Card(Suit.Diamonds, Rank.King)
     val player1 = Player(card1, card2, "John Doe", 1000, 0)
     val player2 = Player(card1, card2, "Jane Smith", 2000, 0)
+    val playersAndBalances = List(("John Doe", 1000), ("Jane Smith", 1000))
     val players = List(player1, player2)
     val deck = List(card1, card2)
-    val gameState = GameState(players, Some(players), Some(deck))
+    val gameState = GameState(playersAndBalances, Some(players), Some(deck))
     val controller = new Controller(gameState)
 
     "created" should {
@@ -49,10 +51,6 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         gameState.pot should be(30)
       }
 
-      "have the correct original players" in {
-        gameState.getOriginalPlayers should be(players)
-      }
-
       "have the correct small blind pointer" in {
         gameState.smallBlindPointer should be(0)
       }
@@ -62,7 +60,8 @@ class GameStateSpec extends AnyWordSpec with Matchers {
       "update the player's balance and current amount betted" in {
         val amount = 100
         val updatedGameState = gameState.bet(amount)
-        val updatedPlayer = updatedGameState.players.getOrElse(List.empty[Player])(0)
+        val updatedPlayer =
+          updatedGameState.players.getOrElse(List.empty[Player])(0)
         updatedPlayer.balance should be(player1.balance - amount)
         updatedPlayer.currentAmountBetted should be(
           player1.currentAmountBetted + amount
@@ -86,7 +85,8 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     "call" should {
       "update the player's balance and current amount betted" in {
         val updatedGameState = gameState.call
-        val updatedPlayer = updatedGameState.players.getOrElse(List.empty[Player])(0)
+        val updatedPlayer =
+          updatedGameState.players.getOrElse(List.empty[Player])(0)
         updatedPlayer.balance should be(player1.balance - 20)
         updatedPlayer.currentAmountBetted should be(
           player1.currentAmountBetted + 20
@@ -108,7 +108,9 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     "fold" should {
       "remove the player from the game" in {
         val updatedGameState = gameState.fold
-        updatedGameState.players.getOrElse(List.empty[Player]) should be(List(player2))
+        updatedGameState.players.getOrElse(List.empty[Player]) should be(
+          List(player2)
+        )
       }
 
       "update the player at turn" in {
@@ -120,7 +122,8 @@ class GameStateSpec extends AnyWordSpec with Matchers {
     "allin" should {
       "update the player's balance and current amount betted" in {
         val updatedGameState = gameState.allIn
-        val updatedPlayer = updatedGameState.players.getOrElse(List.empty[Player])(0)
+        val updatedPlayer =
+          updatedGameState.players.getOrElse(List.empty[Player])(0)
         updatedPlayer.balance should be(0)
         updatedPlayer.currentAmountBetted should be(
           player1.currentAmountBetted + 1000
@@ -166,7 +169,10 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
       val gameState = GameState(
-        List(player1, player2),
+        List(
+          (player1.playername, player1.balance),
+          (player2.playername, player2.balance)
+        ),
         Some(List(player1, player2)),
         None,
         0,
@@ -178,13 +184,14 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
 
-      val updatedGameState = gameState.UpdateBoard.startRound
+      val updatedGameState = UpdateBoard.startRound(gameState)
 
-      updatedGameState.getOriginalPlayers should be(
-        gameState.getOriginalPlayers
-      )
-      updatedGameState.players.getOrElse(List.empty[Player]) should not be gameState.players.getOrElse(List.empty[Player])
-      updatedGameState.deck.getOrElse(List.empty[Card]) should not be gameState.deck.getOrElse(List.empty[Card])
+      updatedGameState.players.getOrElse(
+        List.empty[Player]
+      ) should not be gameState.players.getOrElse(List.empty[Player])
+      updatedGameState.deck.getOrElse(
+        List.empty[Card]
+      ) should not be gameState.deck.getOrElse(List.empty[Card])
       updatedGameState.playerAtTurn should be(2)
       updatedGameState.bigBlind should be(20)
       updatedGameState.board should be(Nil)
@@ -210,7 +217,10 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
       val gameState = GameState(
-        List(player1, player2),
+        List(
+          (player1.playername, player1.balance),
+          (player2.playername, player2.balance)
+        ),
         Some(List(player1, player2)),
         None,
         0,
@@ -222,13 +232,14 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
 
-      val updatedGameState = gameState.UpdateBoard.flop
+      val updatedGameState = UpdateBoard.flop(gameState)
 
-      updatedGameState.getOriginalPlayers should be(
-        gameState.getOriginalPlayers
-      )
-      updatedGameState.players.getOrElse(List.empty[Player]) should not be gameState.players.getOrElse(List.empty[Player])
-      updatedGameState.deck.getOrElse(List.empty[Card]) should not be gameState.deck.getOrElse(List.empty[Card])
+      updatedGameState.players.getOrElse(
+        List.empty[Player]
+      ) should not be gameState.players.getOrElse(List.empty[Player])
+      updatedGameState.deck.getOrElse(
+        List.empty[Card]
+      ) should not be gameState.deck.getOrElse(List.empty[Card])
       updatedGameState.playerAtTurn should be(0)
       updatedGameState.bigBlind should be(0)
       updatedGameState.pot should be(30)
@@ -253,7 +264,10 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
       val gameState = GameState(
-        List(player1, player2),
+        List(
+          (player1.playername, player1.balance),
+          (player2.playername, player2.balance)
+        ),
         Some(List(player1, player2)),
         None,
         0,
@@ -265,13 +279,14 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
 
-      val updatedGameState = gameState.UpdateBoard.turn
+      val updatedGameState = UpdateBoard.turn(gameState)
 
-      updatedGameState.getOriginalPlayers should be(
-        gameState.getOriginalPlayers
-      )
-      updatedGameState.players.getOrElse(List.empty[Player]) should not be gameState.players.getOrElse(List.empty[Player])
-      updatedGameState.deck.getOrElse(List.empty[Card]) should not be gameState.deck.getOrElse(List.empty[Card])
+      updatedGameState.players.getOrElse(
+        List.empty[Player]
+      ) should not be gameState.players.getOrElse(List.empty[Player])
+      updatedGameState.deck.getOrElse(
+        List.empty[Card]
+      ) should not be gameState.deck.getOrElse(List.empty[Card])
       updatedGameState.playerAtTurn should be(0)
       updatedGameState.bigBlind should be(0)
       updatedGameState.pot should be(30)
@@ -296,7 +311,10 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
       val gameState = GameState(
-        List(player1, player2),
+        List(
+          (player1.playername, player1.balance),
+          (player2.playername, player2.balance)
+        ),
         Some(List(player1, player2)),
         None,
         0,
@@ -308,13 +326,14 @@ class GameStateSpec extends AnyWordSpec with Matchers {
         0
       )
 
-      val updatedGameState = gameState.UpdateBoard.river
+      val updatedGameState = UpdateBoard.river(gameState)
 
-      updatedGameState.getOriginalPlayers should be(
-        gameState.getOriginalPlayers
-      )
-      updatedGameState.players.getOrElse(List.empty[Player]) should not be gameState.players.getOrElse(List.empty[Player])
-      updatedGameState.deck.getOrElse(List.empty[Card]) should not be gameState.deck.getOrElse(List.empty[Card])
+      updatedGameState.players.getOrElse(
+        List.empty[Player]
+      ) should not be gameState.players.getOrElse(List.empty[Player])
+      updatedGameState.deck.getOrElse(
+        List.empty[Card]
+      ) should not be gameState.deck.getOrElse(List.empty[Card])
       updatedGameState.playerAtTurn should be(0)
       updatedGameState.bigBlind should be(0)
       updatedGameState.pot should be(30)

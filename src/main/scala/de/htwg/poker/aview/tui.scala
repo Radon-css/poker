@@ -35,7 +35,7 @@ class TUI(controller: Controller) extends Observer {
         )
         result match {
           case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Failure(exception) => showError(exception.getMessage())
         }
         false
       // start a quick example game without inserting playernames and so on.
@@ -49,7 +49,7 @@ class TUI(controller: Controller) extends Observer {
         )
         result match {
           case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Failure(exception) => showError(exception.getMessage())
         }
         false
       // make a monetary contribution to the pot by calling "bet (amount)". This indicates that you are confident in your current hand.
@@ -57,7 +57,7 @@ class TUI(controller: Controller) extends Observer {
         val result: Try[Boolean] = Try(controller.bet(inputList(1).toInt))
         result match {
           case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Failure(exception) => showError(exception.getMessage())
         }
         false
       // fold to to discard your hand and forfeit any further involvement in the current round. Do this if your hand is weak.
@@ -65,7 +65,7 @@ class TUI(controller: Controller) extends Observer {
         val result: Try[Boolean] = Try(controller.fold)
         result match {
           case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Failure(exception) => showError(exception.getMessage())
         }
         false
       // call to match the current bet to continue in the round and see the next community cards. You can only call if there were bets beforehand.
@@ -73,7 +73,7 @@ class TUI(controller: Controller) extends Observer {
         val result: Try[Boolean] = Try(controller.call)
         result match {
           case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Failure(exception) => showError(exception.getMessage())
         }
         false
       // check to dismiss your right to bet and pass the action to the next player. You can only do this if there were no bets in the current state of the game.
@@ -81,7 +81,7 @@ class TUI(controller: Controller) extends Observer {
         val result: Try[Boolean] = Try(controller.check)
         result match {
           case Success(value)     => return true
-          case Failure(exception) => println(s"Error: ${exception.getMessage}")
+          case Failure(exception) => showError(exception.getMessage())
         }
         false
       // close the game
@@ -100,5 +100,9 @@ class TUI(controller: Controller) extends Observer {
         println("invalid command")
         false
     }
+  }
+
+  def showError(errMessage: String): Unit = {
+    println(s"Error: ${errMessage}")
   }
 }

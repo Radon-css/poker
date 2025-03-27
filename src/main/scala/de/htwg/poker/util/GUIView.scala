@@ -46,6 +46,9 @@ object GUIView {
               <script src="https://cdn.tailwindcss.com"></script>
             </head>
             <body class="flex flex-col">
+            <div id="toast" class="hidden fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-md">
+              <span id="toast-message"></span>
+          </div>
             <div class="flex flex-col justify-center items-center h-screen w-full bg-gradient-to-tl from-gray-800 to-gray-700 bg-gradient-to-r space-y-5">
               <div class="flex items-center justify-between w-full h-14">
               <div class="flex space-x-2 ml-2 ">
@@ -308,6 +311,12 @@ object GUIView {
   </div>
 </form>
     <script>
+    function showToast(message) {
+    var toast = document.getElementById("toast");
+    var messageSpan = document.getElementById("toast-message");
+    messageSpan.textContent = message;
+    toast.classList.remove("hidden");
+    }
   function startGame() {
     invoke.toList(
       document.getElementById("form1").value,

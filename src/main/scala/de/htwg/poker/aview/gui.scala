@@ -23,6 +23,8 @@ import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 import scala.compiletime.ops.boolean
 import de.htwg.poker.util.GUIView
+import scalafx.scene.control.Alert
+import scalafx.scene.control.Alert.AlertType
 
 /* For our GUI, we decided to use ScalaFx in combination with the WebView method
   from the ScalaFx Library so we can design our entire GUI with HTML and CSS.
@@ -81,12 +83,39 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
      call a Scala function to update the GameState.*/
 
   class External {
-    def call(): Unit = controller.call
-    def check(): Unit = controller.check
-    def fold(): Unit = controller.fold
+    def call(): Unit = { 
+      val result: Try[Boolean] = Try(controller.call)
+        result match {
+          case Success(value)     => return
+          case Failure(exception) => showError(exception.getMessage())
+        }
+      }
+    
+    def check(): Unit = { 
+      val result: Try[Boolean] = Try(controller.check)
+        result match {
+          case Success(value)     => return
+          case Failure(exception) => showError(exception.getMessage())
+        }
+      }
+
+    def fold(): Unit = { 
+      val result: Try[Boolean] = Try(controller.fold)
+        result match {
+          case Success(value)     => return
+          case Failure(exception) => showError(exception.getMessage())
+        }}
+
+    def bet(amount: Int): Unit = {
+      val result: Try[Boolean] = Try(controller.bet(amount))
+        result match {
+          case Success(value)     => return
+          case Failure(exception) => showError(exception.getMessage())
+        }
+      }
+
     def undo(): Unit = controller.undo
     def redo(): Unit = controller.redo
-    def bet(amount: Int): Unit = controller.bet(amount)
     def restartGame(): Unit = controller.restartGame
 
     /* we need the toList method so that a user of our game can
@@ -185,4 +214,12 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
 
   val HiddenHtml = "<div class=\"hidden\"> </div>"
+
+  def showError(errMessage: String): Unit = {
+    val alert = new Alert(AlertType.Error)
+    alert.setTitle("Error")
+    alert.setHeaderText("An error occurred")
+    alert.setContentText(errMessage)
+    alert.showAndWait()
+  }
 }

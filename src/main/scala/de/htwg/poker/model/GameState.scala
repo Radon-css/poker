@@ -33,18 +33,6 @@ case class GameState(
     newRoundStarted: Boolean = true
 ) {
 
-  /*def players.getOrElse(List.empty[Player]): List[Player] = players.getOrElse(List.empty[Player])
-  def deck.getOrElse(List.empty[Card]): List[Card] = deck.getOrElse(List.empty[Card])
-  def playerAtTurn: Int = playerAtTurn
-  def currentHighestBetSize: Int = currentHighestBetSize
-  def board: List[Card] = board
-  def smallBlind: Int = smallBlind
-  def bigBlind: Int = bigBlind
-  def pot: Int = pot
-  def playersAndBalances: List[(String, Int)] = playersAndBalances
-  def smallBlindPointer = smallBlindPointer
-  def newRoundStarted = newRoundStarted */
-
   // see TUIView for toString implementation
   override def toString(): String = TUIView.update(this)
 

@@ -30,9 +30,15 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("All player names must be unique")
     }
 
-    try {
-      val smallBlindInt = smallBlind.toInt
-      val bigBlindInt = bigBlind.toInt
+      val smallBlindIntOption = smallBlind.toIntOption
+      val bigBlindIntOption = bigBlind.toIntOption
+
+      if (smallBlindIntOption.isEmpty || bigBlindIntOption.isEmpty) {
+        throw new Exception("Last two inputs must be integers")
+      }
+
+      val smallBlindInt = smallBlindIntOption.get
+      val bigBlindInt = bigBlindIntOption.get
 
       if (smallBlindInt > 100 || bigBlindInt > 200) {
         throw new Exception(
@@ -48,10 +54,6 @@ class Controller(var gameState: GameState) extends Observable {
         gameState.createGame(playerNameList, smallBlindInt, bigBlindInt, 0)
       notifyObservers
       true
-    } catch {
-      case _: NumberFormatException =>
-        throw new Exception("Last two inputs must be integers")
-    }
   }
 
   def bet(amount: Int): Boolean = {

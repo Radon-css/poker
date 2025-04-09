@@ -29,12 +29,14 @@ lazy val root = project
   .dependsOn(
     utilService,
     controllerService,
-    modelService
+    modelService,
+    fileIOService
   )
   .aggregate(
     utilService,
     controllerService,
-    modelService
+    modelService,
+    fileIOService
   )
 
 lazy val utilService = project
@@ -55,5 +57,12 @@ lazy val modelService = project
   .in(file("modelService"))
   .settings(
     name := "modelService",
+    dependencies
+  )
+
+lazy val fileIOService = project
+  .in(file("fileIOService"))
+  .settings(
+    name := "fileIOService",
     dependencies
   )

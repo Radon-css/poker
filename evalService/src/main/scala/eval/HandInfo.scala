@@ -1,4 +1,4 @@
-package de.htwg.poker.util
+package de.htwg.poker.eval
 
 import de.htwg.poker.model.*
 

@@ -1,4 +1,4 @@
-package de.htwg.poker.util
+package de.htwg.poker.eval
 import scala.io.Source
 import scala.math.Ordering
 import de.htwg.poker.model.*

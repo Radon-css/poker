@@ -1,4 +1,4 @@
-package de.htwg.poker.util
+package de.htwg.poker.tui
 
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
@@ -7,7 +7,8 @@ import de.htwg.poker.model.Card
 object TUIView {
   def update(gameState: GameState): String = {
     val stringBuilder = new StringBuilder
-    val indexedPlayerList = gameState.players.getOrElse(List.empty[Player]).zipWithIndex
+    val indexedPlayerList =
+      gameState.players.getOrElse(List.empty[Player]).zipWithIndex
     val Print = new Print(gameState)
 
     // clear console
@@ -15,13 +16,31 @@ object TUIView {
     // case mehr als 3 Spieler
     if (gameState.players.getOrElse(List.empty[Player]).size > 3) {
       val TopRowPlayerList =
-        gameState.players.getOrElse(List.empty[Player]).take(
-          scala.math.ceil(gameState.players.getOrElse(List.empty[Player]).size.toDouble / 2).toInt
-        )
+        gameState.players
+          .getOrElse(List.empty[Player])
+          .take(
+            scala.math
+              .ceil(
+                gameState.players
+                  .getOrElse(List.empty[Player])
+                  .size
+                  .toDouble / 2
+              )
+              .toInt
+          )
       val BottomRowPlayerList =
-        gameState.players.getOrElse(List.empty[Player]).drop(
-          scala.math.ceil(gameState.players.getOrElse(List.empty[Player]).size.toDouble / 2).toInt
-        )
+        gameState.players
+          .getOrElse(List.empty[Player])
+          .drop(
+            scala.math
+              .ceil(
+                gameState.players
+                  .getOrElse(List.empty[Player])
+                  .size
+                  .toDouble / 2
+              )
+              .toInt
+          )
       val TopRowIndexedPlayerList = TopRowPlayerList.zipWithIndex
       val BottomRowIndexedPlayerList = BottomRowPlayerList.zipWithIndex.map {
         case (element, index) => (element, index + TopRowPlayerList.size)

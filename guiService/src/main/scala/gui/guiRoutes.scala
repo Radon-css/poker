@@ -13,7 +13,7 @@ object guiRoutes extends DefaultJsonProtocol {
     pathPrefix("gui") {
       concat(
         // GUIVIEW routes
-        path("render") {
+        path("getView") {
           get {
             complete {
               GUIView.render()

@@ -25,12 +25,12 @@ object HandInfo {
       case StraightFlush => 9
     }
 
-  def evaluate(playerCards: List[Card], boardCards: List[Card]): String = {
-    val (bestHand, bestType) = evalHand(playerCards, boardCards)
+  def evalHand(playerCards: List[Card], boardCards: List[Card]): String = {
+    val (bestHand, bestType) = evalHand0(playerCards, boardCards)
     bestType.toString
   }
 
-  def evalHand(
+  def evalHand0(
       playerCards: List[Card],
       boardCards: List[Card]
   ): (List[Card], Type) = {

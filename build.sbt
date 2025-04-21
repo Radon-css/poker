@@ -20,6 +20,14 @@ lazy val dependencies = Seq(
   }
 )
 
+  libraryDependencies ++= Seq(
+    "io.circe" %% "circe-core" % "0.14.6",
+    "io.circe" %% "circe-generic" % "0.14.6",
+    "io.circe" %% "circe-parser" % "0.14.6",
+    "de.heikoseeberger" %% "akka-http-circe" % "1.40.0"
+  )
+
+
 lazy val root = project
   .in(file("."))
   .settings(

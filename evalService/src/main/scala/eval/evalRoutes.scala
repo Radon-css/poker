@@ -18,7 +18,7 @@ object evalRoutes extends DefaultJsonProtocol {
             entity(as[GameState]) { gameState =>
               val playerCards = gameState.players.get.head.cards
               val boardCards = gameState.board
-              val result = HandInfo.evaluate(playerCards, boardCards)
+              val result = HandInfo.getHandInfo(playerCards, boardCards)
               complete(result)
             }
           }

@@ -1,28 +1,30 @@
+package de.htwg.poker
 package controllers
 
-import play.api._
-import play.api.mvc._
-import de.htwg.poker.util.Evaluator
+import akka.actor.{Actor, Props}
+import akka.actor.typed.ActorRef
+import akka.actor.typed.ActorSystem
+import akka.stream.Materializer
 import de.htwg.poker.controller.Controller
 import de.htwg.poker.model.GameState
+import play.api._
 import play.api.libs.json._
-
-import org.apache.pekko.stream.Materializer
-import org.apache.pekko.actor._
 import play.api.libs.streams.ActorFlow
-import scala.collection.immutable.VectorMap
-import scala.swing.event.Event
-import scala.swing.Reactor
-import scala.collection.immutable.ListMap
-import scala.concurrent.duration._
+import play.api.mvc._
 
-/** This controller creates an Action to handle HTTP requests to the
-  * application's home page.
+import scala.collection.immutable.ListMap
+import scala.collection.immutable.VectorMap
+import scala.concurrent.duration._
+import scala.swing.Reactor
+import scala.swing.event.Event
+import de.htwg.poker.controllers.PokerControllerPublisher
+
+/** This controller creates an Action to handle HTTP requests to the application's home page.
   */
 @Singleton
 class PokerController()(
     val controllerComponents: ControllerComponents,
-    implicit val system: ActorSystem,
+    implicit val system: ActorSystem[Nothing],
     implicit val mat: Materializer
 ) extends BaseController {
 
@@ -50,7 +52,6 @@ class PokerController()(
   def gameState = pokerControllerPublisher.gameState
 
   def newGame() = Action { implicit request: Request[AnyContent] =>
-    Evaluator.readHashes
     isLobby = false
 
     pokerControllerPublisher.createGame(
@@ -177,9 +178,9 @@ class PokerController()(
   }
 
   def offlinePlayerIsAtTurn = {
-    val playerAtTurn = gameState.getPlayers(gameState.getPlayerAtTurn)
+    val playerAtTurn = gameState.players.getOrElse(gameState.playerAtTurn,"")
     println("OFFLINEPLAYERISATTURN: Player at turn: " + playerAtTurn)
-    val playerID = players.getOrElse(playerAtTurn.playername, "")
+    val playerID = players.getOrElse(gameState.getCurrentPlayer.playername,"")
     println("OFFLINEPLAYERISATTURN: Player ID: " + playerID)
     println("OFFLINEPLAYERISATTURN:" + offlinePlayers.contains(playerID))
     offlinePlayers.contains(playerID)
@@ -205,29 +206,28 @@ class PokerController()(
       "lobbyPlayers" -> players,
       "smallBlind" -> smallBlind,
       "bigBlind" -> bigBlind,
-      "players" -> gameState.getPlayers.zipWithIndex.map {
-        case (player, index) =>
-          Json.obj(
-            "player" -> Json.obj(
-              "id" -> players.getOrElse(player.playername, ""),
-              "card1rank" -> player.card1.rank.toString,
-              "card1suit" -> player.card1.suit.id,
-              "card2rank" -> player.card2.rank.toString,
-              "card2suit" -> player.card2.suit.id,
-              "playername" -> player.playername,
-              "balance" -> player.balance,
-              "currentAmountBetted" -> player.currentAmountBetted,
-              "folded" -> player.folded,
-              "handEval" -> gameState.getHandEval(index),
-              "offline" -> offlinePlayers.contains(
-                players.getOrElse(player.playername, "")
-              )
+      "players" -> gameState.players.zipWithIndex.map { case (player, index) =>
+        Json.obj(
+          "player" -> Json.obj(
+            "id" -> players.getOrElse(player.playername, ""),
+            "card1rank" -> player.card1.rank.toString,
+            "card1suit" -> player.card1.suit.id,
+            "card2rank" -> player.card2.rank.toString,
+            "card2suit" -> player.card2.suit.id,
+            "playername" -> player.playername,
+            "balance" -> player.balance,
+            "currentAmountBetted" -> player.currentAmountBetted,
+            "folded" -> player.folded,
+            "handEval" -> gameState.getHandEval(index),
+            "offline" -> offlinePlayers.contains(
+              players.getOrElse(player.playername, "")
             )
           )
+        )
       },
-      "playerAtTurn" -> gameState.getPlayerAtTurn,
-      "highestBetSize" -> gameState.getHighestBetSize,
-      "board" -> gameState.getBoard.map { card =>
+      "playerAtTurn" -> gameState.playerAtTurn,
+      "highestBetSize" -> gameState.currentHighestBetSize,
+      "board" -> gameState.board.map { card =>
         Json.obj(
           "card" -> Json.obj(
             "rank" -> card.rank.toString,
@@ -235,7 +235,7 @@ class PokerController()(
           )
         )
       },
-      "pot" -> gameState.getPot
+      "pot" -> gameState.pot
     )
   }
 
@@ -245,19 +245,17 @@ class PokerController()(
 
     ActorFlow.actorRef { out =>
       println("Connect received with playerID: " + playerID)
-      PokerWebSocketActorFactory.create(out, playerID)
+      PokerWebSocketActorFactory.create(out[String], playerID)
 
     }
   }
 
   object PokerWebSocketActorFactory {
-    def create(out: ActorRef, playerID: String) =
-      Props(new PokerWebSocketActor(out, playerID))
+    def create(out: ActorRef[String], playerID: String) =
+      Props(new PokerWebSocketActor(out[String], playerID))
   }
 
-  class PokerWebSocketActor(out: ActorRef, id: String)
-      extends Actor
-      with Reactor {
+  class PokerWebSocketActor(out: ActorRef[String], id: String) extends Actor with Reactor {
     import context.dispatcher
 
     val playerID = id
@@ -293,8 +291,7 @@ class PokerController()(
 
       case "pong" =>
         println(s"Pong received from $playerID")
-        lastPongReceived =
-          System.currentTimeMillis() // Zeitstempel aktualisieren
+        lastPongReceived = System.currentTimeMillis() // Zeitstempel aktualisieren
         if (offlinePlayers.contains(playerID)) {
           reconnected(playerID);
         }

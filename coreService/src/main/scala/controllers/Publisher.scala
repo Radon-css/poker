@@ -1,3 +1,4 @@
+package de.htwg.poker
 package controllers
 
 import scala.swing.Publisher

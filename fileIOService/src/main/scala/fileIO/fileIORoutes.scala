@@ -13,7 +13,7 @@ object FileIORoutes extends DefaultJsonProtocol {
     pathPrefix("fileIO") {
       concat(
         // SAVE route
-        path("save") {
+        path("saveState") {
           post {
             entity(as[GameState]) { gameState =>
               complete {
@@ -24,7 +24,7 @@ object FileIORoutes extends DefaultJsonProtocol {
           }
         },
         // LOAD route
-        path("load") {
+        path("loadState") {
           get {
             complete {
               fileIO.FileIO.load

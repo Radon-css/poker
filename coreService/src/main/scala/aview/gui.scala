@@ -44,7 +44,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     }
 
     // Loading content using the GUIView.render method
-    webView.engine.loadContent(GUIView.render(Controller.gameState))
+    webView.engine.loadContent(Client.getGUIView(Controller.gameState))
 
     // Adding a listener for the load state of the WebEngine
     webView.engine.getLoadWorker.stateProperty.addListener { (_, _, newValue) =>

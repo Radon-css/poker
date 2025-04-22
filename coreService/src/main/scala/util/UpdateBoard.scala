@@ -3,7 +3,7 @@ import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.shuffleDeck
-import de.htwg.poker.util.Evaluator
+import de.htwg.poker.Client
 
 /* here we used a strategy pattern to update the community cards. If a handout of community cards is required,
     we can simply call the strategy method which then decides how many cards have to be revealed.
@@ -22,7 +22,7 @@ object UpdateBoard {
 
   def startRound(gameState: GameState): GameState = {
 
-    val winners = Evaluator.calcWinner(gameState.players.getOrElse(List.empty[Player]).filter(player => !player.folded), gameState.board)
+    val winners = Client.calcWinner(gameState.players.getOrElse(List.empty[Player]).filter(player => !player.folded), gameState.board)
 
     val winnerNames = winners.map(winner => winner.playername)
 

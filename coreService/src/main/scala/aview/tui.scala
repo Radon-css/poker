@@ -4,12 +4,13 @@ import controller.Controller
 import util.Observer
 import scala.io.StdIn.readLine
 import scala.util.{Try, Success, Failure}
+import de.htwg.poker.Client
 
 class TUI(controller: Controller) extends Observer {
   controller.add(this)
 
   override def update: Unit = {
-    println(controller.toString)
+    println(CLient.getTUIView(controller.gameState))
   }
 
   def gameLoop(): Unit = {

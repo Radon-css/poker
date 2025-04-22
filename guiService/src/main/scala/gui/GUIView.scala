@@ -24,7 +24,7 @@ import scala.compiletime.ops.boolean
 import de.htwg.poker.Poker.gui
 
 object GUIView {
-  def render(gameState: GameState): String = {
+  def getView(gameState: GameState): String = {
 
     val playerListHtml = gui.updatePlayersHtml(gameState)
     val cardListHtml = gui.updateCardsHtml(gameState)

@@ -5,7 +5,7 @@ import de.htwg.poker.model.Player
 import de.htwg.poker.model.Card
 
 object TUIView {
-  def update(gameState: GameState): String = {
+  def getView(gameState: GameState): String = {
     val stringBuilder = new StringBuilder
     val indexedPlayerList =
       gameState.players.getOrElse(List.empty[Player]).zipWithIndex

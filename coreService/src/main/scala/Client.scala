@@ -105,7 +105,7 @@ object Client {
           Unmarshal(response.entity).to[String]
         case _ =>
           Future.failed(
-            new RuntimeException(s"Failed with status ${response.status}")
+            new RuntimeException(s"rendergui Failed with status ${response.status}")
           )
       }
     }

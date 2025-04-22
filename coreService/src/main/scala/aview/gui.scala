@@ -22,7 +22,7 @@ import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 import scala.compiletime.ops.boolean
-import de.htwg.poker.util.GUIView
+import de.htwg.poker.Client
 
 /* For our GUI, we decided to use ScalaFx in combination with the WebView method
   from the ScalaFx Library so we can design our entire GUI with HTML and CSS.

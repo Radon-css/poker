@@ -2,10 +2,8 @@ package de.htwg.poker.tui
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import de.htwg.poker.util.UpdateBoard
-import de.htwg.poker.model.GameState
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import spray.json._
+import de.htwg.poker.tui.types.GameState
+import akka.http.scaladsl.marshalling.sprayjson.SprayJsonSupport._
 
 object utilRoutes extends DefaultJsonProtocol {
 
@@ -13,10 +11,11 @@ object utilRoutes extends DefaultJsonProtocol {
     pathPrefix("tui") {
       concat(
         // TUIVIEW routes
-        path("getTUIView") {
+        path("getTUIView") { (gameStateJson) =>
           get {
             complete {
-              TUIView.getView()
+              val gameState = gameStateJson.parseJson.convertTo[GameState]
+              TUIView.getView(gameState)
             }
           }
         }

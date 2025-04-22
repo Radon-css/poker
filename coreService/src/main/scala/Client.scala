@@ -23,9 +23,10 @@ object Client {
       boardCards: List[Card]
   )(implicit system: ActorSystem, mat: Materializer): Future[List[Player]] = {
 
-    val gameState = GameState(Some(players), boardCards)
-
-    val jsonString = gameState.asJson.noSpaces
+    val jsonString = Map(
+      "players" -> Some(players).asJson,
+      "boardCards" -> boardCards.asJson
+    ).asJson.noSpaces
 
     val entity = HttpEntity(
       ContentTypes.`application/json`,
@@ -57,9 +58,10 @@ object Client {
       boardCards: List[Card]
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
-    val gameState = GameState(Some(List(player)), boardCards)
-
-    val jsonString = gameState.asJson.noSpaces
+    val jsonString = Map(
+      "player" -> player.asJson,
+      "boardCards" -> boardCards.asJson
+    ).asJson.noSpaces
 
     val entity = HttpEntity(
       ContentTypes.`application/json`,

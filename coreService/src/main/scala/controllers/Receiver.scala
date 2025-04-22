@@ -1,6 +1,5 @@
 package controllers
 
-import javax.inject._
 import play.api._
 import play.api.mvc._
 import de.htwg.poker.util.Evaluator
@@ -21,7 +20,7 @@ import scala.concurrent.duration._
   * application's home page.
   */
 @Singleton
-class PokerController @Inject() (
+class PokerController()(
     val controllerComponents: ControllerComponents,
     implicit val system: ActorSystem,
     implicit val mat: Materializer

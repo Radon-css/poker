@@ -46,9 +46,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     // Loading content using the GUIView.render method
     webView.engine.loadContent(
       Client.getGUIView(
-        Controller.gameState,
-        gameState.getHandEval(
-          gameState.playerAtTurn
+        controller.gameState,
+        controller.gameState.getHandEval(
+          controller.gameState.playerAtTurn
         )
       )
     )
@@ -80,9 +80,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     Platform.runLater(() =>
       webEngine.loadContent(
         Client.getGUIView(
-          Controller.gameState,
-          gameState.getHandEval(
-            gameState.playerAtTurn
+          controller.gameState,
+          controller.gameState.getHandEval(
+            controller.gameState.playerAtTurn
           )
         )
       )

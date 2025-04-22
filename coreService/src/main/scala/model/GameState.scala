@@ -44,7 +44,7 @@ case class GameState(
   def newRoundStarted = newRoundStarted */
 
   // see TUIView for toString implementation
-  override def toString(): String = TUIView.update(this)
+  override def toString(): String = Client.getTUIView(this)
 
   /* in these following methods, we have to update the gamestate according to the certain action that has been taken.
     For example, if there was a bet, the players balance has to be reduced by the amount that has been betted and this

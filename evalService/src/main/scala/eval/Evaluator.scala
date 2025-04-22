@@ -5,6 +5,11 @@ import scala.math.Ordering
 import de.htwg.poker.eval.types.Card
 import de.htwg.poker.eval.types.Player
 
+import de.htwg.poker.eval.types.Rank
+import de.htwg.poker.eval.types.Suit
+import de.htwg.poker.eval.types.Rank.*
+import de.htwg.poker.eval.types.Suit.*
+
 object Evaluator {
 
   val categoryComparator = new Ordering[String] {
@@ -64,17 +69,25 @@ object Evaluator {
       val combinations = getCombinations[Card](5, cards)
 
       for (combination <- combinations) {
-        val value = combination.map(_.rank.prime).product[Int]
+        val value = combination.map(card => getPrime(card.rank)).product[Int]
         if (
-          combination(0).suit.id == combination(1).suit.id && cards(
-            1
-          ).suit.id == combination(2).suit.id && combination(
-            2
-          ).suit.id == combination(
-            3
-          ).suit.id && combination(3).suit.id == combination(
-            4
-          ).suit.id
+          getId(combination(0).suit) == getId(combination(1).suit) && getId(
+            cards(
+              1
+            ).suit
+          ) == getId(combination(2).suit) && getId(
+            combination(
+              2
+            ).suit
+          ) == getId(
+            combination(
+              3
+            ).suit
+          ) && getId(combination(3).suit) == getId(
+            combination(
+              4
+            ).suit
+          )
         ) {
           val (rank, category) = binarySearch(flushHash, value)
           if (
@@ -154,5 +167,28 @@ object Evaluator {
             tail
           )
       }
+  }
+
+  def getId(suit: Suit): Int = suit match {
+    case Clubs    => 1
+    case Spades   => 2
+    case Diamonds => 3
+    case Hearts   => 4
+  }
+
+  def getPrime(rank: Rank): Int = rank match {
+    case Two   => 2
+    case Three => 3
+    case Four  => 5
+    case Five  => 7
+    case Six   => 11
+    case Seven => 13
+    case Eight => 17
+    case Nine  => 19
+    case Ten   => 23
+    case Jack  => 29
+    case Queen => 31
+    case King  => 37
+    case Ace   => 41
   }
 }

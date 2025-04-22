@@ -3,6 +3,8 @@ package de.htwg.poker.eval
 import de.htwg.poker.eval.types.Card
 import de.htwg.poker.eval.types.Rank
 import de.htwg.poker.eval.types.Suit
+import de.htwg.poker.eval.types.Rank.*
+import de.htwg.poker.eval.types.Suit.*
 
 /* this class contains an Algorithm that can evaluate Poker Hands. It compares the two Cards the player
   holds with the community Cards that are currently revealed to find the combination of player cards and community cards that is worth most.
@@ -89,12 +91,18 @@ object HandInfo {
 
     // check for Straights
     val sortedCards =
-      combination.sorted(Ordering.by[Card, Int](_.rank.strength)).reverse
+      combination.sortBy(card => -getStrength(card.rank))
     if (
-      sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
-      && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
-      && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
-      && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
+      getStrength(sortedCards.head.rank) == getStrength(sortedCards(1).rank) + 1
+      && getStrength(sortedCards(1).rank) == getStrength(
+        sortedCards(2).rank
+      ) + 1
+      && getStrength(sortedCards(2).rank) == getStrength(
+        sortedCards(3).rank
+      ) + 1
+      && getStrength(sortedCards(3).rank) == getStrength(
+        sortedCards(4).rank
+      ) + 1
       || (sortedCards.head.rank == Rank.Ace && sortedCards(
         1
       ).rank == Rank.Five && sortedCards(2).rank == Rank.Four && sortedCards(
@@ -107,15 +115,23 @@ object HandInfo {
 
       // check for Flush
     if (
-      combination(0).suit.id == combination(1).suit.id && combination(
-        1
-      ).suit.id == combination(2).suit.id && combination(
-        2
-      ).suit.id == combination(
-        3
-      ).suit.id && combination(3).suit.id == combination(
-        4
-      ).suit.id
+      getId(combination(0).suit) == getId(combination(1).suit) && getId(
+        combination(
+          1
+        ).suit
+      ) == getId(combination(2).suit) && getId(
+        combination(
+          2
+        ).suit
+      ) == getId(
+        combination(
+          3
+        ).suit
+      ) && getId(combination(3).suit) == getId(
+        combination(
+          4
+        ).suit
+      )
     )
       returnValue = Type.Flush
 
@@ -128,19 +144,35 @@ object HandInfo {
       returnValue = Type.Quads
     // check for StraightFlush
     if (
-      combination(0).suit.id == combination(1).suit.id && combination(
-        1
-      ).suit.id == combination(2).suit.id && combination(
-        2
-      ).suit.id == combination(
-        3
-      ).suit.id && combination(3).suit.id == combination(
-        4
-      ).suit.id && (
-        sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
-          && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1
-          && sortedCards(2).rank.strength == sortedCards(3).rank.strength + 1
-          && sortedCards(3).rank.strength == sortedCards(4).rank.strength + 1
+      getId(combination(0).suit) == getId(combination(1).suit) && getId(
+        combination(
+          1
+        ).suit
+      ) == getId(combination(2).suit) && getId(
+        combination(
+          2
+        ).suit
+      ) == getId(
+        combination(
+          3
+        ).suit
+      ) && getId(combination(3).suit) == getId(
+        combination(
+          4
+        ).suit
+      ) && (
+        getStrength(sortedCards.head.rank) == getStrength(
+          sortedCards(1).rank
+        ) + 1
+          && getStrength(sortedCards(1).rank) == getStrength(
+            sortedCards(2).rank
+          ) + 1
+          && getStrength(sortedCards(2).rank) == getStrength(
+            sortedCards(3).rank
+          ) + 1
+          && getStrength(sortedCards(3).rank) == getStrength(
+            sortedCards(4).rank
+          ) + 1
           || (sortedCards.head.rank == Rank.Ace && sortedCards(
             1
           ).rank == Rank.Five && sortedCards(
@@ -165,5 +197,28 @@ object HandInfo {
         case head :: tail =>
           combinations(n - 1, tail).map(head :: _) ++ combinations(n, tail)
       }
+  }
+
+  def getStrength(rank: Rank): Int = rank match {
+    case Two   => 1
+    case Three => 2
+    case Four  => 3
+    case Five  => 4
+    case Six   => 5
+    case Seven => 6
+    case Eight => 7
+    case Nine  => 8
+    case Ten   => 9
+    case Jack  => 10
+    case Queen => 11
+    case King  => 12
+    case Ace   => 13
+  }
+
+  def getId(suit: Suit): Int = suit match {
+    case Clubs    => 1
+    case Spades   => 2
+    case Diamonds => 3
+    case Hearts   => 4
   }
 }

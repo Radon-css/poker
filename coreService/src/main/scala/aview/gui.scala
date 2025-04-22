@@ -44,8 +44,14 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     }
 
     // Loading content using the GUIView.render method
-    webView.engine.loadContent(Client.getGUIView(Controller.gameState))
-
+    webView.engine.loadContent(
+      Client.getGUIView(
+        Controller.gameState,
+        gameState.getHandEval(
+          gameState.playerAtTurn
+        )
+      )
+    )
     // Adding a listener for the load state of the WebEngine
     webView.engine.getLoadWorker.stateProperty.addListener { (_, _, newValue) =>
       if (newValue == State.SUCCEEDED) {
@@ -71,7 +77,16 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   // here we call GUIView.render to update our GUI
   override def update: Unit = {
-    Platform.runLater(() => webEngine.loadContent(Client.getGUIView(Controller.gameState)))
+    Platform.runLater(() =>
+      webEngine.loadContent(
+        Client.getGUIView(
+          Controller.gameState,
+          gameState.getHandEval(
+            gameState.playerAtTurn
+          )
+        )
+      )
+    )
   }
 
   /* Because we used Html and Javascript for our GUI, we need to make upcalls

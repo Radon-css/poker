@@ -83,10 +83,14 @@ object Client {
   }
 
   def getGUIView(
-      gameState: GameState
+      gameState: GameState,
+      handEval: String
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
-    val jsonString = gameState.asJson.noSpaces
+    val jsonString = Map(
+      "gameState" -> gameState.asJson,
+      "handEval" -> handEval.asJson
+    ).asJson.noSpaces
 
     val entity = HttpEntity(
       ContentTypes.`application/json`,
@@ -105,7 +109,9 @@ object Client {
           Unmarshal(response.entity).to[String]
         case _ =>
           Future.failed(
-            new RuntimeException(s"getGUIView Failed with status ${response.status}")
+            new RuntimeException(
+              s"getGUIView Failed with status ${response.status}"
+            )
           )
       }
     }

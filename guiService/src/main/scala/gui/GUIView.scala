@@ -24,13 +24,20 @@ import scala.compiletime.ops.boolean
 import de.htwg.poker.Poker.gui
 
 object GUIView {
-  def getView(gameState: GameState): String = {
+  def getView(
+      handEval: String,
+      gameState: GameState
+  ): String = {
 
     val playerListHtml = gui.updatePlayersHtml(gameState)
     val cardListHtml = gui.updateCardsHtml(gameState)
     val boardListHtml = gui.updateBoardHtml(gameState)
     val betListHtml = gui.updateBetsHtml(gameState)
+
     val gameStarted = gameState.players.getOrElse(List.empty[Player]).size != 0
+
+    val balance =
+      gameState.currentHighestBetSize - gameState.playerAtTurn.currentAmountBetted
 
     return s"""
     ${
@@ -56,9 +63,7 @@ object GUIView {
               </div>
               <div class="flex flex-col items-center justify-center">
               <h1 class="text-gray-100">Current Hand:</h1>
-              <h1 class="text-red-500">${gameState.getHandEval(
-              gameState.playerAtTurn
-            )}</h1>
+              <h1 class="text-red-500">${handEval}</h1>
               </div>
                 <button class="flex justify-start space-x-2 items-center mt-4 mr-4 font-bold h-12 w-36 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20" onclick="restartGame()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-clockwise ml-4" viewBox="0 0 16 16">
@@ -163,7 +168,7 @@ object GUIView {
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-right-circle ml-2" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
                 </svg>
-                <div class="flex justify-center items-center">CALL ${gameState.currentHighestBetSize - gameState.getCurrentPlayer.currentAmountBetted + "$"}</div>
+                <div class="flex justify-center items-center">CALL ${balance + "$"}</div>
               </button>
               <form onsubmit="bet()" class="flex flex-row items-center">
                 <button type="submit" class="flex justify-start space-x-2 items-center w-28 h-12 font-bold my-5 bg-yellow-600/20 text-yellow-400 rounded-l-full hover:bg-yellow-600/10">
@@ -353,4 +358,63 @@ object GUIView {
       }
     """
   }
+  /* these are methods to create the new Html Code that has to be displayed in the GUI when the GameState is updated.
+     in GUIView, we then simply pass the new Html Code that has been created by these methods into our static Html code with the help of String Variables.*/
+
+  def updatePlayersHtml(gameState: GameState): List[String] = {
+    val newPlayerList =
+      gameState.players.getOrElse(List.empty[Player]).map(_.toHtml)
+    List
+      .fill(6)(HiddenHtml)
+      .patch(0, newPlayerList, newPlayerList.size)
+  }
+
+  def updateCardsHtml(gameState: GameState): List[(String, String)] = {
+    val playerList =
+      gameState.players.getOrElse(List.empty[Player]).zipWithIndex
+    val playerAtTurn = gameState.playerAtTurn
+    val newCardList = playerList.map {
+      case (player, index) if index == playerAtTurn =>
+        (player.card1.toHtml, player.card2.toHtml)
+      case _ =>
+        (HiddenPlayerCardHtml, HiddenHtml)
+    }
+
+    val defaultCardListHtml = List.fill(6)(
+      (HiddenHtml, HiddenHtml)
+    )
+
+    defaultCardListHtml.patch(0, newCardList, newCardList.size)
+  }
+
+  def updateBoardHtml(gameState: GameState): List[String] = {
+    val boardList = gameState.board
+    val newBoardList = boardList.map(_.toHtml)
+    val invisBoardList = List.fill(5)(HiddenHtml)
+    val hiddenBoardList =
+      List.fill(5)(HiddenBoardCardHtml)
+
+    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) invisBoardList
+    else hiddenBoardList.patch(0, newBoardList, newBoardList.size)
+  }
+
+  def updateBetsHtml(gameState: GameState): List[String] = {
+    val playerList = gameState.players.getOrElse(List.empty[Player])
+    val newBetList = playerList.map(_.betSizeToHtml)
+    val hiddenBetList = List.fill(6)(HiddenHtml)
+
+    hiddenBetList.patch(0, newBetList, playerList.size)
+  }
+
+  val HiddenPlayerCardHtml =
+    """<svg class="ml-3" width="42" height="42" viewBox="0 0 119 119" fill="none" xmlns="http://www.w3.org/2000/svg">
+     |  <path fill-rule="evenodd" clip-rule="evenodd" d="M38.9596 14H14C6.26801 14 0 20.268 0 28V105C0 112.732 6.26801 119 14 119H44.4789L16.2797 110.439C8.88111 108.193 5.16362 100.534 7.97644 93.3319L38.9596 14Z" fill="#2dd4bf"/>
+     |  <rect width="67.2466" height="106.582" rx="14" transform="matrix(0.95688 0.290485 -0.363791 0.931481 54.6531 0)" fill="#2dd4bf"/>
+     |</svg>""".stripMargin
+
+  val HiddenBoardCardHtml =
+    "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
+
+  val HiddenHtml = "<div class=\"hidden\"> </div>"
+
 }

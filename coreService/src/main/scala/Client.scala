@@ -111,6 +111,34 @@ object Client {
     }
   }
 
+  def updateTUI(
+      gameState: GameState
+  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+
+    val jsonString = gameState.asJson.noSpaces
+
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+
+    val request = HttpRequest(
+      method = HttpMethods.POST,
+      uri = "http://localhost:8080/tui/update",
+      entity = entity
+    )
+
+    Http().singleRequest(request).flatMap { response =>
+      response.status match {
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(
+            new RuntimeException(
+              s"updateTUI Failed with status ${response.status}"
+            )
+          )
+      }
+    }
+  }
+
   def saveState(
       gameState: GameState
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {

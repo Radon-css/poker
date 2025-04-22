@@ -22,12 +22,10 @@ import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 import scala.compiletime.ops.boolean
 import de.htwg.poker.Poker.gui
-import de.htwg.poker.Poker.controller
 
 object GUIView {
-  def render: String = {
+  def render(gameState: GameState): String = {
 
-    val gameState = controller.gameState
     val playerListHtml = gui.updatePlayersHtml(gameState)
     val cardListHtml = gui.updateCardsHtml(gameState)
     val boardListHtml = gui.updateBoardHtml(gameState)

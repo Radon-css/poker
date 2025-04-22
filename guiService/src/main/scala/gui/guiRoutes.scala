@@ -13,10 +13,11 @@ object guiRoutes extends DefaultJsonProtocol {
     pathPrefix("gui") {
       concat(
         // GUIVIEW routes
-        path("getView") {
+        path("render" / Segment) { gameStateJson =>
           get {
             complete {
-              GUIView.render()
+              val gameState = gameStateJson.parseJson.convertTo[GameState]
+              GUIView.render(gameState)
             }
           }
         }

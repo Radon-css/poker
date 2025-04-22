@@ -10,7 +10,7 @@ class TUI(controller: Controller) extends Observer {
   controller.add(this)
 
   override def update: Unit = {
-    println(CLient.getTUIView(controller.gameState))
+    println(Client.getTUIView(controller.gameState))
   }
 
   def gameLoop(): Unit = {

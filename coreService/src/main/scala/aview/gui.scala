@@ -44,7 +44,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     }
 
     // Loading content using the GUIView.render method
-    webView.engine.loadContent(GUIView.render)
+    webView.engine.loadContent(GUIView.render(Controller.gameState))
 
     // Adding a listener for the load state of the WebEngine
     webView.engine.getLoadWorker.stateProperty.addListener { (_, _, newValue) =>
@@ -133,14 +133,16 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
      in GUIView, we then simply pass the new Html Code that has been created by these methods into our static Html code with the help of String Variables.*/
 
   def updatePlayersHtml(gameState: GameState): List[String] = {
-    val newPlayerList = gameState.players.getOrElse(List.empty[Player]).map(_.toHtml)
+    val newPlayerList =
+      gameState.players.getOrElse(List.empty[Player]).map(_.toHtml)
     List
       .fill(6)(HiddenHtml)
       .patch(0, newPlayerList, newPlayerList.size)
   }
 
   def updateCardsHtml(gameState: GameState): List[(String, String)] = {
-    val playerList = gameState.players.getOrElse(List.empty[Player]).zipWithIndex
+    val playerList =
+      gameState.players.getOrElse(List.empty[Player]).zipWithIndex
     val playerAtTurn = gameState.playerAtTurn
     val newCardList = playerList.map {
       case (player, index) if index == playerAtTurn =>

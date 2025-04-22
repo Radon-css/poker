@@ -3,7 +3,6 @@ package de.htwg.poker.tui
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import de.htwg.poker.tui.types.GameState
-import akka.http.scaladsl.marshalling.sprayjson.SprayJsonSupport._
 
 object utilRoutes extends DefaultJsonProtocol {
 

@@ -1,4 +1,4 @@
-package de.htwg.poker.eval.types
+package fileIO.types
 
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts

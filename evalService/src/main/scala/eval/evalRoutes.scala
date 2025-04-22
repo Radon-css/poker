@@ -2,12 +2,13 @@ package de.htwg.poker.eval
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import de.htwg.poker.util.UpdateBoard
-import de.htwg.poker.model.GameState
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import spray.json._
+import de.htwg.poker.eval.types.GameState
+import io.circe.generic.auto._
+import io.circe.syntax._
+import de.htwg.poker.eval.types.Player
+import de.htwg.poker.eval.types.Card
 
-object evalRoutes extends DefaultJsonProtocol {
+class evalRoutes {
 
   val routes: Route =
     pathPrefix("eval") {
@@ -18,7 +19,7 @@ object evalRoutes extends DefaultJsonProtocol {
             entity(as[GameState]) { gameState =>
               val playerCards = gameState.players.get.head.cards
               val boardCards = gameState.board
-              val result = HandInfo.getHandInfo(playerCards, boardCards)
+              val result = HandInfo.evalHand(playerCards, boardCards)
               complete(result)
             }
           }

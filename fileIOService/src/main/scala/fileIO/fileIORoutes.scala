@@ -2,10 +2,8 @@ package de.htwg.poker.tui
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import de.htwg.poker.model.GameState
+import de.htwg.poker.fileIO.types.GameState
 import de.htwg.poker.util.UpdateBoard
-import spray.json.DefaultJsonProtocol._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 
 object FileIORoutes extends DefaultJsonProtocol {
 

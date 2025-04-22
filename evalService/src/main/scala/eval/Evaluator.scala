@@ -1,7 +1,9 @@
 package de.htwg.poker.eval
 import scala.io.Source
 import scala.math.Ordering
-import de.htwg.poker.model.*
+
+import de.htwg.poker.eval.types.Card
+import de.htwg.poker.eval.types.Player
 
 object Evaluator {
 
@@ -59,10 +61,10 @@ object Evaluator {
       var bestCategory = "HC"
       val playerCards = List(player.card1, player.card2)
       val cards = boardCards ++ playerCards
-      val combinations = getCombinations(5, cards)
+      val combinations = getCombinations[Card](5, cards)
 
       for (combination <- combinations) {
-        val value = combination.map(_.rank.prime).product
+        val value = combination.map(_.rank.prime).product[Int]
         if (
           combination(0).suit.id == combination(1).suit.id && cards(
             1

@@ -99,8 +99,6 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     def call(): Unit = controller.call
     def check(): Unit = controller.check
     def fold(): Unit = controller.fold
-    def undo(): Unit = controller.undo
-    def redo(): Unit = controller.redo
     def bet(amount: Int): Unit = controller.bet(amount)
     def restartGame(): Unit = controller.restartGame
 

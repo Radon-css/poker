@@ -1,8 +1,8 @@
 package de.htwg.poker.tui
 
-import de.htwg.poker.model.GameState
-import de.htwg.poker.model.Player
-import de.htwg.poker.model.Card
+import de.htwg.poker.tui.types.GameState
+import de.htwg.poker.tui.types.Player
+import de.htwg.poker.tui.types.Card
 
 object TUIView {
   def getView(gameState: GameState): String = {
@@ -79,11 +79,12 @@ object TUIView {
   }
 }
 class Print(gameState: GameState) {
+  def balanceToString(player: Player) = "(" + player.balance + "$)"
   def printBalances(playerList: List[Player]): String = {
     val sb = new StringBuilder
     for (player <- playerList) {
-      val spaces = " " * (14 - player.balanceToString.length)
-      sb.append(s"${player.balanceToString}$spaces")
+      val spaces = " " * (14 - balanceToString(player).length)
+      sb.append(s"${balanceToString(player)}$spaces")
     }
     sb.append("\n")
     sb.toString

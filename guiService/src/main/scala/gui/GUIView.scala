@@ -10,18 +10,13 @@ import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
 import scalafx.scene.control.Button
-import de.htwg.poker.controller.Controller
 import de.htwg.poker.model.GameState
-import de.htwg.poker.model.Card
-import de.htwg.poker.model.Player
-import de.htwg.poker.util.Observer
 import scalafx.application.Platform
 import scala.util.{Try, Success, Failure}
 import javafx.concurrent.Worker.State
 import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 import scala.compiletime.ops.boolean
-import de.htwg.poker.Poker.gui
 
 object GUIView {
   def getView(
@@ -54,10 +49,10 @@ object GUIView {
             <div class="flex flex-col justify-center items-center h-screen w-full bg-gradient-to-tl from-gray-800 to-gray-700 bg-gradient-to-r space-y-5">
               <div class="flex items-center justify-between w-full h-14">
               <div class="flex space-x-2 ml-2 ">
-                <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600/40 rounded-full hover:bg-gray-600/20 flex justify-center items-center" onclick="undo()">
+                <button class="mt-4 ml-4 font-extrabold h-12 w-16 my-5 text-slate-100 bg-gray-600/40 rounded-full hover:bg-gray-600/20 flex justify-center items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
                 </button>
-                <button class="mt-4 font-extrabold h-12 w-16 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20 flex justify-center items-center" onclick="redo()">
+                <button class="mt-4 font-extrabold h-12 w-16 my-5 text-slate-100 rounded-full bg-gray-600/40 hover:bg-gray-600/20 flex justify-center items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-redo"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
                 </button>
               </div>
@@ -189,12 +184,6 @@ object GUIView {
                 }
                 function fold()  {
                   invoke.fold();
-                }
-                function undo() {
-                  invoke.undo();
-                }
-                function redo() {
-                  invoke.redo();
                 }
                 function bet() {
                   invoke.bet(document.getElementById("betInput").value);

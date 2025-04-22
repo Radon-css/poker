@@ -1,7 +1,5 @@
 package de.htwg.poker.model
 import scala.math
-import de.htwg.poker.util.Evaluator
-import de.htwg.poker.util.TUIView
 import de.htwg.poker.util.UpdateBoard
 import de.htwg.poker.Client
 
@@ -64,8 +62,10 @@ case class GameState(
       balance = getCurrentPlayer.balance - amount,
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + amount
     )
-    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
-    val updatePlayer = players.getOrElse(List.empty[Player])(playerAtTurn).playername
+    val newPlayerList =
+      players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
+    val updatePlayer =
+      players.getOrElse(List.empty[Player])(playerAtTurn).playername
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = getCurrentPlayer.balance - amount
     val updatedPlayersAndBalances = playersAndBalances.map { player =>
@@ -90,7 +90,8 @@ case class GameState(
 
   def fold: GameState = {
     val foldedPlayer = getCurrentPlayer.copy(folded = true)
-    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, foldedPlayer)
+    val newPlayerList =
+      players.getOrElse(List.empty[Player]).updated(playerAtTurn, foldedPlayer)
 
     copy(
       players = Some(newPlayerList),
@@ -108,7 +109,8 @@ case class GameState(
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + callSize
     )
 
-    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
+    val newPlayerList =
+      players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
     val playerToUpdate = getCurrentPlayer.playername
     val newPlayerBalance = getCurrentPlayer.balance - callSize
     val updatedPlayersAndBalances = playersAndBalances.map { player =>
@@ -131,7 +133,8 @@ case class GameState(
 
   def check: GameState = {
     val playerChecked = getCurrentPlayer.copy(checkedThisRound = true)
-    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, playerChecked)
+    val newPlayerList =
+      players.getOrElse(List.empty[Player]).updated(playerAtTurn, playerChecked)
     copy(
       players = Some(newPlayerList),
       playerAtTurn = getNextPlayer(playerAtTurn),
@@ -147,7 +150,8 @@ case class GameState(
       currentAmountBetted = getCurrentPlayer.currentAmountBetted + allInSize
     )
 
-    val newPlayerList = players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
+    val newPlayerList =
+      players.getOrElse(List.empty[Player]).updated(playerAtTurn, updatedPlayer)
 
     val playerToUpdate = getCurrentPlayer.playername
     val updatedPlayersAndBalances = playersAndBalances.map { player =>
@@ -209,9 +213,9 @@ case class GameState(
       playerList.updated(0, smallBlindPlayer).updated(1, bigBlindPlayer)
 
     val updatedPlayersAndBalances = InitialPlayersAndBalances.map { player =>
-      if(player._1 == smallBlindPlayer.playername) {
+      if (player._1 == smallBlindPlayer.playername) {
         player.copy(player._1, player._2 - smallBlind)
-      } else if(player._1 == bigBlindPlayer.playername) {
+      } else if (player._1 == bigBlindPlayer.playername) {
         player.copy(player._1, player._2 - bigBlind)
       } else {
         player
@@ -239,16 +243,19 @@ case class GameState(
 
     def findNextIndex(index: Int): Int = {
       val nextIndex = (index + 1) % totalPlayers
-      if (!players.getOrElse(List.empty[Player])(nextIndex).folded) nextIndex else findNextIndex(nextIndex)
+      if (!players.getOrElse(List.empty[Player])(nextIndex).folded) nextIndex
+      else findNextIndex(nextIndex)
     }
 
     findNextIndex(current)
   }
 
-  def getCurrentPlayer: Player = players.getOrElse(List.empty[Player])(playerAtTurn)
+  def getCurrentPlayer: Player =
+    players.getOrElse(List.empty[Player])(playerAtTurn)
 
   def getPreviousPlayer: Int =
-    if (playerAtTurn == 0) players.getOrElse(List.empty[Player]).length - 1 else playerAtTurn - 1
+    if (playerAtTurn == 0) players.getOrElse(List.empty[Player]).length - 1
+    else playerAtTurn - 1
 
   def getNextSmallBlindPlayer: Int =
     if (playersAndBalances.length - 1 == smallBlindPointer) 0
@@ -265,9 +272,9 @@ case class GameState(
   def getHandEval(player: Int): String = {
     Client.evalHand(
       List(
-          players.getOrElse(List.empty[Player])(player).card1,
-          players.getOrElse(List.empty[Player])(player).card2
-        ),
+        players.getOrElse(List.empty[Player])(player).card1,
+        players.getOrElse(List.empty[Player])(player).card2
+      ),
       board
     )
   }

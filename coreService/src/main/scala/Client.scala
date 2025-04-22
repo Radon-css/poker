@@ -8,7 +8,6 @@ import akka.stream.Materializer
 
 import io.circe.generic.auto._
 import io.circe.syntax._
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
 import de.htwg.poker.model._
 

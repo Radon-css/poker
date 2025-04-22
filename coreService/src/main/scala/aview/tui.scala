@@ -89,14 +89,6 @@ class TUI(controller: Controller) extends Observer {
       case "q" =>
         sys.exit()
         true
-      // undo the last move
-      case "u" =>
-        controller.undo
-        true
-      // redo the move
-      case "r" =>
-        controller.redo
-        true
       case _ =>
         println("invalid command")
         false

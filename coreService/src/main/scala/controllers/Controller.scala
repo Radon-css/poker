@@ -4,11 +4,8 @@ import model.Player
 import model.GameState
 import util.UpdateBoard
 import util.Observable
-import util.UndoManager
 
 class Controller(var gameState: GameState) extends Observable {
-
-  private val undoManager = new UndoManager
 
   /* the following methods are structured in this particular way:
     first, check the user input for unallowed inputs and throw an exception if necessary.
@@ -58,7 +55,6 @@ class Controller(var gameState: GameState) extends Observable {
     if (gameState.players.getOrElse(List.empty[Player]).isEmpty) {
       throw new Exception("Start a game first")
     }
-    undoManager.doStep(gameState)
 
     // distinguish allIn and normal bet
     if (
@@ -92,7 +88,6 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("Start a game first")
     }
 
-    undoManager.doStep(gameState)
     gameState = gameState.allIn
     notifyObservers
     true
@@ -103,7 +98,6 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("Start a game first")
     }
 
-    undoManager.doStep(gameState)
     gameState = gameState.fold
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
@@ -138,7 +132,6 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("Cannot call")
     }
 
-    undoManager.doStep(gameState)
     gameState = gameState.call
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
@@ -172,7 +165,6 @@ class Controller(var gameState: GameState) extends Observable {
       throw new Exception("Cannot check")
     }
 
-    undoManager.doStep(gameState)
     gameState = gameState.check
 
     // Check if handout is required and if so, call updateBoard to reveal board cards
@@ -192,16 +184,6 @@ class Controller(var gameState: GameState) extends Observable {
     }
     notifyObservers
     true
-  }
-
-  def undo: Unit = {
-    undoManager.undoStep(this, this.gameState)
-    notifyObservers
-  }
-
-  def redo: Unit = {
-    undoManager.redoStep(this)
-    notifyObservers
   }
 
   def restartGame: Unit = {

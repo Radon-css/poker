@@ -1,6 +1,8 @@
 package de.htwg.poker.eval
 
-import de.htwg.poker.model.*
+import de.htwg.poker.eval.types.Card
+import de.htwg.poker.eval.types.Rank
+import de.htwg.poker.eval.types.Suit
 
 /* this class contains an Algorithm that can evaluate Poker Hands. It compares the two Cards the player
   holds with the community Cards that are currently revealed to find the combination of player cards and community cards that is worth most.
@@ -86,7 +88,8 @@ object HandInfo {
       returnValue = Type.Triples
 
     // check for Straights
-    val sortedCards = combination.sorted(Ordering.by(_.rank.strength)).reverse
+    val sortedCards =
+      combination.sorted(Ordering.by[Card, Int](_.rank.strength)).reverse
     if (
       sortedCards.head.rank.strength == sortedCards(1).rank.strength + 1
       && sortedCards(1).rank.strength == sortedCards(2).rank.strength + 1

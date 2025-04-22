@@ -71,7 +71,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   // here we call GUIView.render to update our GUI
   override def update: Unit = {
-    Platform.runLater(() => webEngine.loadContent(GUIView.render))
+    Platform.runLater(() => webEngine.loadContent(Client.getGUIView(Controller.gameState)))
   }
 
   /* Because we used Html and Javascript for our GUI, we need to make upcalls

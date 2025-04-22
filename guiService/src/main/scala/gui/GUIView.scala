@@ -359,7 +359,7 @@ object GUIView {
 
   def updatePlayersHtml(gameState: GameState): List[String] = {
     val newPlayerList =
-      gameState.players.getOrElse(List.empty[Player]).map(_.toHtml)
+      gameState.players.getOrElse(List.empty[Player]).map(playerToHtml)
     List
       .fill(6)(HiddenHtml)
       .patch(0, newPlayerList, newPlayerList.size)
@@ -394,7 +394,7 @@ object GUIView {
 
   def updateBoardHtml(gameState: GameState): List[String] = {
     val boardList = gameState.board
-    val newBoardList = boardList.map(_.toHtml)
+    val newBoardList = boardList.map(cardToHtml)
     val invisBoardList = List.fill(5)(HiddenHtml)
     val hiddenBoardList =
       List.fill(5)(HiddenBoardCardHtml)
@@ -427,6 +427,21 @@ object GUIView {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suitToHtml(
         card.suit
       )}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
+  }
+
+  def playerToHtml(player: Player) = {
+    val opacityClass = if (player.folded) "opacity-50" else ""
+    s"""<div class=\"flex flex-col items-center justify-center space-x-2\">
+                <div class=\"rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5 ${opacityClass}\">
+                  <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"30\" height=\"30\" fill=\"currentColor\" class=\"bi bi-person-fill\" viewBox=\"0 0 16 16\">
+                    <path d=\"M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6\"/>
+                  </svg>
+                </div>
+                    <p class=\"p-1 text-slate-100\">${player.playername}</p>
+                    <div class=\"flex items-center justify-center rounded-full bg-slate-100 text-gray-700 w-14\">
+                      <p class=\"p-1\">${player.balance}$$</p>
+                    </div>
+              </div>"""
   }
 
   val HiddenPlayerCardHtml =

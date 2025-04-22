@@ -6,8 +6,8 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 
-import io.circe.generic.auto._       
-import io.circe.syntax._          
+import io.circe.generic.auto._
+import io.circe.syntax._
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
 import de.htwg.poker.model._
@@ -39,12 +39,16 @@ object Client {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[List[Player]]
         case _ =>
-          Future.failed(new RuntimeException(s"calcWinner Failed with status ${response.status}"))
+          Future.failed(
+            new RuntimeException(
+              s"calcWinner Failed with status ${response.status}"
+            )
+          )
       }
     }
   }
 
-    def evalHand(
+  def evalHand(
       player: Player,
       boardCards: List[Card]
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
@@ -69,12 +73,47 @@ object Client {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[String]
         case _ =>
-          Future.failed(new RuntimeException(s"evalHand Failed with status ${response.status}"))
+          Future.failed(
+            new RuntimeException(
+              s"evalHand Failed with status ${response.status}"
+            )
+          )
       }
     }
   }
 
-  def saveState(gameState: GameState)(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+  def renderGUI(
+      gameState: GameState
+  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+
+    val jsonString = gameState.asJson.noSpaces
+
+    val entity = HttpEntity(
+      ContentTypes.`application/json`,
+      jsonString
+    )
+
+    val request = HttpRequest(
+      method = HttpMethods.POST,
+      uri = "http://localhost:8080/gui/render",
+      entity = entity
+    )
+
+    Http().singleRequest(request).flatMap { response =>
+      response.status match {
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(
+            new RuntimeException(s"Failed with status ${response.status}")
+          )
+      }
+    }
+  }
+
+  def saveState(
+      gameState: GameState
+  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
     val jsonString = gameState.asJson.noSpaces
 
@@ -91,12 +130,19 @@ object Client {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[String]
         case _ =>
-          Future.failed(new RuntimeException(s"saveState Failed with status ${response.status}"))
+          Future.failed(
+            new RuntimeException(
+              s"saveState Failed with status ${response.status}"
+            )
+          )
       }
     }
   }
 
-  def loadState()(implicit system: ActorSystem, mat: Materializer): Future[GameState] = {
+  def loadState()(implicit
+      system: ActorSystem,
+      mat: Materializer
+  ): Future[GameState] = {
 
     val request = HttpRequest(
       method = HttpMethods.GET,
@@ -108,7 +154,11 @@ object Client {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[GameState]
         case _ =>
-          Future.failed(new RuntimeException(s"loadState Failed with status ${response.status}"))
+          Future.failed(
+            new RuntimeException(
+              s"loadState Failed with status ${response.status}"
+            )
+          )
       }
     }
   }

@@ -13,10 +13,10 @@ object utilRoutes extends DefaultJsonProtocol {
     pathPrefix("tui") {
       concat(
         // TUIVIEW routes
-        path("update") {
+        path("getTUIView") {
           get {
             complete {
-              TUIView.update()
+              TUIView.getView()
             }
           }
         }

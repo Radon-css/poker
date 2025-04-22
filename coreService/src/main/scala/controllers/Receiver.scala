@@ -1,6 +1,7 @@
 package de.htwg.poker
 package controllers
 
+import akka.actor.{Actor, Props}
 import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
 import akka.stream.Materializer
@@ -10,19 +11,21 @@ import play.api._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
+
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.VectorMap
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
+import de.htwg.poker.controllers.PokerControllerPublisher
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
 @Singleton
 class PokerController()(
     val controllerComponents: ControllerComponents,
-    implicit val system: ActorSystem,
-    implicit val mat: Materializer[Nothing]
+    implicit val system: ActorSystem[Nothing],
+    implicit val mat: Materializer
 ) extends BaseController {
 
   val gameController = new Controller(
@@ -175,9 +178,9 @@ class PokerController()(
   }
 
   def offlinePlayerIsAtTurn = {
-    val playerAtTurn = gameState.getPlayers(gameState.getPlayerAtTurn)
+    val playerAtTurn = gameState.players.getOrElse(gameState.playerAtTurn,"")
     println("OFFLINEPLAYERISATTURN: Player at turn: " + playerAtTurn)
-    val playerID = players.getOrElse(playerAtTurn.playername, "")
+    val playerID = players.getOrElse(gameState.getCurrentPlayer.playername,"")
     println("OFFLINEPLAYERISATTURN: Player ID: " + playerID)
     println("OFFLINEPLAYERISATTURN:" + offlinePlayers.contains(playerID))
     offlinePlayers.contains(playerID)
@@ -203,7 +206,7 @@ class PokerController()(
       "lobbyPlayers" -> players,
       "smallBlind" -> smallBlind,
       "bigBlind" -> bigBlind,
-      "players" -> gameState.getPlayers.zipWithIndex.map { case (player, index) =>
+      "players" -> gameState.players.zipWithIndex.map { case (player, index) =>
         Json.obj(
           "player" -> Json.obj(
             "id" -> players.getOrElse(player.playername, ""),
@@ -222,9 +225,9 @@ class PokerController()(
           )
         )
       },
-      "playerAtTurn" -> gameState.getPlayerAtTurn,
-      "highestBetSize" -> gameState.getHighestBetSize,
-      "board" -> gameState.getBoard.map { card =>
+      "playerAtTurn" -> gameState.playerAtTurn,
+      "highestBetSize" -> gameState.currentHighestBetSize,
+      "board" -> gameState.board.map { card =>
         Json.obj(
           "card" -> Json.obj(
             "rank" -> card.rank.toString,
@@ -232,7 +235,7 @@ class PokerController()(
           )
         )
       },
-      "pot" -> gameState.getPot
+      "pot" -> gameState.pot
     )
   }
 
@@ -242,17 +245,17 @@ class PokerController()(
 
     ActorFlow.actorRef { out =>
       println("Connect received with playerID: " + playerID)
-      PokerWebSocketActorFactory.create(out, playerID)
+      PokerWebSocketActorFactory.create(out[String], playerID)
 
     }
   }
 
   object PokerWebSocketActorFactory {
-    def create(out: ActorRef, playerID: String) =
-      Props(new PokerWebSocketActor(out, playerID))
+    def create(out: ActorRef[String], playerID: String) =
+      Props(new PokerWebSocketActor(out[String], playerID))
   }
 
-  class PokerWebSocketActor(out: ActorRef, id: String) extends Actor with Reactor {
+  class PokerWebSocketActor(out: ActorRef[String], id: String) extends Actor with Reactor {
     import context.dispatcher
 
     val playerID = id

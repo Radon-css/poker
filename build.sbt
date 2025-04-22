@@ -20,21 +20,20 @@ lazy val dependencies = Seq(
   }
 )
 
-  libraryDependencies ++= Seq(
-      // Akka
-      "com.typesafe.akka" %% "akka-actor-typed" % "2.6.21",
-      "com.typesafe.akka" %% "akka-stream" % "2.6.21",
-      "com.typesafe.akka" %% "akka-http" % "10.2.10",
+libraryDependencies ++= Seq(
+  // Akka
+  "com.typesafe.akka" %% "akka-actor-typed" % "2.6.21",
+  "com.typesafe.akka" %% "akka-stream" % "2.6.21",
+  "com.typesafe.akka" %% "akka-http" % "10.2.10",
 
-      // Circe
-      "io.circe" %% "circe-core" % "0.14.6",
-      "io.circe" %% "circe-generic" % "0.14.6",
-      "io.circe" %% "circe-parser" % "0.14.6",
+  // Circe
+  "io.circe" %% "circe-core" % "0.14.6",
+  "io.circe" %% "circe-generic" % "0.14.6",
+  "io.circe" %% "circe-parser" % "0.14.6",
 
-      // Akka HTTP Circe integration
-      "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
-    )
-
+  // Akka HTTP Circe integration
+  "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
+)
 
 lazy val root = project
   .in(file("."))
@@ -43,36 +42,45 @@ lazy val root = project
     dependencies
   )
   .dependsOn(
-    utilService,
-    controllerService,
-    modelService,
-    fileIOService
+    tuiService,
+    coreService,
+    guiService,
+    fileIOService,
+    evalService
   )
   .aggregate(
-    utilService,
-    controllerService,
-    modelService,
-    fileIOService
+    tuiService,
+    coreService,
+    guiService,
+    fileIOService,
+    evalService
   )
 
-lazy val utilService = project
-  .in(file("utilService"))
+lazy val tuiService = project
+  .in(file("tuiService"))
   .settings(
-    name := "utilService",
+    name := "tuiService",
     dependencies
   )
 
-lazy val controllerService = project
-  .in(file("controllerService"))
+lazy val evalService = project
+  .in(file("evalService"))
   .settings(
-    name := "controllerService",
+    name := "evalService",
     dependencies
   )
 
-lazy val modelService = project
-  .in(file("modelService"))
+lazy val coreService = project
+  .in(file("coreService"))
   .settings(
-    name := "modelService",
+    name := "coreService",
+    dependencies
+  )
+
+lazy val guiService = project
+  .in(file("guiService"))
+  .settings(
+    name := "guiService",
     dependencies
   )
 

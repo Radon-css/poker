@@ -21,11 +21,19 @@ lazy val dependencies = Seq(
 )
 
   libraryDependencies ++= Seq(
-    "io.circe" %% "circe-core" % "0.14.6",
-    "io.circe" %% "circe-generic" % "0.14.6",
-    "io.circe" %% "circe-parser" % "0.14.6",
-    "de.heikoseeberger" %% "akka-http-circe" % "1.40.0"
-  )
+      // Akka
+      "com.typesafe.akka" %% "akka-actor-typed" % "2.6.21",
+      "com.typesafe.akka" %% "akka-stream" % "2.6.21",
+      "com.typesafe.akka" %% "akka-http" % "10.2.10",
+
+      // Circe
+      "io.circe" %% "circe-core" % "0.14.6",
+      "io.circe" %% "circe-generic" % "0.14.6",
+      "io.circe" %% "circe-parser" % "0.14.6",
+
+      // Akka HTTP Circe integration
+      "de.heikoseeberger" %% "akka-http-circe" % "1.39.2"
+    )
 
 
 lazy val root = project

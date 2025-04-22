@@ -39,7 +39,7 @@ object GUIView {
     val gameStarted = gameState.players.getOrElse(List.empty[Player]).size != 0
 
     val balance =
-      gameState.currentHighestBetSize - gameState.playerAtTurn.currentAmountBetted
+      gameState.currentHighestBetSize - gameState.players(gameState.playerAtTurn).currentAmountBetted
 
     return s"""
     ${

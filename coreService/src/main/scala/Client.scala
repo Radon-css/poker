@@ -82,7 +82,7 @@ object Client {
     }
   }
 
-  def renderGUI(
+  def getGUIView(
       gameState: GameState
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
@@ -95,7 +95,7 @@ object Client {
 
     val request = HttpRequest(
       method = HttpMethods.POST,
-      uri = "http://localhost:8080/gui/render",
+      uri = "http://localhost:8080/gui/getGUIView",
       entity = entity
     )
 
@@ -105,13 +105,13 @@ object Client {
           Unmarshal(response.entity).to[String]
         case _ =>
           Future.failed(
-            new RuntimeException(s"rendergui Failed with status ${response.status}")
+            new RuntimeException(s"getGUIView Failed with status ${response.status}")
           )
       }
     }
   }
 
-  def updateTUI(
+  def getTUIView(
       gameState: GameState
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
@@ -121,7 +121,7 @@ object Client {
 
     val request = HttpRequest(
       method = HttpMethods.POST,
-      uri = "http://localhost:8080/tui/update",
+      uri = "http://localhost:8080/tui/getTUIView",
       entity = entity
     )
 
@@ -132,7 +132,7 @@ object Client {
         case _ =>
           Future.failed(
             new RuntimeException(
-              s"updateTUI Failed with status ${response.status}"
+              s"getTUIView Failed with status ${response.status}"
             )
           )
       }

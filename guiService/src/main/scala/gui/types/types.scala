@@ -1,4 +1,4 @@
-package de.htwg.poker.eval.types
+package de.htwg.poker.gui.types
 
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
@@ -17,4 +17,18 @@ case class Player(
     val currentAmountBetted: Int = 0,
     val folded: Boolean = false,
     val checkedThisRound: Boolean = false
+) {}
+
+case class GameState(
+    playersAndBalances: List[(String, Int)],
+    players: Option[List[Player]],
+    deck: Option[List[Card]],
+    playerAtTurn: Int = 0,
+    currentHighestBetSize: Int = 0,
+    board: List[Card] = Nil,
+    pot: Int = 30,
+    smallBlind: Int = 10,
+    bigBlind: Int = 20,
+    smallBlindPointer: Int = 0,
+    newRoundStarted: Boolean = true
 ) {}

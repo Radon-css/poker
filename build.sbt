@@ -2,6 +2,7 @@ val scala3Version = "3.6.4"
 
   ThisBuild / version := "1.0.1"
   ThisBuild / scalaVersion := scala3Version
+  ThisBuild / scalacOptions += "-Xmax-inlines:64"
 
   ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
@@ -19,7 +20,6 @@ val scala3Version = "3.6.4"
   "io.circe" %% "circe-core" % "0.14.6",
   "io.circe" %% "circe-generic" % "0.14.6",
   "io.circe" %% "circe-parser" % "0.14.6",
-  "de.heikoseeberger" %% "akka-http-circe" % "1.39.2",
 
   //play
   "com.typesafe.play" %% "play-json" % "2.10.2",

@@ -1,16 +1,13 @@
 package de.htwg.poker
 package fileIO
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import de.htwg.poker.fileIO.types.GameState
-import spray.json.DefaultJsonProtocol._
+import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 class FileIORoutes {
-
-  // Define the JSON format for GameState
-  implicit val gameStateFormat: RootJsonFormat[GameState] = jsonFormat2(GameState) // Adjust the number of fields to match GameState's constructor
 
   val routes: Route =
     pathPrefix("fileIO") {
@@ -18,10 +15,13 @@ class FileIORoutes {
         // SAVE route
         path("saveState") {
           post {
-            entity(as[GameState]) { gameState =>
-              complete {
-                FileIO.save(gameState)
-                "Game state saved successfully"
+            entity(as[String]) { body =>
+              decode[GameState](body) match {
+                case Right(gameState) =>
+                  FileIO.save(gameState)
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "Game state saved successfully"))
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
               }
             }
           }
@@ -29,9 +29,8 @@ class FileIORoutes {
         // LOAD route
         path("loadState") {
           get {
-            complete {
-              FileIO.load
-            }
+            val gameState = FileIO.load // ⬅️ Stelle sicher, dass das ein GameState ist
+            complete(HttpEntity(ContentTypes.`application/json`, gameState.asJson.noSpaces))
           }
         }
       )

@@ -2,11 +2,9 @@ package de.htwg.poker.gui
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import de.htwg.poker.gui.types.GameState
-
-import io.circe._, io.circe.generic.auto._, io.circe.parser._
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-import akka.http.scaladsl.server.Directives._
+import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 class guiRoutes {
 
@@ -19,9 +17,10 @@ class guiRoutes {
             get {
               decode[GameState](gameStateJson) match {
                 case Right(gameState) =>
-                  complete(GUIView.getView(handEval, gameState))
+                  val result = GUIView.getView(handEval, gameState)
+                  complete(HttpEntity(ContentTypes.`application/json`, result.asJson.noSpaces))
                 case Left(error) =>
-                  complete((400, s"Invalid JSON: ${error.getMessage}"))
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
               }
             }
           }

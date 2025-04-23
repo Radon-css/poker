@@ -6,7 +6,6 @@ import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
 import akka.stream.Materializer
 import de.htwg.poker.controller.Controller
-import de.htwg.poker.model.GameState
 import play.api._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
@@ -18,6 +17,10 @@ import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
 import de.htwg.poker.controllers.PokerControllerPublisher
+
+import de.htwg.poker.model.GameState
+import de.htwg.poker.model.Player
+import de.htwg.poker.model.Card
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
@@ -206,7 +209,7 @@ class PokerController()(
       "lobbyPlayers" -> players,
       "smallBlind" -> smallBlind,
       "bigBlind" -> bigBlind,
-      "players" -> gameState.players.zipWithIndex.map { case (player, index) =>
+      "players" -> gameState.players.getOrElse(List.empty[Player]).zipWithIndex.map { case (player, index) =>
         Json.obj(
           "player" -> Json.obj(
             "id" -> players.getOrElse(player.playername, ""),

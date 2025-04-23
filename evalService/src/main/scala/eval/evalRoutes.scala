@@ -2,18 +2,16 @@ package de.htwg.poker.eval
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import de.htwg.poker.eval.types.GameState
+import de.htwg.poker.eval.types.{GameState, Player, Card}
 import io.circe.generic.auto._
-import io.circe.syntax._
-import de.htwg.poker.eval.types.Player
-import de.htwg.poker.eval.types.Card
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 
 class evalRoutes {
 
   val routes: Route =
     pathPrefix("eval") {
-      // handinfo routes
       concat(
+        // Handinfo route
         path("evaluate") {
           post {
             entity(as[GameState]) { gameState =>
@@ -24,7 +22,7 @@ class evalRoutes {
             }
           }
         },
-        // Evaluator routes
+        // Evaluator route
         path("calcWinner") {
           post {
             entity(as[GameState]) { gameState =>

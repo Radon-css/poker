@@ -19,6 +19,7 @@ val scala3Version = "3.6.4"
   "io.circe" %% "circe-core" % "0.14.6",
   "io.circe" %% "circe-generic" % "0.14.6",
   "io.circe" %% "circe-parser" % "0.14.6",
+  "de.heikoseeberger" %% "akka-http-circe" % "1.39.2",
 
   //play
   "com.typesafe.play" %% "play-json" % "2.10.2",

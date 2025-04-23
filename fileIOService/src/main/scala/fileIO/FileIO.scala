@@ -1,12 +1,9 @@
+package de.htwg.poker
 package fileIO
 
-import play.api.libs.json._
-import de.htwg.poker.model.GameStateComponent.GameStateBaseImpl.GameState
-import de.htwg.poker.model.PlayersComponent.PlayersBaseImpl.Player
-import de.htwg.poker.model.CardsComponent.CardsBaseImpl.Card
-import de.htwg.poker.model.CardsComponent.Rank
-import de.htwg.poker.model.CardsComponent.Suit
+import de.htwg.poker.fileIO.types.{Card, GameState, Player, Rank, Suit}
 import java.io._
+import play.api.libs.json._
 
 object FileIO {
 
@@ -15,21 +12,22 @@ object FileIO {
       scala.io.Source.fromFile("gameState.json").getLines.mkString
     val json: JsValue = Json.parse(source)
 
-    val originalPlayers =
-      (json \ "gameState" \ "originalPlayers").as[List[JsValue]]
+    val playersAndBalances = (json \ "gameState" \ "playersAndBalances").as[List[JsValue]].map { js =>
+      ((js \ "name").as[String], (js \ "balance").as[Int])
+    }
     val players = (json \ "gameState" \ "players").as[List[JsValue]]
     val deck = (json \ "gameState" \ "deck").as[List[JsValue]]
     val playerAtTurn = (json \ "gameState" \ "playerAtTurn").as[Int]
-    val currentHighestBetSize =
-      (json \ "gameState" \ "currentHighestBetSize").as[Int]
+    val currentHighestBetSize = (json \ "gameState" \ "currentHighestBetSize").as[Int]
     val board = (json \ "gameState" \ "board").as[List[JsValue]]
     val pot = (json \ "gameState" \ "pot").as[Int]
     val smallBlind = (json \ "gameState" \ "smallBlind").as[Int]
     val bigBlind = (json \ "gameState" \ "bigBlind").as[Int]
     val smallBlindPointer = (json \ "gameState" \ "smallBlindPointer").as[Int]
+    val newRoundStarted = (json \ "gameState" \ "newRoundStarted").as[Boolean]
 
-    new GameState(
-      originalPlayers = Nil, // reconstructPlayers(originalPlayers),
+    GameState(
+      playersAndBalances = playersAndBalances,
       players = Some(reconstructPlayers(players)),
       deck = Some(reconstructDeck(deck)),
       playerAtTurn = playerAtTurn,
@@ -38,7 +36,8 @@ object FileIO {
       pot = pot,
       smallBlind = smallBlind,
       bigBlind = bigBlind,
-      smallBlindPointer = smallBlindPointer
+      smallBlindPointer = smallBlindPointer,
+      newRoundStarted = newRoundStarted
     )
   }
 
@@ -51,24 +50,13 @@ object FileIO {
   private def gameStateToJson(gameState: GameState) = {
     Json.obj(
       "gameState" -> Json.obj(
-        "originalPlayers" -> Json.arr(gameState.originalPlayers.map { player =>
+        "playersAndBalances" -> Json.arr(gameState.playersAndBalances.map { case (name, balance) =>
           Json.obj(
-            "Players" -> Json.obj(
-              "card1" -> Json.obj(
-                "rank" -> player.card1.rank.toString,
-                "suit" -> player.card1.suit.toString
-              ),
-              "card2" -> Json.obj(
-                "rank" -> player.card2.rank.toString,
-                "suit" -> player.card2.suit.toString
-              ),
-              "playername" -> player.playername,
-              "balance" -> player.balance,
-              "currentAmountBetted" -> player.currentAmountBetted
-            )
+            "name" -> name,
+            "balance" -> balance
           )
         }),
-        "players" -> gameState.players.map { player =>
+        "players" -> gameState.players.map(_.map { player =>
           Json.obj(
             "Player" -> Json.obj(
               "card1" -> Json.obj(
@@ -84,15 +72,15 @@ object FileIO {
               "currentAmountBetted" -> player.currentAmountBetted
             )
           )
-        },
-        "deck" -> gameState.deck.map { card =>
+        }),
+        "deck" -> gameState.deck.map(_.map { card =>
           Json.obj(
             "card" -> Json.obj(
               "rank" -> card.rank.toString,
               "suit" -> card.suit.toString
             )
           )
-        },
+        }),
         "playerAtTurn" -> gameState.playerAtTurn,
         "currentHighestBetSize" -> gameState.currentHighestBetSize,
         "board" -> gameState.board.map { card =>
@@ -106,7 +94,8 @@ object FileIO {
         "pot" -> gameState.pot,
         "smallBlind" -> gameState.smallBlind,
         "bigBlind" -> gameState.bigBlind,
-        "smallBlindPointer" -> gameState.smallBlindPointer
+        "smallBlindPointer" -> gameState.smallBlindPointer,
+        "newRoundStarted" -> gameState.newRoundStarted
       )
     )
   }
@@ -119,19 +108,18 @@ object FileIO {
       val suit1 = (card1 \ "suit").as[String]
       val rank2 = (card2 \ "rank").as[String]
       val suit2 = (card2 \ "suit").as[String]
-      new Player(
-        card1 = new Card(
+      Player(
+        card1 = Card(
           Suit.valueOf(reverseSuit(suit1)),
           Rank.valueOf(reverseRank(rank1))
         ),
-        card2 = new Card(
+        card2 = Card(
           Suit.valueOf(reverseSuit(suit2)),
           Rank.valueOf(reverseRank(rank2))
         ),
         playername = (player \ "Player" \ "playername").as[String],
         balance = (player \ "Player" \ "balance").as[Int],
-        currentAmountBetted =
-          (player \ "Player" \ "currentAmountBetted").as[Int]
+        currentAmountBetted = (player \ "Player" \ "currentAmountBetted").as[Int]
       )
     }
   }
@@ -142,6 +130,7 @@ object FileIO {
       case "♠" => "Spades"
       case "♢" => "Diamonds"
       case "♡" => "Hearts"
+      case s   => s // handle already converted suits
     }
   }
 
@@ -160,6 +149,7 @@ object FileIO {
       case "Q"  => "Queen"
       case "K"  => "King"
       case "A"  => "Ace"
+      case r    => r // handle already converted ranks
     }
   }
 
@@ -167,7 +157,7 @@ object FileIO {
     deck.map { card =>
       val rank = (card \ "card" \ "rank").as[String]
       val suit = (card \ "card" \ "suit").as[String]
-      new Card(Suit.valueOf(reverseSuit(suit)), Rank.valueOf(reverseRank(rank)))
+      Card(Suit.valueOf(reverseSuit(suit)), Rank.valueOf(reverseRank(rank)))
     }
   }
 }

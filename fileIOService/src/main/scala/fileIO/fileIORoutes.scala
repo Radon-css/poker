@@ -1,11 +1,16 @@
-package de.htwg.poker.tui
+package de.htwg.poker
+package fileIO
 
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import de.htwg.poker.fileIO.types.GameState
-import de.htwg.poker.util.UpdateBoard
+import spray.json.DefaultJsonProtocol._
 
 object FileIORoutes extends DefaultJsonProtocol {
+
+  // Define the JSON format for GameState
+  implicit val gameStateFormat: RootJsonFormat[GameState] = jsonFormat2(GameState) // Adjust the number of fields to match GameState's constructor
 
   val routes: Route =
     pathPrefix("fileIO") {
@@ -15,7 +20,7 @@ object FileIORoutes extends DefaultJsonProtocol {
           post {
             entity(as[GameState]) { gameState =>
               complete {
-                fileIO.FileIO.save(gameState)
+                FileIO.save(gameState)
                 "Game state saved successfully"
               }
             }
@@ -25,7 +30,7 @@ object FileIORoutes extends DefaultJsonProtocol {
         path("loadState") {
           get {
             complete {
-              fileIO.FileIO.load
+              FileIO.load
             }
           }
         }

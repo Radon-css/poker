@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Route
 import de.htwg.poker.fileIO.types.GameState
 import spray.json.DefaultJsonProtocol._
 
-object FileIORoutes extends DefaultJsonProtocol {
+class FileIORoutes {
 
   // Define the JSON format for GameState
   implicit val gameStateFormat: RootJsonFormat[GameState] = jsonFormat2(GameState) // Adjust the number of fields to match GameState's constructor

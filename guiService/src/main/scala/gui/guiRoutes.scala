@@ -10,7 +10,7 @@ class guiRoutes {
     pathPrefix("gui") {
       concat(
         // GUIVIEW routes
-        path("getGUIView") { (handEval, gameStateJson) =>
+        path("getGUIView") { parameters("handEval", "gameStateJson") { (handEval, gameStateJson) =>
           get {
             complete {
               val gameState = gameStateJson.parseJson.convertTo[GameState]
@@ -18,6 +18,7 @@ class guiRoutes {
             }
           }
         }
+      }
       )
     }
 }

@@ -4,7 +4,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import de.htwg.poker.tui.types.GameState
 
-object utilRoutes extends DefaultJsonProtocol {
+class tuiRoutes {
 
   val routes: Route =
     pathPrefix("tui") {

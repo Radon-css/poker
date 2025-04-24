@@ -7,7 +7,7 @@ enum EvalRank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
     King, Ace
 
-class EvalCard(val suit: EvalSuit, val rank: EvalRank) {}
+case class EvalCard(val suit: EvalSuit, val rank: EvalRank) {}
 
 case class EvalPlayer(
     val card1: EvalCard,

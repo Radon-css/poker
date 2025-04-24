@@ -7,7 +7,7 @@ enum GUIRank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
     King, Ace
 
-class GUICard(val suit: GUISuit, val rank: GUIRank) {}
+case class GUICard(val suit: GUISuit, val rank: GUIRank) {}
 
 case class GUIPlayer(
     val card1: GUICard,

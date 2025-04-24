@@ -7,7 +7,7 @@ enum TUIRank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
     King, Ace
 
-class TUICard(val suit: TUISuit, val rank: TUIRank) {}
+case class TUICard(val suit: TUISuit, val rank: TUIRank) {}
 
 case class TUIPlayer(
     val card1: TUICard,

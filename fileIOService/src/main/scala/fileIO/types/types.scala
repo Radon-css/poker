@@ -7,7 +7,7 @@ enum FileIOSuit:
 enum FileIORank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
 
-class FileIOCard(val suit: FileIOSuit, val rank: FileIORank) {}
+case class FileIOCard(val suit: FileIOSuit, val rank: FileIORank) {}
 
 case class FileIOPlayer(
     val card1: FileIOCard,

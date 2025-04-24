@@ -1,6 +1,7 @@
 package de.htwg.poker
 package controllers
 
+import akka.actor.ActorRefFactory
 import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
 import akka.actor.{Actor, Props}
@@ -11,6 +12,7 @@ import de.htwg.poker.controllers.PokerControllerPublisher
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
+import javax.inject.Singleton
 import play.api._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
@@ -21,17 +23,16 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
-import javax.inject.Singleton
-
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
-@Singleton
 class PokerController()(
     val controllerComponents: ControllerComponents,
-    implicit val system: ActorSystem[Nothing],
+    implicit val system: ActorSystem[Nothing], // This is already here
     implicit val mat: Materializer
 ) extends BaseController {
+
+  implicit val classicSystem: akka.actor.ActorSystem = system.classicSystem
 
   val gameController = new Controller(
     new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
@@ -256,11 +257,11 @@ class PokerController()(
   }
 
   object PokerWebSocketActorFactory {
-    def create(out: ActorRef[String], playerID: String) =
+    def create(out: akka.actor.ActorRef, playerID: String) =
       Props(new PokerWebSocketActor(out, playerID))
   }
 
-  class PokerWebSocketActor(out: ActorRef[String], id: String) extends Actor with Reactor {
+  class PokerWebSocketActor(out: akka.actor.ActorRef, id: String) extends Actor with Reactor {
     import context.dispatcher
 
     val playerID = id

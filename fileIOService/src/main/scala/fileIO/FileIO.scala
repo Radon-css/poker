@@ -1,13 +1,13 @@
 package de.htwg.poker
 package fileIO
 
-import de.htwg.poker.fileIO.types.{Card, GameState, Player, Rank, Suit}
+import de.htwg.poker.fileIO.types.{FileIOCard, FileIOGameState, FileIOPlayer, FileIORank, FileIOSuit}
 import java.io._
 import play.api.libs.json._
 
 object FileIO {
 
-  def load: GameState = {
+  def load: FileIOGameState = {
     val source: String =
       scala.io.Source.fromFile("gameState.json").getLines.mkString
     val json: JsValue = Json.parse(source)
@@ -26,7 +26,7 @@ object FileIO {
     val smallBlindPointer = (json \ "gameState" \ "smallBlindPointer").as[Int]
     val newRoundStarted = (json \ "gameState" \ "newRoundStarted").as[Boolean]
 
-    GameState(
+    FileIOGameState(
       playersAndBalances = playersAndBalances,
       players = Some(reconstructPlayers(players)),
       deck = Some(reconstructDeck(deck)),
@@ -41,13 +41,13 @@ object FileIO {
     )
   }
 
-  def save(gameState: GameState): Unit = {
+  def save(gameState: FileIOGameState): Unit = {
     val pw = new PrintWriter(new File("gameState.json"))
     pw.write(Json.prettyPrint(gameStateToJson(gameState)))
     pw.close
   }
 
-  private def gameStateToJson(gameState: GameState) = {
+  private def gameStateToJson(gameState: FileIOGameState) = {
     Json.obj(
       "gameState" -> Json.obj(
         "playersAndBalances" -> Json.arr(gameState.playersAndBalances.map { case (name, balance) =>
@@ -100,7 +100,7 @@ object FileIO {
     )
   }
 
-  private def reconstructPlayers(players: List[JsValue]): List[Player] = {
+  private def reconstructPlayers(players: List[JsValue]): List[FileIOPlayer] = {
     players.map { player =>
       val card1 = (player \ "Player" \ "card1").as[JsValue]
       val card2 = (player \ "Player" \ "card2").as[JsValue]
@@ -108,14 +108,14 @@ object FileIO {
       val suit1 = (card1 \ "suit").as[String]
       val rank2 = (card2 \ "rank").as[String]
       val suit2 = (card2 \ "suit").as[String]
-      Player(
-        card1 = Card(
-          Suit.valueOf(reverseSuit(suit1)),
-          Rank.valueOf(reverseRank(rank1))
+      FileIOPlayer(
+        card1 = FileIOCard(
+          FileIOSuit.valueOf(reverseSuit(suit1)),
+          FileIORank.valueOf(reverseRank(rank1))
         ),
-        card2 = Card(
-          Suit.valueOf(reverseSuit(suit2)),
-          Rank.valueOf(reverseRank(rank2))
+        card2 = FileIOCard(
+          FileIOSuit.valueOf(reverseSuit(suit2)),
+          FileIORank.valueOf(reverseRank(rank2))
         ),
         playername = (player \ "Player" \ "playername").as[String],
         balance = (player \ "Player" \ "balance").as[Int],
@@ -153,11 +153,11 @@ object FileIO {
     }
   }
 
-  private def reconstructDeck(deck: List[JsValue]): List[Card] = {
+  private def reconstructDeck(deck: List[JsValue]): List[FileIOCard] = {
     deck.map { card =>
       val rank = (card \ "card" \ "rank").as[String]
       val suit = (card \ "card" \ "suit").as[String]
-      Card(Suit.valueOf(reverseSuit(suit)), Rank.valueOf(reverseRank(rank)))
+      FileIOCard(FileIOSuit.valueOf(reverseSuit(suit)), FileIORank.valueOf(reverseRank(rank)))
     }
   }
 }

@@ -3,7 +3,7 @@ package de.htwg.poker.tui
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
-import de.htwg.poker.tui.types.GameState
+import de.htwg.poker.tui.types.TUIGameState
 import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 class tuiRoutes {
@@ -15,7 +15,7 @@ class tuiRoutes {
         path("getTUIView") {
           parameters("gameStateJson") { gameStateJson =>
             get {
-              decode[GameState](gameStateJson) match {
+              decode[TUIGameState](gameStateJson) match {
                 case Right(gameState) =>
                   val result = TUIView.getView(gameState)
                   complete(HttpEntity(ContentTypes.`application/json`, result.asJson.noSpaces))

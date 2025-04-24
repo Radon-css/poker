@@ -1,10 +1,10 @@
 package de.htwg.poker.eval
 
-import de.htwg.poker.eval.types.Card
-import de.htwg.poker.eval.types.Rank
-import de.htwg.poker.eval.types.Suit
-import de.htwg.poker.eval.types.Rank.*
-import de.htwg.poker.eval.types.Suit.*
+import de.htwg.poker.eval.types.EvalCard
+import de.htwg.poker.eval.types.EvalRank
+import de.htwg.poker.eval.types.EvalSuit
+import de.htwg.poker.eval.types.EvalRank.*
+import de.htwg.poker.eval.types.EvalSuit.*
 
 /* this class contains an Algorithm that can evaluate Poker Hands. It compares the two Cards the player
   holds with the community Cards that are currently revealed to find the combination of player cards and community cards that is worth most.
@@ -29,18 +29,18 @@ object HandInfo {
       case StraightFlush => 9
     }
 
-  def evalHand(playerCards: List[Card], boardCards: List[Card]): String = {
+  def evalHand(playerCards: List[EvalCard], boardCards: List[EvalCard]): String = {
     val (bestHand, bestType) = evalHand0(playerCards, boardCards)
     bestType.toString
   }
 
   def evalHand0(
-      playerCards: List[Card],
-      boardCards: List[Card]
-  ): (List[Card], Type) = {
+      playerCards: List[EvalCard],
+      boardCards: List[EvalCard]
+  ): (List[EvalCard], Type) = {
     val allCards = boardCards ++ playerCards
     val allCombinations = combinations(5, allCards)
-    var bestHand: List[Card] = boardCards
+    var bestHand: List[EvalCard] = boardCards
     var bestType: Type = Type.High
 
     for (combination <- allCombinations) {
@@ -53,12 +53,12 @@ object HandInfo {
     (bestHand, bestType)
   }
 
-  def evalFiveCards(combination: List[Card]): Type = {
+  def evalFiveCards(combination: List[EvalCard]): Type = {
 
     var returnValue = Type.High
 
     // chaining
-    val rankHistogramm: List[(Rank, Int)] = combination
+    val rankHistogramm: List[(EvalRank, Int)] = combination
       .map(_.rank)
       .groupBy(identity)
       .mapValues(_.size)
@@ -103,13 +103,13 @@ object HandInfo {
       && getStrength(sortedCards(3).rank) == getStrength(
         sortedCards(4).rank
       ) + 1
-      || (sortedCards.head.rank == Rank.Ace && sortedCards(
+      || (sortedCards.head.rank == EvalRank.Ace && sortedCards(
         1
-      ).rank == Rank.Five && sortedCards(2).rank == Rank.Four && sortedCards(
+      ).rank == EvalRank.Five && sortedCards(2).rank == EvalRank.Four && sortedCards(
         3
-      ).rank == Rank.Three && sortedCards(
+      ).rank == EvalRank.Three && sortedCards(
         4
-      ).rank == Rank.Two)
+      ).rank == EvalRank.Two)
     )
       returnValue = Type.Straight
 
@@ -173,15 +173,15 @@ object HandInfo {
           && getStrength(sortedCards(3).rank) == getStrength(
             sortedCards(4).rank
           ) + 1
-          || (sortedCards.head.rank == Rank.Ace && sortedCards(
+          || (sortedCards.head.rank == EvalRank.Ace && sortedCards(
             1
-          ).rank == Rank.Five && sortedCards(
+          ).rank == EvalRank.Five && sortedCards(
             2
-          ).rank == Rank.Four && sortedCards(
+          ).rank == EvalRank.Four && sortedCards(
             3
-          ).rank == Rank.Three && sortedCards(
+          ).rank == EvalRank.Three && sortedCards(
             4
-          ).rank == Rank.Two)
+          ).rank == EvalRank.Two)
       )
     )
       returnValue = Type.StraightFlush
@@ -199,7 +199,7 @@ object HandInfo {
       }
   }
 
-  def getStrength(rank: Rank): Int = rank match {
+  def getStrength(rank: EvalRank): Int = rank match {
     case Two   => 1
     case Three => 2
     case Four  => 3
@@ -215,7 +215,7 @@ object HandInfo {
     case Ace   => 13
   }
 
-  def getId(suit: Suit): Int = suit match {
+  def getId(suit: EvalSuit): Int = suit match {
     case Clubs    => 1
     case Spades   => 2
     case Diamonds => 3

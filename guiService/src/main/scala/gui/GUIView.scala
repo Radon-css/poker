@@ -10,7 +10,7 @@ import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
 import scalafx.scene.control.Button
-import de.htwg.poker.gui.types.GameState
+import de.htwg.poker.gui.types.GUIGameState
 import scalafx.application.Platform
 import scala.util.{Try, Success, Failure}
 import javafx.concurrent.Worker.State
@@ -18,17 +18,17 @@ import netscape.javascript.JSObject
 import javafx.scene.web.WebEngine
 import scala.compiletime.ops.boolean
 
-import de.htwg.poker.gui.types.Player
-import de.htwg.poker.gui.types.Card
-import de.htwg.poker.gui.types.Suit
-import de.htwg.poker.gui.types.Rank
-import de.htwg.poker.gui.types.Suit.*
-import de.htwg.poker.gui.types.Rank.*
+import de.htwg.poker.gui.types.GUIPlayer
+import de.htwg.poker.gui.types.GUICard
+import de.htwg.poker.gui.types.GUISuit
+import de.htwg.poker.gui.types.GUIRank
+import de.htwg.poker.gui.types.GUISuit.*
+import de.htwg.poker.gui.types.GUIRank.*
 
 object GUIView {
   def getView(
       handEval: String,
-      gameState: GameState
+      gameState: GUIGameState
   ): String = {
 
     val playerListHtml = updatePlayersHtml(gameState)
@@ -36,10 +36,10 @@ object GUIView {
     val boardListHtml = updateBoardHtml(gameState)
     val betListHtml = updateBetsHtml(gameState)
 
-    val gameStarted = gameState.players.getOrElse(List.empty[Player]).size != 0
+    val gameStarted = gameState.players.getOrElse(List.empty[GUIPlayer]).size != 0
 
     val balance =
-      gameState.currentHighestBetSize - gameState.players.getOrElse(List.empty[Player])(gameState.playerAtTurn).currentAmountBetted
+      gameState.currentHighestBetSize - gameState.players.getOrElse(List.empty[GUIPlayer])(gameState.playerAtTurn).currentAmountBetted
 
     return s"""
     ${
@@ -357,17 +357,17 @@ object GUIView {
   /* these are methods to create the new Html Code that has to be displayed in the GUI when the GameState is updated.
      in GUIView, we then simply pass the new Html Code that has been created by these methods into our static Html code with the help of String Variables.*/
 
-  def updatePlayersHtml(gameState: GameState): List[String] = {
+  def updatePlayersHtml(gameState: GUIGameState): List[String] = {
     val newPlayerList =
-      gameState.players.getOrElse(List.empty[Player]).map(playerToHtml)
+      gameState.players.getOrElse(List.empty[GUIPlayer]).map(playerToHtml)
     List
       .fill(6)(HiddenHtml)
       .patch(0, newPlayerList, newPlayerList.size)
   }
 
-  def updateCardsHtml(gameState: GameState): List[(String, String)] = {
+  def updateCardsHtml(gameState: GUIGameState): List[(String, String)] = {
     val playerList =
-      gameState.players.getOrElse(List.empty[Player]).zipWithIndex
+      gameState.players.getOrElse(List.empty[GUIPlayer]).zipWithIndex
     val playerAtTurn = gameState.playerAtTurn
     val newCardList = playerList.map {
       case (player, index) if index == playerAtTurn =>
@@ -392,19 +392,19 @@ object GUIView {
                     """
   }
 
-  def updateBoardHtml(gameState: GameState): List[String] = {
+  def updateBoardHtml(gameState: GUIGameState): List[String] = {
     val boardList = gameState.board
     val newBoardList = boardList.map(cardToHtml)
     val invisBoardList = List.fill(5)(HiddenHtml)
     val hiddenBoardList =
       List.fill(5)(HiddenBoardCardHtml)
 
-    if (gameState.players.getOrElse(List.empty[Player]).isEmpty) invisBoardList
+    if (gameState.players.getOrElse(List.empty[GUIPlayer]).isEmpty) invisBoardList
     else hiddenBoardList.patch(0, newBoardList, newBoardList.size)
   }
 
-  def updateBetsHtml(gameState: GameState): List[String] = {
-    val playerList = gameState.players.getOrElse(List.empty[Player])
+  def updateBetsHtml(gameState: GUIGameState): List[String] = {
+    val playerList = gameState.players.getOrElse(List.empty[GUIPlayer])
     val newBetList =
       playerList.map(player => betSizeToHtml(player.currentAmountBetted))
     val hiddenBetList = List.fill(6)(HiddenHtml)
@@ -412,7 +412,7 @@ object GUIView {
     hiddenBetList.patch(0, newBetList, playerList.size)
   }
 
-  def suitToHtml(suit: Suit): String = suit match {
+  def suitToHtml(suit: GUISuit): String = suit match {
     case Clubs =>
       "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-suit-club-fill\" viewBox=\"0 0 16 16\"><path d=\"M11.5 12.5a3.493 3.493 0 0 1-2.684-1.254 19.92 19.92 0 0 0 1.582 2.907c.231.35-.02.847-.438.847H6.04c-.419 0-.67-.497-.438-.847a19.919 19.919 0 0 0 1.582-2.907 3.5 3.5 0 1 1-2.538-5.743 3.5 3.5 0 1 1 6.708 0A3.5 3.5 0 1 1 11.5 12.5\"/></svg>"
     case Spades =>
@@ -423,13 +423,13 @@ object GUIView {
       "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\" class=\"bi bi-suit-heart-fill\" viewBox=\"0 0 16 16\"><path d=\"M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1\"/></svg>"
   }
 
-  def cardToHtml(card: Card): String = {
+  def cardToHtml(card: GUICard): String = {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suitToHtml(
         card.suit
       )}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
   }
 
-  def playerToHtml(player: Player) = {
+  def playerToHtml(player: GUIPlayer) = {
     val opacityClass = if (player.folded) "opacity-50" else ""
     s"""<div class=\"flex flex-col items-center justify-center space-x-2\">
                 <div class=\"rounded-full bg-gray-600 h-16 w-16 flex justify-center items-center text-white ml-1.5 ${opacityClass}\">

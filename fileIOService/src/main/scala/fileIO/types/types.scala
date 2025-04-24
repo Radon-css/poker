@@ -1,17 +1,17 @@
 package de.htwg.poker
 package fileIO.types
 
-enum Suit:
+enum FileIOSuit:
   case Clubs, Spades, Diamonds, Hearts
 
-enum Rank:
+enum FileIORank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
 
-class Card(val suit: Suit, val rank: Rank) {}
+class FileIOCard(val suit: FileIOSuit, val rank: FileIORank) {}
 
-case class Player(
-    val card1: Card,
-    val card2: Card,
+case class FileIOPlayer(
+    val card1: FileIOCard,
+    val card2: FileIOCard,
     val playername: String,
     val balance: Int = 1000,
     val currentAmountBetted: Int = 0,
@@ -19,13 +19,13 @@ case class Player(
     val checkedThisRound: Boolean = false
 ) {}
 
-case class GameState(
+case class FileIOGameState(
     playersAndBalances: List[(String, Int)],
-    players: Option[List[Player]],
-    deck: Option[List[Card]],
+    players: Option[List[FileIOPlayer]],
+    deck: Option[List[FileIOCard]],
     playerAtTurn: Int = 0,
     currentHighestBetSize: Int = 0,
-    board: List[Card] = Nil,
+    board: List[FileIOCard] = Nil,
     pot: Int = 30,
     smallBlind: Int = 10,
     bigBlind: Int = 20,

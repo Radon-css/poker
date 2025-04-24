@@ -1,28 +1,28 @@
 package de.htwg.poker.tui
 
-import de.htwg.poker.tui.types.GameState
-import de.htwg.poker.tui.types.Player
-import de.htwg.poker.tui.types.Card
+import de.htwg.poker.tui.types.TUIGameState
+import de.htwg.poker.tui.types.TUIPlayer
+import de.htwg.poker.tui.types.TUICard
 
 object TUIView {
-  def getView(gameState: GameState): String = {
+  def getView(gameState: TUIGameState): String = {
     val stringBuilder = new StringBuilder
     val indexedPlayerList =
-      gameState.players.getOrElse(List.empty[Player]).zipWithIndex
+      gameState.players.getOrElse(List.empty[TUIPlayer]).zipWithIndex
     val Print = new Print(gameState)
 
     // clear console
     // print("\u001b[2J\u001b[H")
     // case mehr als 3 Spieler
-    if (gameState.players.getOrElse(List.empty[Player]).size > 3) {
+    if (gameState.players.getOrElse(List.empty[TUIPlayer]).size > 3) {
       val TopRowPlayerList =
         gameState.players
-          .getOrElse(List.empty[Player])
+          .getOrElse(List.empty[TUIPlayer])
           .take(
             scala.math
               .ceil(
                 gameState.players
-                  .getOrElse(List.empty[Player])
+                  .getOrElse(List.empty[TUIPlayer])
                   .size
                   .toDouble / 2
               )
@@ -30,12 +30,12 @@ object TUIView {
           )
       val BottomRowPlayerList =
         gameState.players
-          .getOrElse(List.empty[Player])
+          .getOrElse(List.empty[TUIPlayer])
           .drop(
             scala.math
               .ceil(
                 gameState.players
-                  .getOrElse(List.empty[Player])
+                  .getOrElse(List.empty[TUIPlayer])
                   .size
                   .toDouble / 2
               )
@@ -62,7 +62,7 @@ object TUIView {
       sb.toString
       // case weniger als 3 Spieler
     } else {
-      val TopRowPlayerList = gameState.players.getOrElse(List.empty[Player])
+      val TopRowPlayerList = gameState.players.getOrElse(List.empty[TUIPlayer])
       val TopRowIndexedPlayerList = TopRowPlayerList.zipWithIndex
       val TopRowApproxLength =
         (TopRowIndexedPlayerList.size - 1) * 14 + 7
@@ -78,9 +78,9 @@ object TUIView {
     }
   }
 }
-class Print(gameState: GameState) {
-  def balanceToString(player: Player) = "(" + player.balance + "$)"
-  def printBalances(playerList: List[Player]): String = {
+class Print(gameState: TUIGameState) {
+  def balanceToString(player: TUIPlayer) = "(" + player.balance + "$)"
+  def printBalances(playerList: List[TUIPlayer]): String = {
     val sb = new StringBuilder
     for (player <- playerList) {
       val spaces = " " * (14 - balanceToString(player).length)
@@ -90,7 +90,7 @@ class Print(gameState: GameState) {
     sb.toString
   }
 
-  def printPlayerNames(indexedPlayerList: List[(Player, Int)]): String = {
+  def printPlayerNames(indexedPlayerList: List[(TUIPlayer, Int)]): String = {
     val sb = new StringBuilder
     for (playerWithIndex <- indexedPlayerList) {
       if (playerWithIndex._2 == gameState.playerAtTurn) {
@@ -119,7 +119,7 @@ class Print(gameState: GameState) {
     sb.append("\n")
     sb.toString
   }
-  def printPlayerCards(playerList: List[Player]): String = {
+  def printPlayerCards(playerList: List[TUIPlayer]): String = {
     val sb = new StringBuilder
     for (player <- playerList) {
       val spaces =
@@ -132,7 +132,7 @@ class Print(gameState: GameState) {
     sb.toString
   }
 
-  def printPlayerBets(playerList: List[Player]): String = {
+  def printPlayerBets(playerList: List[TUIPlayer]): String = {
     val sb = new StringBuilder
     for (player <- playerList) {
       val spaces =
@@ -155,7 +155,7 @@ class Print(gameState: GameState) {
     sb.toString
   }
   def printBoard(
-      cardList: List[Card],
+      cardList: List[TUICard],
       playerLengthApprox: Int
   ): String = {
     val sb = new StringBuilder

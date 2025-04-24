@@ -2,13 +2,13 @@ package de.htwg.poker.eval
 import scala.io.Source
 import scala.math.Ordering
 
-import de.htwg.poker.eval.types.Card
-import de.htwg.poker.eval.types.Player
+import de.htwg.poker.eval.types.EvalCard
+import de.htwg.poker.eval.types.EvalPlayer
 
-import de.htwg.poker.eval.types.Rank
-import de.htwg.poker.eval.types.Suit
-import de.htwg.poker.eval.types.Rank.*
-import de.htwg.poker.eval.types.Suit.*
+import de.htwg.poker.eval.types.EvalRank
+import de.htwg.poker.eval.types.EvalSuit
+import de.htwg.poker.eval.types.EvalRank.*
+import de.htwg.poker.eval.types.EvalSuit.*
 
 object Evaluator {
 
@@ -57,16 +57,16 @@ object Evaluator {
   }
 
   def calcWinner(
-      players: List[Player],
-      boardCards: List[Card]
-  ): List[Player] = {
+      players: List[EvalPlayer],
+      boardCards: List[EvalCard]
+  ): List[EvalPlayer] = {
     var playerHandRanks: List[(String, String, Int)] = List()
     for (player <- players) {
       var bestRank = Integer.MAX_VALUE
       var bestCategory = "HC"
       val playerCards = List(player.card1, player.card2)
       val cards = boardCards ++ playerCards
-      val combinations = getCombinations[Card](5, cards)
+      val combinations = getCombinations[EvalCard](5, cards)
 
       for (combination <- combinations) {
         val value = combination.map(card => getPrime(card.rank)).product[Int]
@@ -169,14 +169,14 @@ object Evaluator {
       }
   }
 
-  def getId(suit: Suit): Int = suit match {
+  def getId(suit: EvalSuit): Int = suit match {
     case Clubs    => 1
     case Spades   => 2
     case Diamonds => 3
     case Hearts   => 4
   }
 
-  def getPrime(rank: Rank): Int = rank match {
+  def getPrime(rank: EvalRank): Int = rank match {
     case Two   => 2
     case Three => 3
     case Four  => 5

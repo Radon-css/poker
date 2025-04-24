@@ -45,12 +45,12 @@ object Client {
   }
 
   def evalHand(
-      player: Player,
+      playerCards: List[Card],
       boardCards: List[Card]
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
     val jsonString = Map(
-      "player" -> player.asJson,
+      "playerCards" -> playerCards.asJson,
       "boardCards" -> boardCards.asJson
     ).asJson.noSpaces
 

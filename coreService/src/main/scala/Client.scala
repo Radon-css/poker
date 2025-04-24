@@ -1,20 +1,18 @@
-package de.htwg.poker;
-
+package de.htwg.poker
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import akka.Done
-import akka.actor.{ActorSystem, CoordinatedShutdown}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.actor.ActorSystem
 import akka.stream.Materializer
 
 import io.circe.generic.auto._
 import io.circe.syntax._
+import io.circe.parser._
 
-import de.htwg.poker.model._
+import de.htwg.poker.model.{Player, Card, GameState}
 
 object Client {
 
@@ -28,27 +26,20 @@ object Client {
       "boardCards" -> boardCards.asJson
     ).asJson.noSpaces
 
-    val entity = HttpEntity(
-      ContentTypes.`application/json`,
-      jsonString
-    )
-
-    val request = HttpRequest(
-      method = HttpMethods.POST,
-      uri = "http://localhost:8080/eval/calcWinner",
-      entity = entity
-    )
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/eval/calcWinner", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
-          Unmarshal(response.entity).to[List[Player]]
+          Unmarshal(response.entity).to[String].flatMap { json =>
+            decode[List[Player]](json) match {
+              case Right(players) => Future.successful(players)
+              case Left(err)      => Future.failed(new RuntimeException(s"JSON decoding error: $err"))
+            }
+          }
         case _ =>
-          Future.failed(
-            new RuntimeException(
-              s"calcWinner Failed with status ${response.status}"
-            )
-          )
+          Future.failed(new RuntimeException(s"calcWinner Failed with status ${response.status}"))
       }
     }
   }
@@ -63,27 +54,15 @@ object Client {
       "boardCards" -> boardCards.asJson
     ).asJson.noSpaces
 
-    val entity = HttpEntity(
-      ContentTypes.`application/json`,
-      jsonString
-    )
-
-    val request = HttpRequest(
-      method = HttpMethods.POST,
-      uri = "http://localhost:8080/eval/evalHand",
-      entity = entity
-    )
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/eval/evalHand", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[String]
         case _ =>
-          Future.failed(
-            new RuntimeException(
-              s"evalHand Failed with status ${response.status}"
-            )
-          )
+          Future.failed(new RuntimeException(s"evalHand Failed with status ${response.status}"))
       }
     }
   }
@@ -98,27 +77,15 @@ object Client {
       "handEval" -> handEval.asJson
     ).asJson.noSpaces
 
-    val entity = HttpEntity(
-      ContentTypes.`application/json`,
-      jsonString
-    )
-
-    val request = HttpRequest(
-      method = HttpMethods.POST,
-      uri = "http://localhost:8080/gui/getGUIView",
-      entity = entity
-    )
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/gui/getGUIView", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[String]
         case _ =>
-          Future.failed(
-            new RuntimeException(
-              s"getGUIView Failed with status ${response.status}"
-            )
-          )
+          Future.failed(new RuntimeException(s"getGUIView Failed with status ${response.status}"))
       }
     }
   }
@@ -128,25 +95,15 @@ object Client {
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
     val jsonString = gameState.asJson.noSpaces
-
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-
-    val request = HttpRequest(
-      method = HttpMethods.POST,
-      uri = "http://localhost:8080/tui/getTUIView",
-      entity = entity
-    )
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/tui/getTUIView", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[String]
         case _ =>
-          Future.failed(
-            new RuntimeException(
-              s"getTUIView Failed with status ${response.status}"
-            )
-          )
+          Future.failed(new RuntimeException(s"getTUIView Failed with status ${response.status}"))
       }
     }
   }
@@ -156,49 +113,34 @@ object Client {
   )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
 
     val jsonString = gameState.asJson.noSpaces
-
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-
-    val request = HttpRequest(
-      method = HttpMethods.POST,
-      uri = "http://localhost:8080/fileIO/saveState",
-      entity = entity
-    )
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/fileIO/saveState", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
           Unmarshal(response.entity).to[String]
         case _ =>
-          Future.failed(
-            new RuntimeException(
-              s"saveState Failed with status ${response.status}"
-            )
-          )
+          Future.failed(new RuntimeException(s"saveState Failed with status ${response.status}"))
       }
     }
   }
 
-  def loadState()(implicit
-      system: ActorSystem,
-      mat: Materializer
-  ): Future[GameState] = {
+  def loadState()(implicit system: ActorSystem, mat: Materializer): Future[GameState] = {
 
-    val request = HttpRequest(
-      method = HttpMethods.GET,
-      uri = "http://localhost:8080/fileIO/loadState"
-    )
+    val request = HttpRequest(HttpMethods.GET, "http://localhost:8080/fileIO/loadState")
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
-          Unmarshal(response.entity).to[GameState]
+          Unmarshal(response.entity).to[String].flatMap { json =>
+            decode[GameState](json) match {
+              case Right(state) => Future.successful(state)
+              case Left(err)    => Future.failed(new RuntimeException(s"JSON decoding error: $err"))
+            }
+          }
         case _ =>
-          Future.failed(
-            new RuntimeException(
-              s"loadState Failed with status ${response.status}"
-            )
-          )
+          Future.failed(new RuntimeException(s"loadState Failed with status ${response.status}"))
       }
     }
   }

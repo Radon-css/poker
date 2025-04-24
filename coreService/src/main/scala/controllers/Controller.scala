@@ -1,9 +1,11 @@
 package de.htwg.poker
 package controller
-import model.Player
+import concurrent.duration.DurationInt
 import model.GameState
-import util.UpdateBoard
+import model.Player
+import scala.concurrent.Await
 import util.Observable
+import util.UpdateBoard
 
 class Controller(var gameState: GameState) extends Observable {
 
@@ -41,8 +43,7 @@ class Controller(var gameState: GameState) extends Observable {
         throw new Exception("Small blind must be smaller than big blind")
       }
 
-      gameState =
-        gameState.createGame(playerNameList, smallBlindInt, bigBlindInt, 0)
+      gameState = gameState.createGame(playerNameList, smallBlindInt, bigBlindInt, 0)
       notifyObservers
       true
     } catch {
@@ -72,9 +73,7 @@ class Controller(var gameState: GameState) extends Observable {
       ) {
         throw new Exception("Insufficient balance")
       }
-      if (
-        gameState.bigBlind >= amount || gameState.currentHighestBetSize >= amount
-      ) {
+      if (gameState.bigBlind >= amount || gameState.currentHighestBetSize >= amount) {
         throw new Exception("Bet size is too low")
       }
       gameState = gameState.bet(amount)
@@ -110,10 +109,12 @@ class Controller(var gameState: GameState) extends Observable {
             .map(player => player.copy(checkedThisRound = false))
         )
       )
-      gameState = UpdateBoard.strategy(gameState)
+      import scala.concurrent.Await
+      import scala.concurrent.duration._
+      gameState = Await.result(UpdateBoard.strategy(gameState), 1.seconds)
     }
     if (playerWonBeforeShowdown) {
-      gameState = UpdateBoard.startRound(gameState)
+      gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
     }
     notifyObservers
     true
@@ -145,10 +146,10 @@ class Controller(var gameState: GameState) extends Observable {
             .map(player => player.copy(checkedThisRound = false))
         )
       )
-      gameState = UpdateBoard.strategy(gameState)
+      gameState = Await.result(UpdateBoard.strategy(gameState), 1.seconds)
     }
     if (playerWonBeforeShowdown) {
-      gameState = UpdateBoard.startRound(gameState)
+      gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
     }
     notifyObservers
     true
@@ -177,17 +178,17 @@ class Controller(var gameState: GameState) extends Observable {
             .map(player => player.copy(checkedThisRound = false))
         )
       )
-      gameState = UpdateBoard.strategy(gameState)
+      gameState = Await.result(UpdateBoard.strategy(gameState), 1.seconds)
     }
     if (playerWonBeforeShowdown) {
-      gameState = UpdateBoard.startRound(gameState)
+      gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
     }
     notifyObservers
     true
   }
 
   def restartGame: Unit = {
-    gameState = UpdateBoard.startRound(gameState)
+    gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
     notifyObservers
   }
 
@@ -200,9 +201,7 @@ class Controller(var gameState: GameState) extends Observable {
     (gameState.board.size == 0 &&
       gameState.players
         .getOrElse(List.empty[Player])
-        .forall(player =>
-          player.currentAmountBetted == gameState.bigBlind || player.folded
-        ))
+        .forall(player => player.currentAmountBetted == gameState.bigBlind || player.folded))
     && gameState.playerAtTurn == gameState.getNextPlayer(
       gameState.getNextPlayer(gameState.smallBlindPointer)
     )

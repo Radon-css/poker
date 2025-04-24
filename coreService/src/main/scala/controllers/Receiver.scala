@@ -1,26 +1,26 @@
 package de.htwg.poker
 package controllers
 
-import akka.actor.{Actor, Props}
 import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
+import akka.actor.{Actor, Props}
 import akka.stream.Materializer
+import concurrent.duration.DurationInt
 import de.htwg.poker.controller.Controller
+import de.htwg.poker.controllers.PokerControllerPublisher
+import de.htwg.poker.model.Card
+import de.htwg.poker.model.GameState
+import de.htwg.poker.model.Player
 import play.api._
 import play.api.libs.json._
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.VectorMap
+import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
-import de.htwg.poker.controllers.PokerControllerPublisher
-
-import de.htwg.poker.model.GameState
-import de.htwg.poker.model.Player
-import de.htwg.poker.model.Card
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
@@ -181,9 +181,9 @@ class PokerController()(
   }
 
   def offlinePlayerIsAtTurn = {
-    val playerAtTurn = gameState.players.getOrElse(gameState.playerAtTurn,"")
+    val playerAtTurn = gameState.players.getOrElse(gameState.playerAtTurn, "")
     println("OFFLINEPLAYERISATTURN: Player at turn: " + playerAtTurn)
-    val playerID = players.getOrElse(gameState.getCurrentPlayer.playername,"")
+    val playerID = players.getOrElse(gameState.getCurrentPlayer.playername, "")
     println("OFFLINEPLAYERISATTURN: Player ID: " + playerID)
     println("OFFLINEPLAYERISATTURN:" + offlinePlayers.contains(playerID))
     offlinePlayers.contains(playerID)
@@ -221,7 +221,7 @@ class PokerController()(
             "balance" -> player.balance,
             "currentAmountBetted" -> player.currentAmountBetted,
             "folded" -> player.folded,
-            "handEval" -> gameState.getHandEval(index),
+            "handEval" -> Json.toJson(Await.result(gameState.getHandEval(index), 1.seconds)),
             "offline" -> offlinePlayers.contains(
               players.getOrElse(player.playername, "")
             )

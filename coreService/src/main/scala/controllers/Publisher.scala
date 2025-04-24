@@ -1,9 +1,9 @@
 package de.htwg.poker
 package controllers
 
+import de.htwg.poker.controller.Controller
 import scala.swing.Publisher
 import scala.swing.event.Event
-import de.htwg.poker.controller.Controller
 
 // Define an event class
 case class GameEvent(eventType: String)
@@ -38,7 +38,6 @@ class PokerControllerPublisher(val controller: Controller) extends Publisher {
       override def toString: String = "AllIn"
     }) // Publish an event for all-in action
   }
-
 
   def fold(): Unit = {
     println("fold Event")

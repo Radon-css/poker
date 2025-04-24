@@ -1,25 +1,28 @@
 package de.htwg.poker
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import akka.Done
 import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
-
+import de.htwg.poker.model._
+import de.htwg.poker.model.{Card, GameState, Player}
 import io.circe.generic.auto._
-import io.circe.syntax._
 import io.circe.parser._
-
-import de.htwg.poker.model.{Player, Card, GameState}
+import io.circe.syntax._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object Client {
+
+  import AppConfig.{materializer, system}
 
   def calcWinner(
       players: List[Player],
       boardCards: List[Card]
-  )(implicit system: ActorSystem, mat: Materializer): Future[List[Player]] = {
+  ): Future[List[Player]] = {
 
     val jsonString = Map(
       "players" -> Some(players).asJson,
@@ -47,7 +50,7 @@ object Client {
   def evalHand(
       playerCards: List[Card],
       boardCards: List[Card]
-  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+  ): Future[String] = {
 
     val jsonString = Map(
       "playerCards" -> playerCards.asJson,
@@ -70,7 +73,7 @@ object Client {
   def getGUIView(
       gameState: GameState,
       handEval: String
-  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+  ): Future[String] = {
 
     val jsonString = Map(
       "gameState" -> gameState.asJson,
@@ -92,7 +95,7 @@ object Client {
 
   def getTUIView(
       gameState: GameState
-  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+  ): Future[String] = {
 
     val jsonString = gameState.asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
@@ -110,7 +113,7 @@ object Client {
 
   def saveState(
       gameState: GameState
-  )(implicit system: ActorSystem, mat: Materializer): Future[String] = {
+  ): Future[String] = {
 
     val jsonString = gameState.asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)

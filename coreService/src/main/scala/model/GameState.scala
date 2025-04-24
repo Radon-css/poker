@@ -1,7 +1,11 @@
 package de.htwg.poker.model
 import scala.math
-import de.htwg.poker.util.UpdateBoard
+
+import concurrent.duration.DurationInt
 import de.htwg.poker.Client
+import de.htwg.poker.util.UpdateBoard
+import scala.concurrent.Await
+import scala.concurrent.Future
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -44,7 +48,7 @@ case class GameState(
   def newRoundStarted = newRoundStarted */
 
   // see TUIView for toString implementation
-  override def toString(): String = Client.getTUIView(this)
+  override def toString(): String = Await.result(Client.getTUIView(this), 1.second)
 
   /* in these following methods, we have to update the gamestate according to the certain action that has been taken.
     For example, if there was a bet, the players balance has to be reduced by the amount that has been betted and this
@@ -188,13 +192,12 @@ case class GameState(
 
     val shuffledDeck = shuffleDeck
 
-    val playerList = playerNameList.zipWithIndex.map {
-      case (playerName, index) =>
-        new Player(
-          shuffledDeck(index * 2),
-          shuffledDeck(index * 2 + 1),
-          playerName
-        )
+    val playerList = playerNameList.zipWithIndex.map { case (playerName, index) =>
+      new Player(
+        shuffledDeck(index * 2),
+        shuffledDeck(index * 2 + 1),
+        playerName
+      )
     }
 
     val newShuffledDeck = shuffledDeck.drop(playerList.size * 2)
@@ -269,13 +272,15 @@ case class GameState(
     if (playersAndBalances.length - 1 == getNextBigBlindPlayer) 0
     else getNextBigBlindPlayer + 1
 
-  def getHandEval(player: Int): String = {
-    Client.evalHand(
-      List(
-        players.getOrElse(List.empty[Player])(player).card1,
-        players.getOrElse(List.empty[Player])(player).card2
-      ),
-      board
-    )
+  def getHandEval(player: Int): Future[String] = {
+    players.getOrElse(List.empty[Player]) match {
+      case Nil => Future.successful("No players available")
+      case playersList if player >= 0 && player < playersList.size =>
+        Client.evalHand(
+          List(playersList(player).card1, playersList(player).card2),
+          board
+        )
+      case _ => Future.failed(new IndexOutOfBoundsException("Invalid player index"))
+    }
   }
 }

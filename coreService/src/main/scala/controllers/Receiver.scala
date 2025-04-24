@@ -21,6 +21,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
+import javax.inject.Singleton
+
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
@@ -248,14 +250,14 @@ class PokerController()(
 
     ActorFlow.actorRef { out =>
       println("Connect received with playerID: " + playerID)
-      PokerWebSocketActorFactory.create(out[String], playerID)
+      PokerWebSocketActorFactory.create(out, playerID)
 
     }
   }
 
   object PokerWebSocketActorFactory {
     def create(out: ActorRef[String], playerID: String) =
-      Props(new PokerWebSocketActor(out[String], playerID))
+      Props(new PokerWebSocketActor(out, playerID))
   }
 
   class PokerWebSocketActor(out: ActorRef[String], id: String) extends Actor with Reactor {

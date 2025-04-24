@@ -17,8 +17,8 @@ class evalRoutes {
             entity(as[String]) { body =>
               decode[GameState](body) match {
                 case Right(gameState) =>
-                  val playerCards = gameState.players.get.head.cards
-                  val boardCards = gameState.board
+                  val playerCards: List[Card] = List(gameState.players.get(gameState.playerAtTurn).card1, gameState.players.get(gameState.playerAtTurn).card2)
+                  val boardCards: List[Card] = gameState.board
                   val result = HandInfo.evalHand(playerCards, boardCards)
                   complete(HttpEntity(ContentTypes.`application/json`, result.asJson.noSpaces))
                 case Left(error) =>

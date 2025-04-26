@@ -3,6 +3,7 @@ val scala3Version = "3.6.4"
   ThisBuild / version := "1.0.1"
   ThisBuild / scalaVersion := scala3Version
   ThisBuild / scalacOptions += "-Xmax-inlines:64"
+  Compile / mainClass := Some("de.htwg.poker.Poker")
 
   ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
@@ -22,9 +23,21 @@ val scala3Version = "3.6.4"
   "io.circe" %% "circe-parser" % "0.14.6",
 
   //play
-  "com.typesafe.play" %% "play-json" % "2.10.2",
+  "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
   "com.typesafe.play" %% "play" % "2.9.0"
 )
+
+libraryDependencies ++= {
+    // Determine OS version of JavaFX binaries
+    lazy val osName = System.getProperty("os.name") match {
+      case n if n.startsWith("Linux")   => "linux"
+      case n if n.startsWith("Mac")     => "mac"
+      case n if n.startsWith("Windows") => "win"
+      case _ => throw new Exception("Unknown platform!")
+    }
+    Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
+      .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
+  }
 
 
 lazy val root = project

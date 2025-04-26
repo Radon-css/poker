@@ -1,30 +1,29 @@
-package de.htwg.poker;
+package de.htwg.poker
+
 import controller.Controller
 import aview.TUI
-import scala.io.StdIn.readLine
 import model.GameState
 import aview.GUI
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.global
+import scala.concurrent.ExecutionContext.Implicits.global
 
-import scala.concurrent.Await
-import scala.concurrent.Future
 
-object Poker {
-  // here we need to pass in a stub of a GameState in order to initially create our controller
+object Poker extends scalafx.application.JFXApp3 {
+  
   val controller = new Controller(
     new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
   val tui = new TUI(controller)
   val gui = new GUI(controller)
 
-  @main
-  def run: Unit = {
-    // read and save Hashes for WinnerEvaluation
-    // the strange looking future and await stuff is needed so we can run our GUI and TUI concurrently
-    implicit val context = scala.concurrent.ExecutionContext.global
-    val f = Future {
-      gui.main(Array[String]())
+  override def start(): Unit = {
+    // Starte die GUI
+    gui.start()
+
+    // Und parallel dazu TUI im Hintergrund
+    Future {
+      tui.gameLoop()
     }
-    tui.gameLoop()
-    Await.ready(f, scala.concurrent.duration.Duration.Inf)
   }
 }

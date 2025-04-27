@@ -1,11 +1,11 @@
-package de.htwg.poker
-package controller
+package de.htwg.poker.controllers
+
 import concurrent.duration.DurationInt
-import model.GameState
-import model.Player
+import de.htwg.poker.model.GameState
+import de.htwg.poker.model.Player
 import scala.concurrent.Await
-import util.Observable
-import util.UpdateBoard
+import de.htwg.poker.util.Observable
+import de.htwg.poker.util.UpdateBoard
 
 class Controller(var gameState: GameState) extends Observable {
 

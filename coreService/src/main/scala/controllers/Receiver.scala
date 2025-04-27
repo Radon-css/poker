@@ -1,5 +1,4 @@
-package de.htwg.poker
-package controllers
+package de.htwg.poker.controllers
 
 import akka.actor.ActorRefFactory
 import akka.actor.typed.ActorRef
@@ -7,7 +6,7 @@ import akka.actor.typed.ActorSystem
 import akka.actor.{Actor, Props}
 import akka.stream.Materializer
 import concurrent.duration.DurationInt
-import de.htwg.poker.controller.Controller
+import de.htwg.poker.controllers.Controller
 import de.htwg.poker.controllers.PokerControllerPublisher
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
@@ -26,7 +25,7 @@ import scala.swing.event.Event
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
-class PokerController()(
+class Receiver()(
     val controllerComponents: ControllerComponents,
     implicit val system: ActorSystem[Nothing], // This is already here
     implicit val mat: Materializer

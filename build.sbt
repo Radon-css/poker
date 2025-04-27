@@ -16,6 +16,7 @@ val scala3Version = "3.6.4"
   "com.typesafe.akka" %% "akka-actor-typed" % "2.8.5",
   "com.typesafe.akka" %% "akka-stream" % "2.8.5",
   "com.typesafe.akka" %% "akka-http" % "10.5.3",
+  "com.typesafe.akka" %% "akka-serialization-jackson" % "2.8.5",
 
   // Circe
   "io.circe" %% "circe-core" % "0.14.6",

@@ -4,7 +4,14 @@ import akka.actor.ActorRefFactory
 import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
 import akka.actor.{Actor, Props}
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.ws.{Message, TextMessage, WebSocketUpgradeResponse}
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
+import akka.stream.scaladsl.Flow
+import akka.stream.scaladsl.{Flow, Sink, Source}
 import concurrent.duration.DurationInt
 import de.htwg.poker.controllers.Controller
 import de.htwg.poker.controllers.PokerControllerPublisher
@@ -12,10 +19,7 @@ import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
 import javax.inject.Singleton
-import play.api._
-import play.api.libs.json._
-import play.api.libs.streams.ActorFlow
-import play.api.mvc._
+import play.api.libs.json.{Format, JsValue, Json}
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.VectorMap
 import scala.concurrent.Await
@@ -25,11 +29,10 @@ import scala.swing.event.Event
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
-class Receiver()(
-    val controllerComponents: ControllerComponents,
-    implicit val system: ActorSystem[Nothing], // This is already here
-    implicit val mat: Materializer
-) extends BaseController {
+class Receiver()(implicit
+    val system: ActorSystem[Nothing], // This is already here
+    val mat: Materializer
+) {
 
   implicit val classicSystem: akka.actor.ActorSystem = system.classicSystem
 
@@ -56,7 +59,7 @@ class Receiver()(
   def pokerAsText = pokerControllerPublisher.toString()
   def gameState = pokerControllerPublisher.gameState
 
-  def newGame() = Action { implicit request: Request[AnyContent] =>
+  def newGame() = Route {
     isLobby = false
 
     pokerControllerPublisher.createGame(
@@ -65,10 +68,10 @@ class Receiver()(
       bigBlind.toString
     )
     val updatedPokerJson = pokerToJson()
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
-  def bet(amount: Int) = Action { implicit request: Request[AnyContent] =>
+  def bet(amount: Int) = Route {
     println("PokerController.bet() function called")
     pokerControllerPublisher.bet(amount)
     while (offlinePlayerIsAtTurn) {
@@ -76,10 +79,10 @@ class Receiver()(
       pokerControllerPublisher.fold()
     }
     val updatedPokerJson = pokerToJson()
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
-  def allIn() = Action { implicit request: Request[AnyContent] =>
+  def allIn() = Route {
     println("PokerController.allIn() function called")
     pokerControllerPublisher.allIn()
     while (offlinePlayerIsAtTurn) {
@@ -87,10 +90,10 @@ class Receiver()(
       pokerControllerPublisher.fold()
     }
     val updatedPokerJson = pokerToJson()
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
-  def fold() = Action { implicit request: Request[AnyContent] =>
+  def fold() = Route {
     println("PokerController.fold() function called")
     pokerControllerPublisher.fold()
     while (offlinePlayerIsAtTurn) {
@@ -98,10 +101,10 @@ class Receiver()(
       pokerControllerPublisher.fold()
     }
     val updatedPokerJson = pokerToJson()
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
-  def call() = Action { implicit request: Request[AnyContent] =>
+  def call() = Route {
     println("PokerController.call() function called")
     pokerControllerPublisher.call()
 
@@ -109,10 +112,12 @@ class Receiver()(
       Thread.sleep(1000)
       pokerControllerPublisher.fold()
     }
-    Ok(pokerToJson()).as("application/json")
+    val updatedPokerJson = pokerToJson()
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
+
   }
 
-  def check() = Action { implicit request: Request[AnyContent] =>
+  def check() = Route {
     println("PokerController.check() function called")
     pokerControllerPublisher.check()
     val updatedPokerJson = pokerToJson()
@@ -121,55 +126,52 @@ class Receiver()(
       Thread.sleep(1000)
       pokerControllerPublisher.fold()
     }
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
-  def restartGame() = Action { implicit request: Request[AnyContent] =>
+  def restartGame() = Route {
     pokerControllerPublisher.restartGame()
     val updatedPokerJson = pokerToJson()
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   // lobby functions
-  def join() = Action { implicit request: Request[AnyContent] =>
+  def join(): Route = {
     println("Joining lobby")
     isLobby = true
 
-    val playerID = request.headers.get("playerID").getOrElse("")
-    val playersLength = players.toList.length
+    optionalHeaderValueByName("playerID") { playerIdOpt =>
+      val playerID = playerIdOpt.getOrElse("")
+      val playersLength = players.toList.length
 
-    println("playerrs: " + players)
-    println("playerID: " + playerID)
+      println(s"players: $players")
+      println(s"playerID: $playerID")
 
-    if (playerID == "") {
-      BadRequest("Error: playerID is missing")
+      if (playerID.isEmpty) {
+        complete(StatusCodes.BadRequest -> "Error: playerID is missing")
+      } else if (players.values.toList.contains(playerID)) {
+        println("Player already in lobby")
+        val updatedPokerJson = pokerToJson()
+        complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
+      } else if (playersLength >= 6) {
+        complete(StatusCodes.BadRequest -> "Error: Player limit reached")
+      } else {
+        val newPlayerName = "Player" + (playersLength + 1)
+        players = players + (newPlayerName -> playerID)
+        pokerControllerPublisher.lobby()
 
-    } else if (players.values.toList.contains(playerID)) {
-      println("Player already in lobby")
-      val updatedPokerJson = pokerToJson()
-      Ok(updatedPokerJson).as("application/json")
-
-    } else if (playersLength >= 6) {
-      BadRequest("Error: Player limit reached")
-    } else {
-      val newPlayerName = "Player" + (playersLength + 1)
-      players = players + (newPlayerName -> playerID)
-
-      pokerControllerPublisher.lobby()
-
-      println("New Player: " + playerID + " " + newPlayerName)
-
-      val updatedPokerJson = pokerToJson()
-      Ok(updatedPokerJson).as("application/json")
+        println(s"New Player: $playerID $newPlayerName")
+        val updatedPokerJson = pokerToJson()
+        complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
+      }
     }
-
   }
 
-  def leave() = Action { implicit request: Request[AnyContent] =>
+  def leave() = Route {
     isLobby = true;
     pokerControllerPublisher.leave()
     val updatedPokerJson = pokerToJson()
-    Ok(updatedPokerJson).as("application/json")
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def disconnected(playerID: String) = {
@@ -197,11 +199,14 @@ class Receiver()(
       bigBlind: String
   )
   object GameConfig {
+    import play.api.libs.json._
     implicit val gameConfigFormat: Format[GameConfig] = Json.format[GameConfig]
   }
 
-  def getJson = Action {
-    Ok(pokerToJson())
+  def getJson = Route {
+    val updatedPokerJson = pokerToJson()
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
+
   }
 
   def pokerToJson() = {
@@ -244,14 +249,14 @@ class Receiver()(
     )
   }
 
-  def socket(): WebSocket = WebSocket.accept[String, String] { request =>
-
-    val playerID = request.queryString("playerID").headOption.getOrElse("")
-
-    ActorFlow.actorRef { out =>
-      println("Connect received with playerID: " + playerID)
-      PokerWebSocketActorFactory.create(out, playerID)
-
+  def socket(): Route = {
+    parameter("playerID".?) { playerIdOpt =>
+      val playerID = playerIdOpt.getOrElse("")
+      val flow = Flow.fromSinkAndSource(
+        Sink.foreach(println), // Handle incoming messages
+        Source.maybe // Send outgoing messages
+      )
+      handleWebSocketMessages(flow)
     }
   }
 

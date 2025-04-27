@@ -1,8 +1,8 @@
 package de.htwg.poker
 package aview
 
-import controller.Controller
 import de.htwg.poker.Client
+import de.htwg.poker.controllers.Controller
 import javafx.concurrent.Worker.State
 import javafx.scene.web.WebEngine
 import model.Card

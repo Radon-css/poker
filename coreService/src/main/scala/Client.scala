@@ -81,7 +81,7 @@ object Client {
     ).asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/gui/getGUIView", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8081/gui/getGUIView", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -99,7 +99,7 @@ object Client {
 
     val jsonString = gameState.asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/tui/getTUIView", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8082/tui/getTUIView", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {

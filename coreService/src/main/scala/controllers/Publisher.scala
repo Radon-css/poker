@@ -1,7 +1,7 @@
 package de.htwg.poker
 package controllers
 
-import de.htwg.poker.controller.Controller
+import de.htwg.poker.controllers.Controller
 import scala.swing.Publisher
 import scala.swing.event.Event
 

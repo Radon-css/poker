@@ -3,7 +3,7 @@ val scala3Version = "3.6.4"
 ThisBuild / version := "1.0.1"
 ThisBuild / scalaVersion := scala3Version
 ThisBuild / scalacOptions += "-Xmax-inlines:64"
-Compile / mainClass := Some("de.htwg.poker.Poker")
+Compile / mainClass := Some("de.htwg.poker.CoreServer")
 
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
@@ -25,7 +25,10 @@ ThisBuild / libraryDependencies ++= Seq(
 
   //play
   "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
-  "com.typesafe.play" %% "play" % "2.9.0"
+  "com.typesafe.play" %% "play" % "2.9.0",
+
+    "org.slf4j" % "slf4j-api" % "2.0.7",
+  "ch.qos.logback" % "logback-classic" % "1.4.7" 
 )
 
 libraryDependencies ++= {

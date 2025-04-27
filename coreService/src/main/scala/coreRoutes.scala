@@ -1,61 +1,70 @@
 package de.htwg.poker
 
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
 import de.htwg.poker.controllers.Receiver
+import scala.concurrent.ExecutionContext
 
-object CoreRoutes {
+class CoreRoutes {
+  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "PokerSystem")
+  implicit val mat: Materializer = Materializer(system)
+  implicit val ec: ExecutionContext = system.executionContext
+
+  val receiver = new Receiver()(system, mat)
 
   val routes: Route = pathPrefix("core") {
     concat(
       path("get") {
         get {
-          complete(Receiver.getJson()) // ruft deine Funktion auf
+          receiver.getJson // ruft deine Funktion auf
         }
       },
       path("bet" / IntNumber) { x =>
         post {
-          complete(Receiver.bet(x))
+          receiver.bet(x)
         }
       },
       path("allIn") {
         post {
-          complete(Receiver.allIn())
+          receiver.allIn()
         }
       },
       path("fold") {
         post {
-          complete(Receiver.fold())
+          receiver.fold()
         }
       },
       path("call") {
         post {
-          complete(Receiver.call())
+          receiver.call()
         }
       },
       path("check") {
         post {
-          complete(Receiver.check())
+          receiver.check()
         }
       },
       path("restartGame") {
         post {
-          complete(Receiver.restartGame())
+          receiver.restartGame()
         }
       },
       path("leave") {
         post {
-          complete(Receiver.leave())
+          receiver.leave()
         }
       },
       path("join") {
         get {
-          complete(Receiver.join())
+          receiver.join()
         }
       },
       path("newGame") {
         post {
-          complete(Receiver.newGame())
+          receiver.newGame()
         }
       }
       // WebSocket können wir auch bauen, wenn du willst

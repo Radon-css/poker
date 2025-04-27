@@ -1,8 +1,8 @@
 package de.htwg.poker
 package aview
 
-import controller.Controller
 import de.htwg.poker.Client
+import de.htwg.poker.controllers.Controller
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.io.StdIn.readLine

@@ -1,29 +1,28 @@
 package de.htwg.poker.gui
 
+import de.htwg.poker.gui.types.GUICard
+import de.htwg.poker.gui.types.GUIGameState
+import de.htwg.poker.gui.types.GUIPlayer
+import de.htwg.poker.gui.types.GUIRank
+import de.htwg.poker.gui.types.GUIRank.*
+import de.htwg.poker.gui.types.GUISuit
+import de.htwg.poker.gui.types.GUISuit.*
+import javafx.concurrent.Worker.State
+import javafx.scene.web.WebEngine
+import netscape.javascript.JSObject
+import scala.compiletime.ops.boolean
+import scala.util.{Failure, Success, Try}
 import scalafx.application.JFXApp3
+import scalafx.application.Platform
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
+import scalafx.scene.control.Button
 import scalafx.scene.effect.DropShadow
 import scalafx.scene.layout.HBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint._
 import scalafx.scene.text.Text
 import scalafx.scene.web.WebView
-import scalafx.scene.control.Button
-import de.htwg.poker.gui.types.GUIGameState
-import scalafx.application.Platform
-import scala.util.{Try, Success, Failure}
-import javafx.concurrent.Worker.State
-import netscape.javascript.JSObject
-import javafx.scene.web.WebEngine
-import scala.compiletime.ops.boolean
-
-import de.htwg.poker.gui.types.GUIPlayer
-import de.htwg.poker.gui.types.GUICard
-import de.htwg.poker.gui.types.GUISuit
-import de.htwg.poker.gui.types.GUIRank
-import de.htwg.poker.gui.types.GUISuit.*
-import de.htwg.poker.gui.types.GUIRank.*
 
 object GUIView {
   def getView(
@@ -38,13 +37,14 @@ object GUIView {
 
     val gameStarted = gameState.players.getOrElse(List.empty[GUIPlayer]).size != 0
 
-    val balance =
-      gameState.currentHighestBetSize - gameState.players.getOrElse(List.empty[GUIPlayer])(gameState.playerAtTurn).currentAmountBetted
+    var balance = 0;
+    if (gameStarted) {
+      balance = gameState.currentHighestBetSize - gameState.players.getOrElse(List.empty[GUIPlayer])(gameState.playerAtTurn).currentAmountBetted
+    }
 
     return s"""
-    ${
-        if (gameStarted) {
-          s"""
+    ${if (gameStarted) {
+      s"""
           <!DOCTYPE html>
           <html>
             <head>
@@ -202,8 +202,8 @@ object GUIView {
               </body>
           </html>
               """
-        } else {
-          s"""
+    } else {
+      s"""
               <!DOCTYPE html>
           <html>
   <head>
@@ -350,8 +350,7 @@ object GUIView {
   </body>
 </html>
         """
-        }
-      }
+    }}
     """
   }
   /* these are methods to create the new Html Code that has to be displayed in the GUI when the GameState is updated.
@@ -425,8 +424,8 @@ object GUIView {
 
   def cardToHtml(card: GUICard): String = {
     s"<div class=\"rounded-lg bg-slate-100 w-6 h-9 hover:scale-125 flex flex-col justify-center items-center shadow-xl shadow-black/50\">${suitToHtml(
-        card.suit
-      )}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
+      card.suit
+    )}<h1 class=\"font-bold \">${card.rank.toString}</h1></div>"
   }
 
   def playerToHtml(player: GUIPlayer) = {

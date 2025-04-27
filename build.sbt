@@ -1,21 +1,21 @@
 val scala3Version = "3.6.4"
 
-  ThisBuild / version := "1.0.1"
-  ThisBuild / scalaVersion := scala3Version
-  ThisBuild / scalacOptions += "-Xmax-inlines:64"
-  Compile / mainClass := Some("de.htwg.poker.Poker")
+ThisBuild / version := "1.0.1"
+ThisBuild / scalaVersion := scala3Version
+ThisBuild / scalacOptions += "-Xmax-inlines:64"
+Compile / mainClass := Some("de.htwg.poker.Poker")
 
-  ThisBuild / libraryDependencies ++= Seq(
+ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
   "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
   "org.scalafx" %% "scalafx" % "21.0.0-R32",
 
-  // Akka
-  "com.typesafe.akka" %% "akka-actor-typed" % "2.8.5",
+  // Akka - using consistent versions
   "com.typesafe.akka" %% "akka-actor-typed" % "2.8.5",
   "com.typesafe.akka" %% "akka-stream" % "2.8.5",
   "com.typesafe.akka" %% "akka-http" % "10.5.3",
+  // Add explicit dependency to prevent older version being pulled in
   "com.typesafe.akka" %% "akka-serialization-jackson" % "2.8.5",
 
   // Circe
@@ -38,8 +38,7 @@ libraryDependencies ++= {
     }
     Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
       .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
-  }
-
+}
 
 lazy val root = project
   .in(file("."))

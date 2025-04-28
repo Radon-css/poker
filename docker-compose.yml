@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  core:
+    container_name: poker-core
+    build:
+      context: .
+      dockerfile: coreService/Dockerfile
+    stdin_open: true  # Required for interactive TUI
+    tty: true        # Required for interactive TUI
+    ports:
+      - "8080:8080"
+    environment:
+      - POKER_CORE_PORT=8080
+
+  eval:
+    container_name: poker-eval
+    build:
+      context: .
+      dockerfile: evalService/Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - core  # Waits for core to start (but not necessarily be "healthy")
+    environment:
+      - POKER_EVAL_PORT=8083
+
+  tui:
+    container_name: poker-tui
+    build:
+      context: .
+      dockerfile: tuiService/Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - core  # Waits for core to start
+      - eval  # Waits for eval to start
+    environment:
+      - POKER_TUI_PORT=8082

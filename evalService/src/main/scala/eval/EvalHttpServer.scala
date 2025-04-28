@@ -19,7 +19,7 @@ object EvalHttpServer {
       port: Int = 8083
   ): Future[ServerBinding] = {
     val routes = new evalRoutes().routes
-    val host = "localhost"
+    val host = "0.0.0.0"
 
     implicit val classicSystem: ClassicActorSystemProvider = system
     implicit val executionContext: ExecutionContext = ec

@@ -1,6 +1,5 @@
 package de.htwg.poker.util
 
-@main
 def run: Unit = {
   print(WappFunctions.calculateCoins(10))
   print(WappFunctions.calculateCoins(20))

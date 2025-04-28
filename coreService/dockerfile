@@ -1,0 +1,25 @@
+FROM hseeberger/scala-sbt:17.0.2_1.6.2_3.1.1
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    libxtst6 \
+    libgl1-mesa-glx \
+    libgtk-3-0 \
+    libcanberra-gtk-module && \
+    rm -rf /var/lib/apt/lists/*
+
+
+WORKDIR /app
+
+COPY ../build.sbt ./
+COPY ../project ./project
+
+
+COPY ./coreService/src/main/scala ./coreService/src/main/scala
+
+EXPOSE 8080
+
+CMD ["sbt", "coreService/run"]

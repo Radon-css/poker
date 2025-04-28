@@ -277,8 +277,7 @@ case class GameState(
       case Nil => Future.successful("No players available")
       case playersList if player >= 0 && player < playersList.size =>
         Client.evalHand(
-          List(playersList(player).card1, playersList(player).card2),
-          board
+          this
         )
       case _ => Future.failed(new IndexOutOfBoundsException("Invalid player index"))
     }

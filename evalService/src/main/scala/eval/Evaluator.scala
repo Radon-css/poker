@@ -60,6 +60,10 @@ object Evaluator {
       players: List[EvalPlayer],
       boardCards: List[EvalCard]
   ): List[EvalPlayer] = {
+    if (flushHash.isEmpty || nonFlushHash.isEmpty) {
+      readHashes
+    }
+
     var playerHandRanks: List[(String, String, Int)] = List()
     for (player <- players) {
       var bestRank = Integer.MAX_VALUE

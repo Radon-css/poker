@@ -20,17 +20,13 @@ object Client {
   import AppConfig.{materializer, system}
 
   def calcWinner(
-      players: List[Player],
-      boardCards: List[Card]
+      gameState: GameState,
   ): Future[List[Player]] = {
 
-    val jsonString = Map(
-      "players" -> Some(players).asJson,
-      "boardCards" -> boardCards.asJson
-    ).asJson.noSpaces
+    val jsonString = gameState.asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8080/eval/calcWinner", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/calcWinner", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -48,14 +44,10 @@ object Client {
   }
 
   def evalHand(
-      playerCards: List[Card],
-      boardCards: List[Card]
+      gameState: GameState,
   ): Future[String] = {
 
-    val jsonString = Map(
-      "playerCards" -> playerCards.asJson,
-      "boardCards" -> boardCards.asJson
-    ).asJson.noSpaces
+    val jsonString = gameState.asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
     val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/evalHand", entity = entity)

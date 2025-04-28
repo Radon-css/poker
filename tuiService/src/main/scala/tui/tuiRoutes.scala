@@ -18,9 +18,9 @@ class tuiRoutes {
             decode[TUIGameState](gameStateJson) match {
               case Right(gameState) =>
                 val result = TUIView.getView(gameState)
-                complete(HttpEntity(ContentTypes.`application/json`, result.asJson.noSpaces))
+                complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, result))
               case Left(error) =>
-                complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+                complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid String: ${error.getMessage}"))
             }
           }
         }

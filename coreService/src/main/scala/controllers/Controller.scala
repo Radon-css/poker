@@ -111,10 +111,10 @@ class Controller(var gameState: GameState) extends Observable {
       )
       import scala.concurrent.Await
       import scala.concurrent.duration._
-      gameState = Await.result(UpdateBoard.strategy(gameState), 1.seconds)
+      gameState = Await.result(UpdateBoard.strategy(gameState), 10.seconds)
     }
     if (playerWonBeforeShowdown) {
-      gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
+      gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     }
     notifyObservers
     true
@@ -146,10 +146,10 @@ class Controller(var gameState: GameState) extends Observable {
             .map(player => player.copy(checkedThisRound = false))
         )
       )
-      gameState = Await.result(UpdateBoard.strategy(gameState), 1.seconds)
+      gameState = Await.result(UpdateBoard.strategy(gameState), 10.seconds)
     }
     if (playerWonBeforeShowdown) {
-      gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
+      gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     }
     notifyObservers
     true
@@ -178,17 +178,17 @@ class Controller(var gameState: GameState) extends Observable {
             .map(player => player.copy(checkedThisRound = false))
         )
       )
-      gameState = Await.result(UpdateBoard.strategy(gameState), 1.seconds)
+      gameState = Await.result(UpdateBoard.strategy(gameState), 10.seconds)
     }
     if (playerWonBeforeShowdown) {
-      gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
+      gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     }
     notifyObservers
     true
   }
 
   def restartGame: Unit = {
-    gameState = Await.result(UpdateBoard.startRound(gameState), 1.seconds)
+    gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     notifyObservers
   }
 

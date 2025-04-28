@@ -20,8 +20,7 @@ object UpdateBoard {
   def startRound(gameState: GameState): Future[GameState] = {
     Client
       .calcWinner(
-        gameState.players.getOrElse(List.empty[Player]).filter(player => !player.folded),
-        gameState.board
+        gameState
       )
       .flatMap { winners =>
         val winnerNames = winners.map(_.playername)

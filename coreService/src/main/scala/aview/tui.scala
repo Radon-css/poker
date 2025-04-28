@@ -13,20 +13,25 @@ class TUI(controller: Controller) extends Observer {
   controller.add(this)
 
   override def update: Unit = {
-    Try {
-      Client.getTUIView(controller.gameState)
-    } match {
-      case Success(futureView) =>
-        futureView.onComplete {
-          case Success(view) =>
-            println(view)
-          case Failure(ex) =>
-            println(s"Error getting TUI view: ${ex.getMessage}")
-        }
-      case Failure(exception) =>
-        println(s"Could not start HTTP request: ${exception.getMessage}")
-    }
+  val tuiViewFuture = Client.getTUIView(controller.gameState)
+  val evalHandFuture = Client.evalHand(controller.gameState)
+
+  // Beide Futures zusammenfassen
+  val combinedFuture = for {
+    view <- tuiViewFuture
+    handEval <- evalHandFuture
+  } yield (view, handEval)
+
+  combinedFuture.onComplete {
+    case Success((view, handEval)) =>
+      print("\u001b[2J\u001b[H")
+      println(view)
+      println()
+      println("current hand:" + handEval)
+    case Failure(ex) =>
+      println(s"Error during update: ${ex.getMessage}")
   }
+}
 
   def gameLoop(): Unit = {
     while (true) {

@@ -12,7 +12,7 @@ class evalRoutes {
     pathPrefix("eval") {
       concat(
         // Handinfo route
-        path("evaluate") {
+        path("evalHand") {
           post {
             entity(as[String]) { body =>
               decode[EvalGameState](body) match {

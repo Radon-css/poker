@@ -13,17 +13,33 @@ class TUI(controller: Controller) extends Observer {
   controller.add(this)
 
   override def update: Unit = {
-    Client.getTUIView(controller.gameState).onComplete {
-      case Success(view) => println(view)
-      case Failure(ex)   => println(s"Error getting TUI view: ${ex.getMessage}")
+    Try {
+      Client.getTUIView(controller.gameState)
+    } match {
+      case Success(futureView) =>
+        futureView.onComplete {
+          case Success(view) =>
+            println(view)
+          case Failure(ex) =>
+            println(s"Error getting TUI view: ${ex.getMessage}")
+        }
+      case Failure(exception) =>
+        println(s"Could not start HTTP request: ${exception.getMessage}")
     }
   }
 
   def gameLoop(): Unit = {
     while (true) {
-      val input = readLine()
-      processInput(input)
+    try {
+      val inputOpt = Option(readLine()).map(_.trim).filter(_.nonEmpty)
+      inputOpt.foreach { input =>
+        processInput(input)
+      }
+    } catch {
+      case ex: Exception =>
+        println(s"An error occurred: ${ex.getMessage}")
     }
+  }
   }
 
   def processInput(input: String): Boolean = {

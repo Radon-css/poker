@@ -30,7 +30,7 @@ object Client {
     ).asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/eval/calcWinner", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8080/eval/calcWinner", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -58,7 +58,7 @@ object Client {
     ).asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/eval/evalHand", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/evalHand", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -81,7 +81,7 @@ object Client {
     ).asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8081/gui/getGUIView", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8081/gui/getGUIView", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -99,7 +99,7 @@ object Client {
 
     val jsonString = gameState.asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8082/tui/getTUIView", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8082/tui/getTUIView", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -117,7 +117,7 @@ object Client {
 
     val jsonString = gameState.asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8080/fileIO/saveState", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8080/fileIO/saveState", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -131,7 +131,7 @@ object Client {
 
   def loadState()(implicit system: ActorSystem, mat: Materializer): Future[GameState] = {
 
-    val request = HttpRequest(HttpMethods.GET, "http://localhost:8080/fileIO/loadState")
+    val request = HttpRequest(HttpMethods.GET, "http://127.0.0.1:8080/fileIO/loadState")
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {

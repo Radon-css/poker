@@ -4,39 +4,42 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import aview.GUI
 import aview.TUI
 import de.htwg.poker.controllers.Controller
 import model.GameState
-import scala.concurrent.ExecutionContext
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-object CoreServer extends scalafx.application.JFXApp3 {
+object CoreServer {
   val controller = new Controller(
     new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
   val tui = new TUI(controller)
-  val gui = new GUI(controller)
 
-  override def start(): Unit = {
+  // <<< Hier global!
+  val system: ActorSystem = ActorSystem("CoreServer")
+
+  def main(args: Array[String]): Unit = {
+    start()
+  }
+
+  def start(): Unit = {
     // Provide the implicit ExecutionContext
-    implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
+    implicit val ec: ExecutionContext = system.dispatcher
 
-    // Start GUI
-    gui.start()
-
-    // Start TUI in background
-    Future {
-      tui.gameLoop()
-    }
+    // Start TUI in eigenem Thread
+    new Thread(() => tui.gameLoop()).start()
 
     // Start HTTP server
     startHttpServer()
+
+    // <<< Jetzt funktioniert es, weil system sichtbar ist
+    Await.result(system.whenTerminated, Duration.Inf)
   }
 
   private def startHttpServer(): Unit = {
-    implicit val system: ActorSystem = ActorSystem("CoreServer")
+    implicit val system: ActorSystem = CoreServer.system // <- Hier wichtig!!
     implicit val executionContext: ExecutionContext = system.dispatcher
     implicit val materializer: Materializer = Materializer(system)
 
@@ -51,5 +54,6 @@ object CoreServer extends scalafx.application.JFXApp3 {
         println(s"Server failed to start: ${exception.getMessage}")
         system.terminate()
     }
-  }
+}
+
 }

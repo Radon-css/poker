@@ -1,4 +1,4 @@
-package de.htwg.poker.gui
+/*package de.htwg.poker.gui
 
 import akka.Done
 import akka.actor.{ActorSystem, ClassicActorSystemProvider, CoordinatedShutdown}
@@ -19,7 +19,7 @@ object GUIHttpServer {
   ): Future[ServerBinding] = {
     val routes = new GuiRoutes().routes
     val port = 8081
-    val host = "0.0.0.0"
+    val host = "localhost"
 
     // The critical fix - provide the system as a ClassicActorSystemProvider
     implicit val classicSystem: ClassicActorSystemProvider = system
@@ -58,4 +58,4 @@ object GUIHttpServer {
       }
     }
   }
-}
+} */

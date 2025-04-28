@@ -1,4 +1,4 @@
-package de.htwg.poker.gui
+/*package de.htwg.poker.gui
 
 import akka.actor.ActorSystem
 import scala.concurrent.duration.Duration
@@ -17,4 +17,4 @@ object GUIService {
     // Keep the server running
     Await.result(Future.never, Duration.Inf)
   }
-}
+} */

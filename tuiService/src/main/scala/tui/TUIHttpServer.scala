@@ -19,7 +19,7 @@ object TUIHttpServer {
       port: Int = 8082
   ): Future[ServerBinding] = {
     val routes = new tuiRoutes().routes
-    val host = "0.0.0.0"
+    val host = "localhost"
 
     implicit val classicSystem: ClassicActorSystemProvider = system
     implicit val executionContext: ExecutionContext = ec

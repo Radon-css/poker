@@ -9,7 +9,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
   "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
-  "org.scalafx" %% "scalafx" % "21.0.0-R32",
+  //"org.scalafx" %% "scalafx" % "21.0.0-R32",
 
   // Akka - using consistent versions
   "com.typesafe.akka" %% "akka-actor-typed" % "2.8.5",
@@ -31,7 +31,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.4.7" 
 )
 
-libraryDependencies ++= {
+/*libraryDependencies ++= {
     // Determine OS version of JavaFX binaries
     lazy val osName = System.getProperty("os.name") match {
       case n if n.startsWith("Linux")   => "linux"
@@ -41,7 +41,7 @@ libraryDependencies ++= {
     }
     Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
       .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
-}
+}*/
 
 lazy val root = project
   .in(file("."))

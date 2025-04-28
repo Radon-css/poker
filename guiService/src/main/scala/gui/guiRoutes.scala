@@ -1,5 +1,4 @@
-// GuiRoutes.scala
-package de.htwg.poker.gui
+/*package de.htwg.poker.gui
 
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.server.Directives._
@@ -24,14 +23,14 @@ class GuiRoutes {
 
               decode[Map[String, Json]](jsonString) match {
                 case Right(data) =>
-                  (data("gameState").as[GUIGameState], data("handEval").as[String]) match {
-                    case (Right(gameState), Right(handEval)) =>
+                  (data.get("gameState").flatMap(_.as[GUIGameState].toOption), data.get("handEval").flatMap(_.as[String].toOption)) match {
+                    case (Some(gameState), Some(handEval)) =>
                       val result = GUIView.getView(handEval, gameState)
                       complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, result))
-                    case (Left(gameStateError), _) =>
-                      complete(StatusCodes.BadRequest -> s"Invalid gameState: ${gameStateError.getMessage}")
-                    case (_, Left(handEvalError)) =>
-                      complete(StatusCodes.BadRequest -> s"Invalid handEval: ${handEvalError.getMessage}")
+                    case (None, _) =>
+                      complete(StatusCodes.BadRequest -> "Invalid or missing 'gameState'")
+                    case (_, None) =>
+                      complete(StatusCodes.BadRequest -> "Invalid or missing 'handEval'")
                   }
                 case Left(error) =>
                   complete(StatusCodes.BadRequest -> s"Invalid JSON: ${error.getMessage}")
@@ -41,4 +40,4 @@ class GuiRoutes {
         }
       )
     }
-}
+} */

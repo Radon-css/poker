@@ -1,4 +1,4 @@
-package de.htwg.poker.gui
+/*package de.htwg.poker.gui
 
 import de.htwg.poker.gui.types.GUICard
 import de.htwg.poker.gui.types.GUIGameState
@@ -454,4 +454,4 @@ object GUIView {
 
   val HiddenHtml = "<div class=\"hidden\"> </div>"
 
-}
+} */

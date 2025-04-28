@@ -1,4 +1,4 @@
-package de.htwg.poker
+/*package de.htwg.poker
 package aview
 
 import de.htwg.poker.Client
@@ -184,4 +184,4 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     "<div class=\"rounded-lg bg-teal-400 w-6 h-9\"></div>"
 
   val HiddenHtml = "<div class=\"hidden\"> </div>"
-}
+}*/

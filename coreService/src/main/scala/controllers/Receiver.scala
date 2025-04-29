@@ -250,6 +250,7 @@ class Receiver()(implicit
   }
 
   def socket(): Route = {
+    println("Socket route called")
     parameter("playerID".?) { playerIdOpt =>
       val playerID = playerIdOpt.getOrElse("")
       val flow = Flow.fromSinkAndSource(
@@ -262,6 +263,7 @@ class Receiver()(implicit
 
   object PokerWebSocketActorFactory {
     def create(out: akka.actor.ActorRef, playerID: String) =
+      println(s"Player $playerID connected.")
       Props(new PokerWebSocketActor(out, playerID))
   }
 

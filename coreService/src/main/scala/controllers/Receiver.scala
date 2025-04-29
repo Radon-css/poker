@@ -78,10 +78,6 @@ class Receiver()(implicit
   def bet(amount: Int) = Route {
     println("PokerController.bet() function called")
     gameController.bet(amount)
-    while (offlinePlayerIsAtTurn) {
-      Thread.sleep(1000)
-      gameController.fold
-    }
     val updatedPokerJson = pokerToJson()
     broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -90,10 +86,6 @@ class Receiver()(implicit
   def allIn() = Route {
     println("PokerController.allIn() function called")
     gameController.allIn()
-    while (offlinePlayerIsAtTurn) {
-      Thread.sleep(1000)
-      gameController.fold
-    }
     val updatedPokerJson = pokerToJson()
     broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -102,10 +94,6 @@ class Receiver()(implicit
   def fold() = Route {
     println("PokerController.fold() function called")
     gameController.fold
-    while (offlinePlayerIsAtTurn) {
-      Thread.sleep(1000)
-      gameController.fold
-    }
     val updatedPokerJson = pokerToJson()
     broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -115,10 +103,6 @@ class Receiver()(implicit
     println("PokerController.call() function called")
     gameController.call
 
-    while (offlinePlayerIsAtTurn) {
-      Thread.sleep(1000)
-      gameController.fold
-    }
     val updatedPokerJson = pokerToJson()
     broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -130,10 +114,6 @@ class Receiver()(implicit
     gameController.check
     val updatedPokerJson = pokerToJson()
 
-    while (offlinePlayerIsAtTurn) {
-      Thread.sleep(1000)
-      gameController.fold
-    }
     broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
@@ -188,22 +168,11 @@ class Receiver()(implicit
   }
 
   def disconnected(playerID: String) = {
-    offlinePlayers = playerID :: offlinePlayers
     broadcastUpdate()
   }
 
   def reconnected(playerID: String) = {
-    offlinePlayers = offlinePlayers.filter(_ != playerID)
     broadcastUpdate()
-  }
-
-  def offlinePlayerIsAtTurn = {
-    val playerAtTurn = gameState.players.getOrElse(gameState.playerAtTurn, "")
-    println("OFFLINEPLAYERISATTURN: Player at turn: " + playerAtTurn)
-    val playerID = players.getOrElse(gameState.getCurrentPlayer.playername, "")
-    println("OFFLINEPLAYERISATTURN: Player ID: " + playerID)
-    println("OFFLINEPLAYERISATTURN:" + offlinePlayers.contains(playerID))
-    offlinePlayers.contains(playerID)
   }
 
   case class GameConfig(
@@ -269,9 +238,7 @@ class Receiver()(implicit
       
       val handler = Sink.foreach[Message] {
         case TextMessage.Strict("pong") =>
-          if (offlinePlayers.contains(playerID)) {
             reconnected(playerID)
-          }
         case _ => // Ignore other messages
       }
       
@@ -290,9 +257,7 @@ class Receiver()(implicit
           def receive: Receive = {
             case Terminated(_) =>
               connectionManager ! ConnectionManager.Unregister(actorRef)
-              if (!offlinePlayers.contains(playerID)) {
                 disconnected(playerID)
-              }
               context.stop(self)
           }
         }))

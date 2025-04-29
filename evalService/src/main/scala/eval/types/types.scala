@@ -32,3 +32,5 @@ case class EvalGameState(
                       smallBlindPointer: Int = 0,
                       newRoundStarted: Boolean = true
                     ) {}
+
+case class EvalHandRequest(gameState: EvalGameState, player: Int)

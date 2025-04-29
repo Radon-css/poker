@@ -1,6 +1,6 @@
 package de.htwg.poker
 
-import akka.actor.typed.ActorSystem
+import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -11,9 +11,9 @@ import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.model.HttpMethods._
 
 class CoreRoutes {
-  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "PokerSystem")
+  implicit val system: ActorSystem = ActorSystem("PokerSystem")
   implicit val mat: Materializer = Materializer(system)
-  implicit val ec: ExecutionContext = system.executionContext
+  implicit val ec: ExecutionContext = system.dispatcher
 
   val receiver = new Receiver()(system, mat)
 

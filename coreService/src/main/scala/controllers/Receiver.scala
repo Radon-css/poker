@@ -1,8 +1,10 @@
 package de.htwg.poker.controllers
 
 import akka.actor.ActorRefFactory
-import akka.actor.typed.ActorRef
-import akka.actor.typed.ActorSystem
+import akka.actor.{Actor, ActorRef, Props, Terminated, ActorSystem}  // Note: Using untyped ActorRef
+import akka.{Done, NotUsed}
+import akka.stream.scaladsl._
+import akka.stream.{CompletionStrategy, OverflowStrategy}
 import akka.actor.{Actor, Props}
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model._
@@ -14,7 +16,6 @@ import akka.stream.scaladsl.Flow
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import concurrent.duration.DurationInt
 import de.htwg.poker.controllers.Controller
-import de.htwg.poker.controllers.PokerControllerPublisher
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
@@ -30,17 +31,20 @@ import scala.swing.event.Event
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
 class Receiver()(implicit
-    val system: ActorSystem[Nothing], // This is already here
+    val system: ActorSystem, // This is already here
     val mat: Materializer
 ) {
 
-  implicit val classicSystem: akka.actor.ActorSystem = system.classicSystem
+  private val connectionManager = system.actorOf(Props[ConnectionManager](), "connectionManager")
+
+  private def broadcastUpdate(): Unit = {
+    println("Broadcasting update to all connections")
+    connectionManager ! ConnectionManager.Broadcast(pokerToJson().toString())
+  }
 
   val gameController = new Controller(
     new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
-
-  val pokerControllerPublisher = new PokerControllerPublisher(gameController)
 
   // lobby
 
@@ -56,82 +60,88 @@ class Receiver()(implicit
   var isLobby = false
   var newRoundStarted = true
 
-  def pokerAsText = pokerControllerPublisher.toString()
-  def gameState = pokerControllerPublisher.gameState
+  def gameState = gameController.gameState
 
   def newGame() = Route {
     isLobby = false
 
-    pokerControllerPublisher.createGame(
+    gameController.createGame(
       players.keys.toList,
       smallBlind.toString,
       bigBlind.toString
     )
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def bet(amount: Int) = Route {
     println("PokerController.bet() function called")
-    pokerControllerPublisher.bet(amount)
+    gameController.bet(amount)
     while (offlinePlayerIsAtTurn) {
       Thread.sleep(1000)
-      pokerControllerPublisher.fold()
+      gameController.fold
     }
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def allIn() = Route {
     println("PokerController.allIn() function called")
-    pokerControllerPublisher.allIn()
+    gameController.allIn()
     while (offlinePlayerIsAtTurn) {
       Thread.sleep(1000)
-      pokerControllerPublisher.fold()
+      gameController.fold
     }
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def fold() = Route {
     println("PokerController.fold() function called")
-    pokerControllerPublisher.fold()
+    gameController.fold
     while (offlinePlayerIsAtTurn) {
       Thread.sleep(1000)
-      pokerControllerPublisher.fold()
+      gameController.fold
     }
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def call() = Route {
     println("PokerController.call() function called")
-    pokerControllerPublisher.call()
+    gameController.call
 
     while (offlinePlayerIsAtTurn) {
       Thread.sleep(1000)
-      pokerControllerPublisher.fold()
+      gameController.fold
     }
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
 
   }
 
   def check() = Route {
     println("PokerController.check() function called")
-    pokerControllerPublisher.check()
+    gameController.check
     val updatedPokerJson = pokerToJson()
 
     while (offlinePlayerIsAtTurn) {
       Thread.sleep(1000)
-      pokerControllerPublisher.fold()
+      gameController.fold
     }
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def restartGame() = Route {
-    pokerControllerPublisher.restartGame()
+    gameController.restartGame
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
@@ -148,20 +158,23 @@ class Receiver()(implicit
       println(s"playerID: $playerID")
 
       if (playerID.isEmpty) {
+        broadcastUpdate()
         complete(StatusCodes.BadRequest -> "Error: playerID is missing")
       } else if (players.values.toList.contains(playerID)) {
         println("Player already in lobby")
         val updatedPokerJson = pokerToJson()
+        broadcastUpdate()
         complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
       } else if (playersLength >= 6) {
+        broadcastUpdate()
         complete(StatusCodes.BadRequest -> "Error: Player limit reached")
       } else {
         val newPlayerName = "Player" + (playersLength + 1)
         players = players + (newPlayerName -> playerID)
-        pokerControllerPublisher.lobby()
 
         println(s"New Player: $playerID $newPlayerName")
         val updatedPokerJson = pokerToJson()
+        broadcastUpdate()
         complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
       }
     }
@@ -169,19 +182,19 @@ class Receiver()(implicit
 
   def leave() = Route {
     isLobby = true;
-    pokerControllerPublisher.leave()
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
   def disconnected(playerID: String) = {
     offlinePlayers = playerID :: offlinePlayers
-    pokerControllerPublisher.connectionEvent()
+    broadcastUpdate()
   }
 
   def reconnected(playerID: String) = {
     offlinePlayers = offlinePlayers.filter(_ != playerID)
-    pokerControllerPublisher.connectionEvent()
+    broadcastUpdate()
   }
 
   def offlinePlayerIsAtTurn = {
@@ -205,6 +218,7 @@ class Receiver()(implicit
 
   def getJson = Route {
     val updatedPokerJson = pokerToJson()
+    broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
 
   }
@@ -250,78 +264,79 @@ class Receiver()(implicit
   }
 
   def socket(): Route = {
-    println("Socket route called")
     parameter("playerID".?) { playerIdOpt =>
       val playerID = playerIdOpt.getOrElse("")
-      val flow = Flow.fromSinkAndSource(
-        Sink.foreach(println), // Handle incoming messages
-        Source.maybe // Send outgoing messages
-      )
-      handleWebSocketMessages(flow)
-    }
-  }
-
-  object PokerWebSocketActorFactory {
-    def create(out: akka.actor.ActorRef, playerID: String) =
-      println(s"Player $playerID connected.")
-      Props(new PokerWebSocketActor(out, playerID))
-  }
-
-  class PokerWebSocketActor(out: akka.actor.ActorRef, id: String) extends Actor with Reactor {
-    import context.dispatcher
-
-    val playerID = id
-
-    listenTo(pokerControllerPublisher)
-
-    // Scheduler für Pings
-    val pingScheduler = context.system.scheduler.scheduleAtFixedRate(
-      initialDelay = 5.seconds,
-      interval = 5.seconds,
-      receiver = self,
-      message = "sendPing"
-    )
-
-    // Zeitstempel der letzten Pong-Antwort
-    var lastPongReceived: Long = System.currentTimeMillis()
-
-    def receive: Receive = {
-
-      case "sendPing" =>
-        out ! "ping" // Sende Ping an den Client
-        // Prüfe, ob der Client innerhalb des Zeitlimits geantwortet hat
-        if (System.currentTimeMillis() - lastPongReceived > 10000) { // Timeout: 5 Sekunden
-          println(s"No pong received from $playerID, closing connection")
-          if (!offlinePlayers.contains(playerID)) {
-            disconnected(playerID);
-            if (offlinePlayerIsAtTurn) {
-              println("triggering fold because player offline")
-              pokerControllerPublisher.fold()
-            }
+      
+      val handler = Sink.foreach[Message] {
+        case TextMessage.Strict("pong") =>
+          if (offlinePlayers.contains(playerID)) {
+            reconnected(playerID)
           }
-        }
-
-      case "pong" =>
-        println(s"Pong received from $playerID")
-        lastPongReceived = System.currentTimeMillis() // Zeitstempel aktualisieren
-        if (offlinePlayers.contains(playerID)) {
-          reconnected(playerID);
-        }
-
-      case msg: String =>
-        out ! pokerToJson().toString()
-    }
-
-    reactions += { case _ =>
-      sendJsonToClient()
-    }
-
-    def sendJsonToClient() = {
-      out ! pokerToJson().toString()
-    }
-
-    override def postStop(): Unit = {
-      println(s"Player $playerID disconnected.")
+        case _ => // Ignore other messages
+      }
+      
+      val source = Source.actorRef[Message](
+        completionMatcher = { case Done => CompletionStrategy.immediately },
+        failureMatcher = PartialFunction.empty,
+        bufferSize = 100,
+        overflowStrategy = OverflowStrategy.dropHead
+      ).mapMaterializedValue { actorRef =>
+        connectionManager ! ConnectionManager.Register(actorRef)
+        actorRef ! TextMessage(pokerToJson().toString())
+        
+        // Verwenden Sie das system-Member statt classicSystem
+        system.actorOf(Props(new Actor {
+          context.watch(actorRef)
+          def receive: Receive = {
+            case Terminated(_) =>
+              connectionManager ! ConnectionManager.Unregister(actorRef)
+              if (!offlinePlayers.contains(playerID)) {
+                disconnected(playerID)
+              }
+              context.stop(self)
+          }
+        }))
+        
+        NotUsed
+      }
+      
+      handleWebSocketMessages(Flow.fromSinkAndSource(handler, source))
     }
   }
+
+  // Aktualisierte ConnectionManager-Definition
+}
+
+class ConnectionManager extends Actor {
+  import ConnectionManager._
+  
+  var connections: Set[ActorRef] = Set.empty  // klassischer ActorRef
+  
+  def receive: Receive = {
+    case Register(connection) =>
+      connections += connection
+      context.watch(connection)
+      
+    case Unregister(connection) =>
+      connections -= connection
+      context.unwatch(connection)
+      
+    case Broadcast(message) =>
+      connections.foreach(_ ! TextMessage(message))
+      
+    case GetConnections =>
+      sender() ! connections
+      
+    case Terminated(connection) =>
+      connections -= connection
+  }
+}
+
+object ConnectionManager {
+  sealed trait Command
+  case class Register(connection: ActorRef) extends Command  // klassischer ActorRef
+  case class Unregister(connection: ActorRef) extends Command
+  case class Broadcast(message: String) extends Command
+  case object GetConnections extends Command
+  case object SendPings extends Command
 }

@@ -237,9 +237,7 @@ class Receiver()(implicit
       val playerID = playerIdOpt.getOrElse("")
       
       val handler = Sink.foreach[Message] {
-        case TextMessage.Strict("pong") =>
-            reconnected(playerID)
-        case _ => // Ignore other messages
+        case _ =>
       }
       
       val source = Source.actorRef[Message](

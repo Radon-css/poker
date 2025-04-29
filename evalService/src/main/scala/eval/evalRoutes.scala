@@ -3,7 +3,7 @@ package de.htwg.poker.eval
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
-import de.htwg.poker.eval.types.{EvalGameState, EvalPlayer, EvalCard}
+import de.htwg.poker.eval.types.{EvalGameState, EvalPlayer, EvalCard, EvalHandRequest}
 import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 class evalRoutes {
@@ -15,9 +15,10 @@ class evalRoutes {
         path("evalHand") {
           post {
             entity(as[String]) { body =>
-              decode[EvalGameState](body) match {
-                case Right(gameState) =>
-                  val playerCards: List[EvalCard] = List(gameState.players.get(gameState.playerAtTurn).card1, gameState.players.get(gameState.playerAtTurn).card2)
+              println("Received body: " + body) // Debugging output
+              decode[EvalHandRequest](body) match {
+                case Right(EvalHandRequest(gameState, player)) =>
+                  val playerCards: List[EvalCard] = List(gameState.players.get(player).card1, gameState.players.get(player).card2)
                   val boardCards: List[EvalCard] = gameState.board
                   val result = HandInfo.evalHand(playerCards, boardCards)
                   complete(HttpEntity(ContentTypes.`application/json`, result.asJson.noSpaces))

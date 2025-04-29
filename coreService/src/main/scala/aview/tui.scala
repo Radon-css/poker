@@ -14,7 +14,7 @@ class TUI(controller: Controller) extends Observer {
 
   override def update: Unit = {
   val tuiViewFuture = Client.getTUIView(controller.gameState)
-  val evalHandFuture = Client.evalHand(controller.gameState)
+  val evalHandFuture = Client.evalHand(controller.gameState, controller.gameState.playerAtTurn)
 
   // Beide Futures zusammenfassen
   val combinedFuture = for {

@@ -45,9 +45,13 @@ object Client {
 
   def evalHand(
       gameState: GameState,
+      player: Int,
   ): Future[String] = {
 
-    val jsonString = gameState.asJson.noSpaces
+    val jsonString = Map(
+      "gameState" -> gameState.asJson,
+      "player" -> player.asJson
+    ).asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
     val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/evalHand", entity = entity)

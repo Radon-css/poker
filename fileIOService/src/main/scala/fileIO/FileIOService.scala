@@ -9,7 +9,7 @@ object FileIOService {
     implicit val system: ActorSystem = ActorSystem("PokerFileIOService")
     implicit val ec: ExecutionContext = system.dispatcher
 
-    FileIOHttpServer.run(system, ec, port = 8082)
+    FileIOHttpServer.run(system, ec, port = 8084)
 
     Await.result(Future.never, Duration.Inf)
   }

@@ -15,7 +15,7 @@ class DbRoutes {
   val routes: Route =
     pathPrefix("db") {
       concat(
-        path("insertNewPlayer") {
+        path("insertPlayer") {
           post {
             entity(as[String]) { body =>
               decode[PlayerIdRequest](body) match {

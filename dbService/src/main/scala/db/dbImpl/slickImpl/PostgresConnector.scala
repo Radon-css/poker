@@ -1,5 +1,6 @@
 package de.htwg.poker.db.dbImpl.slickImpl
 
+import DatabaseConfig._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}

@@ -19,7 +19,7 @@ class PostgresConnector extends ConnectorInterface:
 
   override def connect(setup: DBIOAction[Unit, NoStream, Effect.Schema]): Unit =
     println("Db Service -- Connecting to postgres database...")
-    retry(DB_POSTGRES_CONN_RETRY_ATTEMPTS, setup)(db)
+    retry(5, setup)(db)
 
   private def retry(retries: Int, setup: DBIOAction[Unit, NoStream, Effect.Schema])(database: => JdbcDatabaseDef): Unit =
     Try(Await.result(database.run(setup), 5.seconds)) match

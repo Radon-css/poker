@@ -1,6 +1,7 @@
 package de.htwg.poker.db.dbImpl.slick
 
-import common.config.DatabaseConfig._
+import DatabaseConfig._
+import de.htwg.poker.db.ConnectorInterface
 import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -8,7 +9,6 @@ import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import slick.dbio.{DBIOAction, Effect, NoStream}
 import slick.jdbc.JdbcBackend.{Database, JdbcDatabaseDef}
-import de.htwg.poker.db.ConnectorInterface
 
 class PostgresConnector extends ConnectorInterface:
   override val db = Database.forURL(

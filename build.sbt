@@ -27,7 +27,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
   "com.typesafe.play" %% "play" % "2.9.0",
 
-    "org.slf4j" % "slf4j-api" % "2.0.7",
+  "org.slf4j" % "slf4j-api" % "2.0.7",
   "ch.qos.logback" % "logback-classic" % "1.4.7" 
 )
 

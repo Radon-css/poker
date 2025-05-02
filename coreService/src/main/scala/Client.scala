@@ -107,40 +107,4 @@ object Client {
     }
   }
 
-  def saveState(
-      gameState: GameState
-  ): Future[String] = {
-
-    val jsonString = gameState.asJson.noSpaces
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8080/fileIO/saveState", entity = entity)
-
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
-        case _ =>
-          Future.failed(new RuntimeException(s"saveState Failed with status ${response.status}"))
-      }
-    }
-  }
-
-  def loadState()(implicit system: ActorSystem, mat: Materializer): Future[GameState] = {
-
-    val request = HttpRequest(HttpMethods.GET, "http://127.0.0.1:8080/fileIO/loadState")
-
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String].flatMap { json =>
-            decode[GameState](json) match {
-              case Right(state) => Future.successful(state)
-              case Left(err)    => Future.failed(new RuntimeException(s"JSON decoding error: $err"))
-            }
-          }
-        case _ =>
-          Future.failed(new RuntimeException(s"loadState Failed with status ${response.status}"))
-      }
-    }
-  }
 }

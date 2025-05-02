@@ -28,7 +28,10 @@ ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play" % "2.9.0",
 
     "org.slf4j" % "slf4j-api" % "2.0.7",
-  "ch.qos.logback" % "logback-classic" % "1.4.7" 
+  "ch.qos.logback" % "logback-classic" % "1.4.7",
+
+  //slick
+  "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
 )
 
 /*libraryDependencies ++= {
@@ -52,14 +55,14 @@ lazy val root = project
     tuiService,
     coreService,
     guiService,
-    fileIOService,
+    dbService,
     evalService
   )
   .aggregate(
     tuiService,
     coreService,
     guiService,
-    fileIOService,
+    dbService,
     evalService
   )
 
@@ -87,8 +90,8 @@ lazy val guiService = project
     name := "guiService"
   )
 
-lazy val fileIOService = project
-  .in(file("fileIOService"))
+lazy val dbService = project
+  .in(file("dbService"))
   .settings(
-    name := "fileIOService"
+    name := "dbService"
   )

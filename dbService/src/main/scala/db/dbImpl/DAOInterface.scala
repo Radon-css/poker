@@ -4,6 +4,6 @@ import scala.concurrent.Future
 import scala.util.Try
 
 trait DAOInterface:
-  def insertNewPlayer(playerId: String): Try[Unit]
-  def updateBalance(playerId: String, balance: Int): Try[Unit]
+  def insertPlayer(playerId: String): Try[Int]
+  def updateBalance(playerId: String, balance: Int): Try[Int]
   def fetchBalance(playerId: String): Try[Int]

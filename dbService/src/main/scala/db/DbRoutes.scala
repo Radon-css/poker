@@ -5,11 +5,12 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 import de.htwg.poker.db.dbImpl.InjectDbImpl.given_DAOInterface as daoInterface
+import de.htwg.poker.db.dbImpl.slickImpl.SlickDb
 
 class DbRoutes {
 
   case class PlayerIdRequest(playerID: String)
-  case class BalanceUpdateRequest(playerID: String, balance: Double)
+  case class BalanceUpdateRequest(playerID: String, balance: Int)
 
   val routes: Route =
     pathPrefix("db") {
@@ -19,7 +20,7 @@ class DbRoutes {
             entity(as[String]) { body =>
               decode[PlayerIdRequest](body) match {
                 case Right(PlayerIdRequest(playerID)) =>
-                  Db.insertPlayer(playerID)
+                  daoInterface.insertPlayer(playerID)
                   complete(HttpEntity(ContentTypes.`application/json`, s"""{"status":"Player $playerID inserted"}"""))
                 case Left(error) =>
                   complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
@@ -32,7 +33,7 @@ class DbRoutes {
             entity(as[String]) { body =>
               decode[BalanceUpdateRequest](body) match {
                 case Right(BalanceUpdateRequest(playerID, balance)) =>
-                  Db.updateBalance(playerID, balance)
+                  daoInterface.updateBalance(playerID, balance)
                   complete(HttpEntity(ContentTypes.`application/json`, s"""{"status":"Balance updated for $playerID"}"""))
                 case Left(error) =>
                   complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
@@ -45,7 +46,7 @@ class DbRoutes {
             entity(as[String]) { body =>
               decode[PlayerIdRequest](body) match {
                 case Right(PlayerIdRequest(playerID)) =>
-                  val balance = Db.fetchBalance(playerID)
+                  val balance = daoInterface.fetchBalance(playerID)
                   complete(HttpEntity(ContentTypes.`application/json`, s"""{"playerID":"$playerID", "balance":$balance}"""))
                 case Left(error) =>
                   complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))

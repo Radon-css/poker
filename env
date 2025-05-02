@@ -1,0 +1,5 @@
+# .env
+
+POSTGRES_USER=pokeruser
+POSTGRES_PASSWORD=pokerpassword
+POSTGRES_DB=pokerdb

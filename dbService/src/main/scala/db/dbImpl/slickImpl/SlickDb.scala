@@ -1,16 +1,14 @@
-package de.htwg.poker.db.dbImpl.slick
+package de.htwg.poker.db.dbImpl.slickImpl
 
-import de.htwg.poker.db.DAOInterface
 import org.slf4j.LoggerFactory
 import slick.jdbc.PostgresProfile.api._
 import slick.lifted.TableQuery
-import de.htwg.poker.db.ConnectorInterface
-import de.htwg.poker.db.dbImpl.PlayerRow
-import de.htwg.poker.db.dbImpl.PlayerTable
+import de.htwg.poker.db.dbImpl.ConnectorInterface
+import de.htwg.poker.db.dbImpl.DAOInterface
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.util.{Try, Success, Failure}
+import scala.util.{Try}
 import scala.concurrent.Future
 
 object SlickDb:
@@ -20,12 +18,12 @@ object SlickDb:
     private val logger = LoggerFactory.getLogger(getClass.getName.init)
     private def playerTable = TableQuery[PlayerTable](new PlayerTable(_))
 
-    override def insertNewPlayer(playerId: String): Try[Unit] = Try {
-      val action = playerTable += PlayerRow(0, playerId, 0)
+    override def insertPlayer(playerId: String): Try[Int] = Try {
+      val action = playerTable += (0, playerId, 0)
       Await.result(dbConnector.db.run(action), 5.seconds)
     }
 
-    override def updateBalance(playerId: String, balance: Int): Try[Unit] = Try {
+    override def updateBalance(playerId: String, balance: Int): Try[Int] = Try {
       val action = playerTable.filter(_.playerId === playerId).map(_.balance).update(balance)
       Await.result(dbConnector.db.run(action), 5.seconds)
     }

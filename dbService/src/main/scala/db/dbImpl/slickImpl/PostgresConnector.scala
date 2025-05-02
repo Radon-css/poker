@@ -1,14 +1,12 @@
-package de.htwg.poker.db.dbImpl.slick
+package de.htwg.poker.db.dbImpl.slickImpl
 
-import common.config.DatabaseConfig._
-import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import slick.dbio.{DBIOAction, Effect, NoStream}
 import slick.jdbc.JdbcBackend.{Database, JdbcDatabaseDef}
-import de.htwg.poker.db.ConnectorInterface
+import de.htwg.poker.db.dbImpl.ConnectorInterface
 
 class PostgresConnector extends ConnectorInterface:
   override val db = Database.forURL(
@@ -19,18 +17,18 @@ class PostgresConnector extends ConnectorInterface:
   )
 
   override def connect(setup: DBIOAction[Unit, NoStream, Effect.Schema]): Unit =
-    logger.info("Db Service -- Connecting to postgres database...")
+    println("Db Service -- Connecting to postgres database...")
     retry(DB_POSTGRES_CONN_RETRY_ATTEMPTS, setup)(db)
 
   private def retry(retries: Int, setup: DBIOAction[Unit, NoStream, Effect.Schema])(database: => JdbcDatabaseDef): Unit =
     Try(Await.result(database.run(setup), 5.seconds)) match
-      case Success(_) => logger.info("Db Service -- Postgres database connection established")
+      case Success(_) => println("Db Service -- Postgres database connection established")
       case Failure(exception) if retries > 0 =>
-        logger.warn(s"Db Service -- Postgres database connection failed - retrying... (${DB_POSTGRES_CONN_RETRY_ATTEMPTS - retries + 1}/$DB_POSTGRES_CONN_RETRY_ATTEMPTS): ${exception.getMessage}")
-        Thread.sleep(DB_POSTGRES_CONN_RETRY_WAIT_TIME)
+        println(s"Db Service -- Postgres database connection failed - retrying... (${5 - retries + 1}/ 5): ${exception.getMessage}")
+        Thread.sleep(2000)
         retry(retries - 1, setup)(database)
-      case Failure(exception) => logger.error(s"Db Service -- Could not establish a connection to the postgres database: ${exception.getMessage}")
+      case Failure(exception) => println(s"Db Service -- Could not establish a connection to the postgres database: ${exception.getMessage}")
 
   override def disconnect: Unit =
-    logger.info("Db Service -- Closing postgres database connection...")
+    println("Db Service -- Closing postgres database connection...")
     db.close

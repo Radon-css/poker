@@ -12,6 +12,7 @@ services:
       - "8080:8080"
     environment:
       - POKER_CORE_PORT=8080
+      - DATABASE_URL=postgresql://pokeruser:pokerpassword@db:5432/pokerdb  # Updated to connect to PostgreSQL
 
   eval:
     container_name: poker-eval
@@ -24,6 +25,7 @@ services:
       - core
     environment:
       - POKER_EVAL_PORT=8083
+      - DATABASE_URL=postgresql://pokeruser:pokerpassword@db:5432/pokerdb  # Updated to connect to PostgreSQL
 
   tui:
     container_name: poker-tui
@@ -37,3 +39,19 @@ services:
       - eval
     environment:
       - POKER_TUI_PORT=8082
+      - DATABASE_URL=postgresql://pokeruser:pokerpassword@db:5432/pokerdb  # Updated to connect to PostgreSQL
+
+  db:
+    container_name: poker-db
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=pokeruser
+      - POSTGRES_PASSWORD=pokerpassword
+      - POSTGRES_DB=pokerdb
+    ports:
+      - "5433:5432"  # Exposing PostgreSQL port
+    volumes:
+      - poker-db-data:/var/lib/postgresql/data  # Ensuring data persistence with volumes
+
+volumes:
+  poker-db-data:  # Defining volume for persistent data storage

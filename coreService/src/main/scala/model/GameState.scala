@@ -6,6 +6,7 @@ import de.htwg.poker.Client
 import de.htwg.poker.util.UpdateBoard
 import scala.concurrent.Await
 import scala.concurrent.Future
+import scala.collection.immutable.ListMap
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -24,6 +25,7 @@ allInFlag: tells if there was an all-In in the current Round, which changes the 
 case class GameState(
     playersAndBalances: List[(String, Int)],
     players: Option[List[Player]],
+    playersAndAuthIDs: Option[ListMap[String, String]],
     deck: Option[List[Card]],
     playerAtTurn: Int = 0,
     currentHighestBetSize: Int = 0,
@@ -182,6 +184,7 @@ case class GameState(
   // construct an initial gameState to start the Game
   def createGame(
       playerNameList: List[String],
+      playerAuthIDsMap: Option[ListMap[String, String]],
       smallBlind: Int,
       bigBlind: Int,
       smallBlindPlayerIndex: Int
@@ -196,7 +199,7 @@ case class GameState(
       new Player(
         shuffledDeck(index * 2),
         shuffledDeck(index * 2 + 1),
-        playerName
+        playerName,
       )
     }
 
@@ -228,6 +231,7 @@ case class GameState(
     GameState(
       updatedPlayersAndBalances,
       Some(playerListWithBlinds),
+      playerAuthIDsMap,
       Some(newShuffledDeck),
       if (playerList.size < 3) 0 else 2,
       bigBlind,

@@ -6,6 +6,7 @@ import de.htwg.poker.model.Player
 import scala.concurrent.Await
 import de.htwg.poker.util.Observable
 import de.htwg.poker.util.UpdateBoard
+import scala.collection.immutable.ListMap
 
 class Controller(var gameState: GameState) extends Observable {
 
@@ -18,9 +19,11 @@ class Controller(var gameState: GameState) extends Observable {
 
   def createGame(
       playerNameList: List[String],
+      playerAuthIDsMap: Option[ListMap[String, String]],
       smallBlind: String,
       bigBlind: String
   ): Boolean = {
+
     if (playerNameList.size < 2) {
       throw new Exception("Minimum two players required")
     }
@@ -43,7 +46,7 @@ class Controller(var gameState: GameState) extends Observable {
         throw new Exception("Small blind must be smaller than big blind")
       }
 
-      gameState = gameState.createGame(playerNameList, smallBlindInt, bigBlindInt, 0)
+      gameState = gameState.createGame(playerNameList, playerAuthIDsMap, smallBlindInt, bigBlindInt, 0)
       notifyObservers
       true
     } catch {

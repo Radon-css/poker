@@ -13,7 +13,7 @@ import scala.util.{Failure, Success}
 
 object CoreServer {
   val controller = new Controller(
-    new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
+    new GameState(Nil, None, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
   val tui = new TUI(controller)
 

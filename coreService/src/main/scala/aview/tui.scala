@@ -8,6 +8,7 @@ import scala.concurrent.Future
 import scala.io.StdIn.readLine
 import scala.util.{Failure, Success, Try}
 import util.Observer
+import scala.collection.immutable.ListMap
 
 class TUI(controller: Controller) extends Observer {
   controller.add(this)
@@ -80,7 +81,7 @@ class TUI(controller: Controller) extends Observer {
   }
 
   private def handleCreateGame(players: List[String], smallBlind: String, bigBlind: String): Boolean = {
-    val result: Try[Boolean] = Try(controller.createGame(players, smallBlind, bigBlind))
+    val result: Try[Boolean] = Try(controller.createGame(players, None, smallBlind, bigBlind))
     result match {
       case Success(value) => true
       case Failure(exception) =>

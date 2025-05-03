@@ -48,13 +48,16 @@ class Receiver()(implicit
   }
 
   val gameController = new Controller(
-    new GameState(Nil, None, None, 0, 0, Nil, 0, 0, 0, 0)
+    new GameState(Nil, None,None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
 
   // lobby
 
   // maps names to playerIDs
   var players: ListMap[String, String] = ListMap()
+
+  // maps playerNames to authIDs
+  var playersAuthIDs: ListMap[String, String] = ListMap()
 
   // list of playerIDs of players that are currently offline
   var offlinePlayers: List[String] = List()
@@ -72,6 +75,7 @@ class Receiver()(implicit
 
     gameController.createGame(
       players.keys.toList,
+      Some(playersAuthIDs),
       smallBlind.toString,
       bigBlind.toString
     )

@@ -27,6 +27,8 @@ object UpdateBoard {
         val winningAmount = gameState.pot / winners.size
         val shuffledDeck = shuffleDeck
 
+        val balancesBefore = gameState.playersAndBalances
+
         val newPlayerList = gameState.playersAndBalances.zipWithIndex.map { case (player, index) =>
           Player(
             shuffledDeck(index * 2),
@@ -81,7 +83,20 @@ object UpdateBoard {
           }
         }
 
-        Future.successful(
+        // Update the balances of players in the database
+        val updateBalanceFutures = gameState.playersAndAuthIDs match {
+          case Some(playerAuthMap) =>
+            updatedPlayersAndBalances.flatMap { case (playerName, newBalance) =>
+              balancesBefore.find(_._1 == playerName).map { case (_, oldBalance) =>
+                val diff = newBalance - oldBalance
+                val playerID = playerAuthMap(playerName)
+                Client.updateBalance(playerID, diff)
+              }
+            }
+          case None => Nil
+        }
+
+        Future.sequence(updateBalanceFutures).map { _ =>
           gameState.copy(
             playersAndBalances = updatedPlayersAndBalances,
             players = Some(finalPlayerList),
@@ -95,7 +110,7 @@ object UpdateBoard {
             smallBlindPointer = gameState.getNextSmallBlindPlayer,
             newRoundStarted = true
           )
-        )
+        }
       }
   }
 

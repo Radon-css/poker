@@ -106,20 +106,26 @@ object Client {
       }
     }
   }
-  def fetchBalance(
-      playerID: String
-  ): Future[String] = {
 
+  case class PlayerBalance(playerID: String, balance: Int)
+  def fetchBalance(playerID: String)(implicit system: ActorSystem, mat: Materializer): Future[PlayerBalance] = {
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/fetchBalance", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/fetchBalance", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
+          Unmarshal(response.entity).to[String].flatMap { responseBody =>
+            decode[PlayerBalance](responseBody) match {
+              case Right(playerBalance) => Future.successful(playerBalance)
+              case Left(error)          => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
+            }
+          }
         case _ =>
-          Future.failed(new RuntimeException(s"fetchBalance Failed with status ${response.status}"))
+          Unmarshal(response.entity).to[String].flatMap { errorBody =>
+            Future.failed(new RuntimeException(s"fetchBalance failed with status ${response.status}: $errorBody"))
+          }
       }
     }
   }
@@ -134,7 +140,7 @@ object Client {
       "balance" -> balance.asJson
     ).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/updateBalance", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/updateBalance", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -152,7 +158,7 @@ object Client {
 
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/insertPlayer", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/insertPlayer", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {

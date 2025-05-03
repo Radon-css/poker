@@ -22,6 +22,8 @@ import de.htwg.poker.controllers.Controller
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
+import io.circe.generic.auto._
+import io.circe.syntax._
 import javax.inject.Singleton
 import play.api.libs.json.{Format, JsValue, Json}
 import scala.collection.immutable.ListMap
@@ -136,49 +138,48 @@ class Receiver()(implicit
 
   // lobby functions
   def join(): Route = {
-  println("Joining lobby")
-  isLobby = true
+    println("Joining lobby")
+    isLobby = true
 
-  optionalHeaderValueByName("playerID") { playerIdOpt =>
-    optionalHeaderValueByName("authID") { authIdOpt =>
-      val playerID = playerIdOpt.getOrElse("")
-      val authID = authIdOpt.getOrElse("")
-      val playersLength = players.size
+    optionalHeaderValueByName("playerID") { playerIdOpt =>
+      optionalHeaderValueByName("authID") { authIdOpt =>
+        val playerID = playerIdOpt.getOrElse("")
+        val authID = authIdOpt.getOrElse("")
+        val playersLength = players.size
 
-      println(s"players: $players")
-      println(s"playerID: $playerID")
-      println(s"authID: $authID")
+        println(s"players: $players")
+        println(s"playerID: $playerID")
+        println(s"authID: $authID")
 
-      if (playerID.isEmpty) {
-        broadcastUpdate()
-        complete(StatusCodes.BadRequest -> "Error: playerID is missing")
-      } else if (players.values.toList.contains(playerID)) {
-        println("Player already in lobby")
+        if (playerID.isEmpty) {
+          broadcastUpdate()
+          complete(StatusCodes.BadRequest -> "Error: playerID is missing")
+        } else if (players.values.toList.contains(playerID)) {
+          println("Player already in lobby")
 
-        val updatedPokerJson = pokerToJson()
-        broadcastUpdate()
-        complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
-      } else if (playersLength >= 6) {
-        broadcastUpdate()
-        complete(StatusCodes.BadRequest -> "Error: Player limit reached")
-      } else {
-        val newPlayerName = "Player" + (playersLength + 1)
-        players = players + (newPlayerName -> playerID)
+          val updatedPokerJson = pokerToJson()
+          broadcastUpdate()
+          complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
+        } else if (playersLength >= 6) {
+          broadcastUpdate()
+          complete(StatusCodes.BadRequest -> "Error: Player limit reached")
+        } else {
+          val newPlayerName = "Player" + (playersLength + 1)
+          players = players + (newPlayerName -> playerID)
 
-        if (authID.nonEmpty) {
-          playersAuthIDs = playersAuthIDs.updated(newPlayerName, authID)
-          println(s"Mapped $newPlayerName to authID: $authID")
+          if (authID.nonEmpty) {
+            playersAuthIDs = playersAuthIDs.updated(newPlayerName, authID)
+            println(s"Mapped $newPlayerName to authID: $authID")
+          }
+
+          println(s"New Player: $playerID $newPlayerName")
+          val updatedPokerJson = pokerToJson()
+          broadcastUpdate()
+          complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
         }
-
-        println(s"New Player: $playerID $newPlayerName")
-        val updatedPokerJson = pokerToJson()
-        broadcastUpdate()
-        complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
       }
     }
   }
-}
-
 
   def leave() = Route {
     isLobby = true;
@@ -197,8 +198,9 @@ class Receiver()(implicit
 
   def fetchBalance(playerID: String): Route = {
     onComplete(Client.fetchBalance(playerID)) {
-      case scala.util.Success(json) =>
-        complete(HttpEntity(ContentTypes.`application/json`, json))
+      case scala.util.Success(balance) =>
+        val jsonString = balance.asJson.noSpaces
+        complete(HttpEntity(ContentTypes.`application/json`, jsonString))
       case scala.util.Failure(_) =>
         complete(StatusCodes.InternalServerError -> "Failed to fetch balance")
     }

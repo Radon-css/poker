@@ -4,6 +4,8 @@ ThisBuild / version := "1.0.1"
 ThisBuild / scalaVersion := scala3Version
 ThisBuild / scalacOptions += "-Xmax-inlines:64"
 Compile / mainClass := Some("de.htwg.poker.CoreServer")
+Compile / resourceDirectory := baseDirectory.value / "src" / "main" / "resources"
+
 
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
@@ -76,7 +78,8 @@ lazy val tuiService = project
 lazy val evalService = project
   .in(file("evalService"))
   .settings(
-    name := "evalService"
+    name := "evalService",
+     Compile / resourceDirectory := baseDirectory.value / "src" / "main" / "resources"
   )
 
 lazy val coreService = project

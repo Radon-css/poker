@@ -5,7 +5,7 @@ WORKDIR /app
 COPY ../build.sbt ./
 COPY ../project ./project
 
-COPY ./evalService/src/main/scala ./evalService/src/main/scala
+COPY ./evalService/src/main ./evalService/src/main
 
 EXPOSE 8083
 

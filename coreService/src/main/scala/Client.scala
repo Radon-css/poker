@@ -106,38 +106,60 @@ object Client {
       }
     }
   }
-  def fetchBalance(playerID: String): Future[String] = {
-    val requestEntity = HttpEntity(ContentTypes.`application/json`, s"""{"playerID":"$playerID"}""")
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/fetchBalance", entity = requestEntity)
+  def fetchBalance(
+      playerID: String
+  ): Future[String] = {
+
+    val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/fetchBalance", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
-        case StatusCodes.OK => Unmarshal(response.entity).to[String]
-        case _              => Future.failed(new RuntimeException("Failed to fetch balance"))
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(new RuntimeException(s"fetchBalance Failed with status ${response.status}"))
       }
     }
   }
 
-  def updateBalance(playerID: String): Future[String] = {
-    val requestEntity = HttpEntity(ContentTypes.`application/json`, s"""{"playerID":"$playerID"}""")
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/updateBalance", entity = requestEntity)
+  def updateBalance(
+      playerID: String,
+      balance: Int
+  ): Future[String] = {
+
+    val jsonString = Map(
+      "playerID" -> playerID.asJson,
+      "balance" -> balance.asJson
+    ).asJson.noSpaces
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/updateBalance", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
-        case StatusCodes.OK => Unmarshal(response.entity).to[String]
-        case _              => Future.failed(new RuntimeException("Failed to update balance"))
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(new RuntimeException(s"updateBalance Failed with status ${response.status}"))
       }
     }
   }
 
-  def insertPlayer(playerID: String): Future[String] = {
-    val requestEntity = HttpEntity(ContentTypes.`application/json`, s"""{"playerID":"$playerID"}""")
-    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/insertPlayer", entity = requestEntity)
+  def insertPlayer(
+      playerID: String
+  ): Future[String] = {
+
+    val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://localhost:8084/insertPlayer", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
-        case StatusCodes.OK => Unmarshal(response.entity).to[String]
-        case _              => Future.failed(new RuntimeException("Failed to insert player"))
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(new RuntimeException(s"insertPlayer Failed with status ${response.status}"))
       }
     }
   }

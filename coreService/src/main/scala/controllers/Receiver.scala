@@ -48,7 +48,7 @@ class Receiver()(implicit
   }
 
   val gameController = new Controller(
-    new GameState(Nil, None,None, None, 0, 0, Nil, 0, 0, 0, 0)
+    new GameState(Nil, None, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
 
   // lobby
@@ -136,21 +136,25 @@ class Receiver()(implicit
 
   // lobby functions
   def join(): Route = {
-    println("Joining lobby")
-    isLobby = true
+  println("Joining lobby")
+  isLobby = true
 
-    optionalHeaderValueByName("playerID") { playerIdOpt =>
+  optionalHeaderValueByName("playerID") { playerIdOpt =>
+    optionalHeaderValueByName("authID") { authIdOpt =>
       val playerID = playerIdOpt.getOrElse("")
-      val playersLength = players.toList.length
+      val authID = authIdOpt.getOrElse("")
+      val playersLength = players.size
 
       println(s"players: $players")
       println(s"playerID: $playerID")
+      println(s"authID: $authID")
 
       if (playerID.isEmpty) {
         broadcastUpdate()
         complete(StatusCodes.BadRequest -> "Error: playerID is missing")
       } else if (players.values.toList.contains(playerID)) {
         println("Player already in lobby")
+
         val updatedPokerJson = pokerToJson()
         broadcastUpdate()
         complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -161,6 +165,11 @@ class Receiver()(implicit
         val newPlayerName = "Player" + (playersLength + 1)
         players = players + (newPlayerName -> playerID)
 
+        if (authID.nonEmpty) {
+          playersAuthIDs = playersAuthIDs.updated(newPlayerName, authID)
+          println(s"Mapped $newPlayerName to authID: $authID")
+        }
+
         println(s"New Player: $playerID $newPlayerName")
         val updatedPokerJson = pokerToJson()
         broadcastUpdate()
@@ -168,6 +177,8 @@ class Receiver()(implicit
       }
     }
   }
+}
+
 
   def leave() = Route {
     isLobby = true;

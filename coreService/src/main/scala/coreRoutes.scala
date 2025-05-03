@@ -29,7 +29,7 @@ class CoreRoutes {
     respondWithHeaders(
       `Access-Control-Allow-Origin`(HttpOrigin("http://localhost:5173")),
       `Access-Control-Allow-Credentials`(true),
-      `Access-Control-Allow-Headers`("Content-Type", "Authorization", "X-Requested-With", "playerid"),
+      `Access-Control-Allow-Headers`("Content-Type", "Authorization", "X-Requested-With", "playerid", "authID"),
       `Access-Control-Allow-Methods`(GET, POST, OPTIONS)
     ) {
       options {

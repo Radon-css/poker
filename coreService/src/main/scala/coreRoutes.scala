@@ -2,18 +2,26 @@ package de.htwg.poker
 
 import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
+import akka.http.scaladsl.model.HttpMethods._
+import akka.http.scaladsl.model.headers._
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import de.htwg.poker.controllers.Receiver
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
 import scala.concurrent.ExecutionContext
-import akka.http.scaladsl.model.headers._
-import akka.http.scaladsl.model.HttpMethods._
 
 class CoreRoutes {
   implicit val system: ActorSystem = ActorSystem("PokerSystem")
   implicit val mat: Materializer = Materializer(system)
   implicit val ec: ExecutionContext = system.dispatcher
+
+  case class PlayerIdRequest(playerID: String)
+  case class BalanceUpdateRequest(playerID: String, balance: Int)
 
   val receiver = new Receiver()(system, mat)
 
@@ -30,7 +38,7 @@ class CoreRoutes {
     }
   }
 
-  val routes: Route = corsHandler { 
+  val routes: Route = corsHandler {
     pathPrefix("core") {
       concat(
         path("get") {
@@ -84,10 +92,35 @@ class CoreRoutes {
           }
         },
         path("websocket") {
-        get {
-          receiver.socket()
+          get {
+            receiver.socket()
+          }
+        },
+        //dbRoutes
+        path("fetchBalance") {
+          post {
+            entity(as[String]) { body =>
+              decode[PlayerIdRequest](body) match {
+                case Right(PlayerIdRequest(playerID)) =>
+                  receiver.fetchBalance(playerID)
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+              }
+            }
+          }
+        },
+        path("insertPlayer") {
+          post {
+            entity(as[String]) { body =>
+              decode[PlayerIdRequest](body) match {
+                case Right(PlayerIdRequest(playerID)) =>
+                  receiver.insertPlayer(playerID)
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+              }
+            }
+          }
         }
-      }
       )
     }
   }

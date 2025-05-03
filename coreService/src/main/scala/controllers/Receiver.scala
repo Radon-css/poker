@@ -1,20 +1,23 @@
 package de.htwg.poker.controllers
 
 import akka.actor.ActorRefFactory
-import akka.actor.{Actor, ActorRef, Props, Terminated, ActorSystem}  // Note: Using untyped ActorRef
-import akka.{Done, NotUsed}
-import akka.stream.scaladsl._
-import akka.stream.{CompletionStrategy, OverflowStrategy}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props, Terminated} // Note: Using untyped ActorRef
 import akka.actor.{Actor, Props}
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.ws.{Message, TextMessage, WebSocketUpgradeResponse}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import akka.stream.scaladsl.Flow
+import akka.stream.scaladsl._
 import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.{CompletionStrategy, OverflowStrategy}
+import akka.{Done, NotUsed}
 import concurrent.duration.DurationInt
+import de.htwg.poker.Client
 import de.htwg.poker.controllers.Controller
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
@@ -24,6 +27,8 @@ import play.api.libs.json.{Format, JsValue, Json}
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.VectorMap
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
@@ -175,6 +180,24 @@ class Receiver()(implicit
     broadcastUpdate()
   }
 
+  def fetchBalance(playerID: String): Route = {
+    onComplete(Client.fetchBalance(playerID)) {
+      case scala.util.Success(json) =>
+        complete(HttpEntity(ContentTypes.`application/json`, json))
+      case scala.util.Failure(_) =>
+        complete(StatusCodes.InternalServerError -> "Failed to fetch balance")
+    }
+  }
+
+  def insertPlayer(playerID: String): Route = {
+    onComplete(Client.insertPlayer(playerID)) {
+      case scala.util.Success(json) =>
+        complete(HttpEntity(ContentTypes.`application/json`, json))
+      case scala.util.Failure(_) =>
+        complete(StatusCodes.InternalServerError -> "Failed to insert player")
+    }
+  }
+
   case class GameConfig(
       players: List[String],
       smallBlind: String,
@@ -235,34 +258,34 @@ class Receiver()(implicit
   def socket(): Route = {
     parameter("playerID".?) { playerIdOpt =>
       val playerID = playerIdOpt.getOrElse("")
-      
-      val handler = Sink.foreach[Message] {
-        case _ =>
+
+      val handler = Sink.foreach[Message] { case _ =>
       }
-      
-      val source = Source.actorRef[Message](
-        completionMatcher = { case Done => CompletionStrategy.immediately },
-        failureMatcher = PartialFunction.empty,
-        bufferSize = 100,
-        overflowStrategy = OverflowStrategy.dropHead
-      ).mapMaterializedValue { actorRef =>
-        connectionManager ! ConnectionManager.Register(actorRef)
-        actorRef ! TextMessage(pokerToJson().toString())
-        
-        // Verwenden Sie das system-Member statt classicSystem
-        system.actorOf(Props(new Actor {
-          context.watch(actorRef)
-          def receive: Receive = {
-            case Terminated(_) =>
+
+      val source = Source
+        .actorRef[Message](
+          completionMatcher = { case Done => CompletionStrategy.immediately },
+          failureMatcher = PartialFunction.empty,
+          bufferSize = 100,
+          overflowStrategy = OverflowStrategy.dropHead
+        )
+        .mapMaterializedValue { actorRef =>
+          connectionManager ! ConnectionManager.Register(actorRef)
+          actorRef ! TextMessage(pokerToJson().toString())
+
+          // Verwenden Sie das system-Member statt classicSystem
+          system.actorOf(Props(new Actor {
+            context.watch(actorRef)
+            def receive: Receive = { case Terminated(_) =>
               connectionManager ! ConnectionManager.Unregister(actorRef)
-                disconnected(playerID)
+              disconnected(playerID)
               context.stop(self)
-          }
-        }))
-        
-        NotUsed
-      }
-      
+            }
+          }))
+
+          NotUsed
+        }
+
       handleWebSocketMessages(Flow.fromSinkAndSource(handler, source))
     }
   }
@@ -272,24 +295,24 @@ class Receiver()(implicit
 
 class ConnectionManager extends Actor {
   import ConnectionManager._
-  
-  var connections: Set[ActorRef] = Set.empty  // klassischer ActorRef
-  
+
+  var connections: Set[ActorRef] = Set.empty // klassischer ActorRef
+
   def receive: Receive = {
     case Register(connection) =>
       connections += connection
       context.watch(connection)
-      
+
     case Unregister(connection) =>
       connections -= connection
       context.unwatch(connection)
-      
+
     case Broadcast(message) =>
       connections.foreach(_ ! TextMessage(message))
-      
+
     case GetConnections =>
       sender() ! connections
-      
+
     case Terminated(connection) =>
       connections -= connection
   }
@@ -297,7 +320,7 @@ class ConnectionManager extends Actor {
 
 object ConnectionManager {
   sealed trait Command
-  case class Register(connection: ActorRef) extends Command  // klassischer ActorRef
+  case class Register(connection: ActorRef) extends Command // klassischer ActorRef
   case class Unregister(connection: ActorRef) extends Command
   case class Broadcast(message: String) extends Command
   case object GetConnections extends Command

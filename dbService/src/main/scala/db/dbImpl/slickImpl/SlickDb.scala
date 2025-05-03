@@ -19,7 +19,7 @@ object SlickDb:
     private def playerTable = TableQuery[PlayerTable](new PlayerTable(_))
 
     override def insertPlayer(playerId: String): Try[Int] = Try {
-      val action = playerTable += (0, playerId, 0)
+      val action = playerTable += (0, playerId, 100000)
       Await.result(dbConnector.db.run(action), 5.seconds)
     }
 

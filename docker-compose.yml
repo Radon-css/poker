@@ -13,10 +13,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - DB_POSTGRES_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
       - POKER_CORE_PORT=8080
 
   eval:
@@ -55,19 +51,5 @@ services:
       - core
     environment:
       - POKER_EVAL_PORT=8084
-      - DATABASE_URL=postgresql://pokeruser:pokerpassword@db:5432/pokerdb  # Updated to connect to PostgreSQL
+      
 
-  db:
-    container_name: poker-db
-    image: postgres:latest
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - "5433:5432"  # Exposing PostgreSQL port
-    volumes:
-      - poker-db-data:/var/lib/postgresql/data  # Ensuring data persistence with volumes
-
-volumes:
-  poker-db-data:  # Defining volume for persistent data storage

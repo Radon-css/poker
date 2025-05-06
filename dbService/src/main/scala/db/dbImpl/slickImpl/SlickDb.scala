@@ -23,9 +23,19 @@ object SlickDb:
     }
 
     override def updateBalance(playerId: String, balance: Int): Try[Int] = Try {
-      val action = playerTable.filter(_.playerId === playerId).map(_.balance).update(balance)
-      Await.result(dbConnector.db.run(action), 5.seconds)
+      val query = playerTable.filter(_.playerId === playerId).map(_.balance)
+      val futureCurrentBalance = dbConnector.db.run(query.result.headOption)
+
+      val currentBalance = Await.result(futureCurrentBalance, 5.seconds) match {
+        case Some(b) => b
+        case None => throw new NoSuchElementException(s"Player $playerId not found")
+      }
+
+      val newBalance = currentBalance + balance
+      val updateAction = query.update(newBalance)
+      Await.result(dbConnector.db.run(updateAction), 5.seconds)
     }
+
 
     override def fetchBalance(playerId: String): Try[Int] = Try {
       val action = playerTable.filter(_.playerId === playerId).map(_.balance).result.headOption

@@ -1,15 +1,14 @@
 package de.htwg.poker.db.dbImpl.slickImpl
 
-import org.slf4j.LoggerFactory
-import slick.jdbc.PostgresProfile.api._
-import slick.lifted.TableQuery
 import de.htwg.poker.db.dbImpl.ConnectorInterface
 import de.htwg.poker.db.dbImpl.DAOInterface
-
+import org.slf4j.LoggerFactory
 import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.util.{Try}
 import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.util.Try
+import slick.jdbc.PostgresProfile.api._
+import slick.lifted.TableQuery
 
 object SlickDb:
   def apply(dbConnector: ConnectorInterface): DAOInterface = new Slickb(dbConnector)
@@ -19,7 +18,7 @@ object SlickDb:
     private def playerTable = TableQuery[PlayerTable](new PlayerTable(_))
 
     override def insertPlayer(playerId: String): Try[Int] = Try {
-      val action = playerTable += (0, playerId, 100000)
+      val action = playerTable += (0, playerId, 100000, "Guest")
       Await.result(dbConnector.db.run(action), 5.seconds)
     }
 
@@ -32,6 +31,17 @@ object SlickDb:
       val action = playerTable.filter(_.playerId === playerId).map(_.balance).result.headOption
       Await.result(dbConnector.db.run(action), 5.seconds) match
         case Some(balance) => balance
-        case None => throw new NoSuchElementException(s"Player $playerId not found")
+        case None          => throw new NoSuchElementException(s"Player $playerId not found")
     }
 
+    override def updateName(playerId: String, name: String): Try[Int] = Try {
+      val action = playerTable.filter(_.playerId === playerId).map(_.name).update(name)
+      Await.result(dbConnector.db.run(action), 5.seconds)
+    }
+
+    override def fetchName(playerId: String): Try[String] = Try {
+      val action = playerTable.filter(_.playerId === playerId).map(_.name).result.headOption
+      Await.result(dbConnector.db.run(action), 5.seconds) match
+        case Some(name) => name
+        case None       => throw new NoSuchElementException(s"Player $playerId not found")
+    }

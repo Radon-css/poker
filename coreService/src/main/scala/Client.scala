@@ -169,4 +169,47 @@ object Client {
       }
     }
   }
+
+  case class PlayerName(playerID: String, name: String)
+
+  def fetchName(playerID: String)(implicit system: ActorSystem, mat: Materializer): Future[PlayerName] = {
+    val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/fetchName", entity = entity)
+
+    Http().singleRequest(request).flatMap { response =>
+      response.status match {
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String].flatMap { responseBody =>
+            decode[PlayerName](responseBody) match {
+              case Right(playerName) => Future.successful(playerName)
+              case Left(error)       => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
+            }
+          }
+        case _ =>
+          Unmarshal(response.entity).to[String].flatMap { errorBody =>
+            Future.failed(new RuntimeException(s"fetchName failed with status ${response.status}: $errorBody"))
+          }
+      }
+    }
+  }
+
+  def updateName(playerID: String, name: String): Future[String] = {
+    val jsonString = Map(
+      "playerID" -> playerID.asJson,
+      "name" -> name.asJson
+    ).asJson.noSpaces
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/updateName", entity = entity)
+
+    Http().singleRequest(request).flatMap { response =>
+      response.status match {
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(new RuntimeException(s"updateName Failed with status ${response.status}"))
+      }
+    }
+  }
+
 }

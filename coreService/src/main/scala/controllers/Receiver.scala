@@ -206,6 +206,25 @@ class Receiver()(implicit
     }
   }
 
+  def fetchName(playerID: String): Route = {
+    onComplete(Client.fetchName(playerID)) {
+      case scala.util.Success(name) =>
+        val jsonString = name.asJson.noSpaces
+        complete(HttpEntity(ContentTypes.`application/json`, jsonString))
+      case scala.util.Failure(_) =>
+        complete(StatusCodes.InternalServerError -> "Failed to fetch name")
+    }
+  }
+
+  def updateName(playerID: String, name: String): Route = {
+    onComplete(Client.updateName(playerID, name)) {
+      case scala.util.Success(json) =>
+        complete(HttpEntity(ContentTypes.`application/json`, json))
+      case scala.util.Failure(_) =>
+        complete(StatusCodes.InternalServerError -> "Failed to update name")
+    }
+  }
+
   def insertPlayer(playerID: String): Route = {
     onComplete(Client.insertPlayer(playerID)) {
       case scala.util.Success(json) =>

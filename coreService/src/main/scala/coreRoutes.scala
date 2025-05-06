@@ -23,6 +23,8 @@ class CoreRoutes {
   case class PlayerIdRequest(playerID: String)
   case class BalanceUpdateRequest(playerID: String, balance: Int)
 
+  case class NameUpdateRequest(playerID: String, name: String)
+
   val receiver = new Receiver()(system, mat)
 
   def corsHandler(route: Route): Route = {
@@ -115,6 +117,31 @@ class CoreRoutes {
               decode[PlayerIdRequest](body) match {
                 case Right(PlayerIdRequest(playerID)) =>
                   receiver.insertPlayer(playerID)
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+              }
+            }
+          }
+        },
+        path("fetchName") {
+          post {
+            entity(as[String]) { body =>
+              decode[PlayerIdRequest](body) match {
+                case Right(PlayerIdRequest(playerID)) =>
+                  receiver.fetchName(playerID)
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+              }
+            }
+          }
+        },
+        path("updateName") {
+          post {
+            entity(as[String]) { body =>
+              decode[NameUpdateRequest](body) match {
+                case Right(NameUpdateRequest(playerID, name)) =>
+                  receiver.updateName(playerID, name)
+                  complete(HttpEntity(ContentTypes.`application/json`, s"""{"status":"Name updated for $playerID"}"""))
                 case Left(error) =>
                   complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
               }

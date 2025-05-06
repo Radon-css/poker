@@ -156,7 +156,6 @@ class Receiver()(implicit
           complete(StatusCodes.BadRequest -> "Error: playerID is missing")
         } else if (players.values.toList.contains(playerID)) {
           println("Player already in lobby")
-
           val updatedPokerJson = pokerToJson()
           broadcastUpdate()
           complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -164,18 +163,25 @@ class Receiver()(implicit
           broadcastUpdate()
           complete(StatusCodes.BadRequest -> "Error: Player limit reached")
         } else {
-          val newPlayerName = "Player" + (playersLength + 1)
-          players = players + (newPlayerName -> playerID)
+          onComplete(Client.fetchName(authID)) {
+            case scala.util.Success(playerNameObj) =>
+              val playerName = playerNameObj.name
+              players = players + (playerName -> playerID)
 
-          if (authID.nonEmpty) {
-            playersAuthIDs = playersAuthIDs.updated(newPlayerName, authID)
-            println(s"Mapped $newPlayerName to authID: $authID")
+              if (authID.nonEmpty) {
+                playersAuthIDs = playersAuthIDs.updated(playerName, authID)
+                println(s"Mapped $playerName to authID: $authID")
+              }
+
+              println(s"New Player: $playerID $playerName")
+              val updatedPokerJson = pokerToJson()
+              broadcastUpdate()
+              complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
+
+            case scala.util.Failure(e) =>
+              println(s"Failed to fetch name for $authID: ${e.getMessage}")
+              complete(StatusCodes.InternalServerError -> "Failed to fetch player name")
           }
-
-          println(s"New Player: $playerID $newPlayerName")
-          val updatedPokerJson = pokerToJson()
-          broadcastUpdate()
-          complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
         }
       }
     }

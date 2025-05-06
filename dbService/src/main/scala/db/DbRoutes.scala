@@ -79,6 +79,24 @@ class DbRoutes {
               }
             }
           }
+        },
+        path("fetchName") {
+          post {
+            entity(as[String]) { body =>
+              decode[PlayerIdRequest](body) match {
+                case Right(PlayerIdRequest(playerID)) =>
+                  daoInterface.fetchName(playerID) match {
+                    case Success(name) =>
+                      val json = PlayerName(playerID, name).asJson.noSpaces
+                      complete(HttpEntity(ContentTypes.`application/json`, json))
+                    case Failure(e) =>
+                      complete(StatusCodes.InternalServerError -> s"""{"error": "${e.getMessage}"}""")
+                  }
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+              }
+            }
+          }
         }
       )
     }

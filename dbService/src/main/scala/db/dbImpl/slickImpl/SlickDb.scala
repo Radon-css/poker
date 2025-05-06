@@ -47,3 +47,10 @@ object SlickDb:
       val action = playerTable.filter(_.playerId === playerId).map(_.name).update(name)
       Await.result(dbConnector.db.run(action), 5.seconds)
     }
+
+    override def fetchName(playerId: String): Try[String] = Try {
+      val action = playerTable.filter(_.playerId === playerId).map(_.name).result.headOption
+      Await.result(dbConnector.db.run(action), 5.seconds) match
+        case Some(name) => name
+        case None       => throw new NoSuchElementException(s"Player $playerId not found")
+    }

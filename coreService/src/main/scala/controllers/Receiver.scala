@@ -58,9 +58,6 @@ class Receiver()(implicit
   // maps names to (cookieID, authID)
   var players: ListMap[String, (String, String)] = ListMap()
 
-  val nameToAuthId: ListMap[String, String] = 
-  ListMap(players.map { case (name, (_, authId)) => name -> authId }.toSeq: _*)
-
   // list of cookieIDs of players that are currently offline
   var offlinePlayers: List[String] = List()
 
@@ -77,7 +74,7 @@ class Receiver()(implicit
 
     gameController.createGame(
       players.keys.toList,
-      Some(nameToAuthId),
+      Some(ListMap(players.map { case (name, (_, authId)) => name -> authId }.toSeq*)),
       smallBlind.toString,
       bigBlind.toString
     )

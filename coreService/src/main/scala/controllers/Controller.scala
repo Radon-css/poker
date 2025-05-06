@@ -24,6 +24,17 @@ class Controller(var gameState: GameState) extends Observable {
       bigBlind: String
   ): Boolean = {
 
+    playerAuthIDsMap match {
+      case Some(authIDs: ListMap[String, String]) => 
+        if (authIDs.isEmpty) {
+          println("Auth IDs are empty")
+        } else {
+          println("Auth IDs: " + authIDs.mkString(", "))
+        }
+      case None => 
+        println("Auth IDs: No auth IDs available")
+    }
+
     if (playerNameList.size < 2) {
       throw new Exception("Minimum two players required")
     }

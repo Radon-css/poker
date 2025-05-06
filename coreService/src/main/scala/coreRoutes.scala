@@ -123,18 +123,6 @@ class CoreRoutes {
             }
           }
         },
-        path("fetchName") {
-          post {
-            entity(as[String]) { body =>
-              decode[PlayerIdRequest](body) match {
-                case Right(PlayerIdRequest(playerID)) =>
-                  receiver.fetchName(playerID)
-                case Left(error) =>
-                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
-              }
-            }
-          }
-        },
         path("updateName") {
           post {
             entity(as[String]) { body =>

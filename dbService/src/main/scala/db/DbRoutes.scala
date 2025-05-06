@@ -68,8 +68,10 @@ class DbRoutes {
           }
         },
         path("updateName") {
+          println("updateName route called")
           post {
             entity(as[String]) { body =>
+              println(s"Received body: $body")
               decode[NameUpdateRequest](body) match {
                 case Right(NameUpdateRequest(playerID, name)) =>
                   daoInterface.updateName(playerID, name)

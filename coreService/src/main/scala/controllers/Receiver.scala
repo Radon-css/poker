@@ -210,6 +210,7 @@ class Receiver()(implicit
   }
 
   def updateName(authID: String, name: String): Route = {
+    println(s"Updating name for authID: $authID to $name")
     onComplete(Client.updateName(authID, name)) {
       case scala.util.Success(json) =>
         renamePlayerByAuthId(name, authID)
@@ -266,7 +267,7 @@ class Receiver()(implicit
       "players" -> gameState.players.getOrElse(List.empty[Player]).zipWithIndex.map { case (player, index) =>
         Json.obj(
           "player" -> Json.obj(
-            "id" -> players.getOrElse(player.playername, ""),
+            "id" -> players.get(player.playername).map(_._1).getOrElse(""),
             "card1rank" -> player.card1.rank.toString,
             "card1suit" -> player.card1.suit.id,
             "card2rank" -> player.card2.rank.toString,
@@ -277,7 +278,7 @@ class Receiver()(implicit
             "folded" -> player.folded,
             "handEval" -> Json.toJson(Await.result(gameState.getHandEval(index), 1.seconds)),
             "offline" -> offlinePlayers.contains(
-              players.getOrElse(player.playername, "")
+              players.get(player.playername).map(_._1).getOrElse("")
             )
           )
         )

@@ -44,6 +44,7 @@ object SlickDb:
     }
 
     override def updateName(playerId: String, name: String): Try[Int] = Try {
+      println(s"Updating name for player $playerId to $name")
       val action = playerTable.filter(_.playerId === playerId).map(_.name).update(name)
       Await.result(dbConnector.db.run(action), 5.seconds)
     }

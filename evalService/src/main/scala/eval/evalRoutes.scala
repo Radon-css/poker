@@ -15,7 +15,6 @@ class evalRoutes {
         path("evalHand") {
           post {
             entity(as[String]) { body =>
-              println("Received body: " + body) // Debugging output
               decode[EvalHandRequest](body) match {
                 case Right(EvalHandRequest(gameState, player)) =>
                   val playerCards: List[EvalCard] = List(gameState.players.get(player).card1, gameState.players.get(player).card2)

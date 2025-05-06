@@ -55,13 +55,13 @@ class Receiver()(implicit
 
   // lobby
 
-  // maps names to playerIDs
-  var players: ListMap[String, String] = ListMap()
+  // maps names to (cookieID, authID)
+  var players: ListMap[String, (String, String)] = ListMap()
 
-  // maps playerNames to authIDs
-  var playersAuthIDs: ListMap[String, String] = ListMap()
+  val nameToAuthId: ListMap[String, String] = 
+  ListMap(players.map { case (name, (_, authId)) => name -> authId }.toSeq: _*)
 
-  // list of playerIDs of players that are currently offline
+  // list of cookieIDs of players that are currently offline
   var offlinePlayers: List[String] = List()
 
   var smallBlind: Int = 10
@@ -77,7 +77,7 @@ class Receiver()(implicit
 
     gameController.createGame(
       players.keys.toList,
-      Some(playersAuthIDs),
+      Some(nameToAuthId),
       smallBlind.toString,
       bigBlind.toString
     )
@@ -143,18 +143,18 @@ class Receiver()(implicit
 
     optionalHeaderValueByName("playerID") { playerIdOpt =>
       optionalHeaderValueByName("authID") { authIdOpt =>
-        val playerID = playerIdOpt.getOrElse("")
+        val cookieID = playerIdOpt.getOrElse("")
         val authID = authIdOpt.getOrElse("")
         val playersLength = players.size
 
         println(s"players: $players")
-        println(s"playerID: $playerID")
+        println(s"cookieID: $cookieID")
         println(s"authID: $authID")
 
-        if (playerID.isEmpty) {
+        if (cookieID.isEmpty) {
           broadcastUpdate()
           complete(StatusCodes.BadRequest -> "Error: playerID is missing")
-        } else if (players.values.toList.contains(playerID)) {
+        } else if (players.values.toList.contains(cookieID)) {
           println("Player already in lobby")
           val updatedPokerJson = pokerToJson()
           broadcastUpdate()
@@ -166,14 +166,11 @@ class Receiver()(implicit
           onComplete(Client.fetchName(authID)) {
             case scala.util.Success(playerNameObj) =>
               val playerName = playerNameObj.name
-              players = players + (playerName -> playerID)
-
               if (authID.nonEmpty) {
-                playersAuthIDs = playersAuthIDs.updated(playerName, authID)
-                println(s"Mapped $playerName to authID: $authID")
+              players = players + (playerName -> (cookieID, authID))
               }
 
-              println(s"New Player: $playerID $playerName")
+              println(s"New Player: $cookieID $playerName")
               val updatedPokerJson = pokerToJson()
               broadcastUpdate()
               complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
@@ -194,16 +191,16 @@ class Receiver()(implicit
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
   }
 
-  def disconnected(playerID: String) = {
+  def disconnected(cookieID: String) = {
     broadcastUpdate()
   }
 
-  def reconnected(playerID: String) = {
+  def reconnected(cookieID: String) = {
     broadcastUpdate()
   }
 
-  def fetchBalance(playerID: String): Route = {
-    onComplete(Client.fetchBalance(playerID)) {
+  def fetchBalance(authID: String): Route = {
+    onComplete(Client.fetchBalance(authID)) {
       case scala.util.Success(balance) =>
         val jsonString = balance.asJson.noSpaces
         complete(HttpEntity(ContentTypes.`application/json`, jsonString))
@@ -212,33 +209,35 @@ class Receiver()(implicit
     }
   }
 
-  def fetchName(playerID: String): Route = {
-    onComplete(Client.fetchName(playerID)) {
-      case scala.util.Success(name) =>
-        val jsonString = name.asJson.noSpaces
-        complete(HttpEntity(ContentTypes.`application/json`, jsonString))
-      case scala.util.Failure(_) =>
-        complete(StatusCodes.InternalServerError -> "Failed to fetch name")
-    }
-  }
-
-  def updateName(playerID: String, name: String): Route = {
-    onComplete(Client.updateName(playerID, name)) {
+  def updateName(authID: String, name: String): Route = {
+    onComplete(Client.updateName(authID, name)) {
       case scala.util.Success(json) =>
+        renamePlayerByAuthId(name, authID)
+        broadcastUpdate()
         complete(HttpEntity(ContentTypes.`application/json`, json))
       case scala.util.Failure(_) =>
         complete(StatusCodes.InternalServerError -> "Failed to update name")
     }
   }
 
-  def insertPlayer(playerID: String): Route = {
-    onComplete(Client.insertPlayer(playerID)) {
+  def insertPlayer(authID: String): Route = {
+    onComplete(Client.insertPlayer(authID)) {
       case scala.util.Success(json) =>
         complete(HttpEntity(ContentTypes.`application/json`, json))
       case scala.util.Failure(_) =>
         complete(StatusCodes.InternalServerError -> "Failed to insert player")
     }
   }
+
+  def renamePlayerByAuthId(newName: String, authId: String): Unit = {
+  players.find { case (_, (_, aId)) => aId == authId } match {
+    case Some((oldName, (cookieId, _))) =>
+      players -= oldName
+      players += (newName -> (cookieId, authId))
+    case None =>
+      println(s"No player found with authId $authId")
+  }
+}
 
   case class GameConfig(
       players: List[String],
@@ -299,7 +298,7 @@ class Receiver()(implicit
 
   def socket(): Route = {
     parameter("playerID".?) { playerIdOpt =>
-      val playerID = playerIdOpt.getOrElse("")
+      val cookieID = playerIdOpt.getOrElse("")
 
       val handler = Sink.foreach[Message] { case _ =>
       }
@@ -320,7 +319,7 @@ class Receiver()(implicit
             context.watch(actorRef)
             def receive: Receive = { case Terminated(_) =>
               connectionManager ! ConnectionManager.Unregister(actorRef)
-              disconnected(playerID)
+              disconnected(cookieID)
               context.stop(self)
             }
           }))

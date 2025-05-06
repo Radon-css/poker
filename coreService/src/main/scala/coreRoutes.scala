@@ -129,7 +129,6 @@ class CoreRoutes {
               decode[NameUpdateRequest](body) match {
                 case Right(NameUpdateRequest(playerID, name)) =>
                   receiver.updateName(playerID, name)
-                  complete(HttpEntity(ContentTypes.`application/json`, s"""{"status":"Name updated for $playerID"}"""))
                 case Left(error) =>
                   complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
               }

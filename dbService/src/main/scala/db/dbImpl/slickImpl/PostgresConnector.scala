@@ -7,7 +7,7 @@ import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import slick.dbio.{DBIOAction, Effect, NoStream}
 import slick.jdbc.JdbcBackend.{Database, JdbcDatabaseDef}
-import de.htwg.poker.db.dbImpl.ConnectorInterface
+import de.htwg.poker.db.dbImpl.slickImpl.ConnectorInterface
 
 class PostgresConnector extends ConnectorInterface:
   override val db = Database.forURL(

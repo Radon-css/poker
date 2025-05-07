@@ -1,5 +1,10 @@
 package de.htwg.poker.db.dbImpl.mongoImpl
 
+import org.mongodb.scala._
+import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.ReplaceOptions
+import org.mongodb.scala.model.Updates._
 import org.slf4j.LoggerFactory
 import de.htwg.poker.db.dbImpl.ConnectorInterface
 import de.htwg.poker.db.dbImpl.DAOInterface

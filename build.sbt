@@ -34,7 +34,10 @@ ThisBuild / libraryDependencies ++= Seq(
 
   //slick
   "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
-  "org.postgresql" % "postgresql" % "42.7.3"
+  "org.postgresql" % "postgresql" % "42.7.3",
+
+  //mongo
+  "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
 )
 
 /*libraryDependencies ++= {

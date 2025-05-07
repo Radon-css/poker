@@ -2,6 +2,8 @@ package de.htwg.poker.db.dbImpl.mongoImpl
 
 import akka.Done
 import akka.actor.{ActorSystem, CoordinatedShutdown}
+import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.{MongoClient, MongoDatabase, ObservableFuture}
 import DatabaseConfig._
 import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
@@ -9,7 +11,7 @@ import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 import de.htwg.poker.db.dbImpl.ConnectorInterface
 
-class MongoDBConnector extends DBConnectorInterface:
+class MongoConnector extends ConnectorInterface:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)
 
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
@@ -26,7 +28,7 @@ class MongoDBConnector extends DBConnectorInterface:
 
   override def connect: Unit =
     println("Db Service - Connecting to MongoDB...")
-    retry(DB_MONGO_CONN_RETRY_ATTEMPTS)
+    retry(5)
 
   private def retry(retries: Int): Unit =
     Try {
@@ -34,8 +36,8 @@ class MongoDBConnector extends DBConnectorInterface:
     } match
       case Success(_) => println("Db Service - MongoDB connection established")
       case Failure(exception) if retries > 0 =>
-        logger.warn(s"Db Service - MongoDB connection failed - retrying... (${DB_MONGO_CONN_RETRY_ATTEMPTS - retries + 1}/$DB_MONGO_CONN_RETRY_ATTEMPTS): ${exception.getMessage}")
-        Thread.sleep(DB_MONGO_CONN_RETRY_WAIT_TIME)
+        logger.warn(s"Db Service - MongoDB connection failed - retrying... (${5 - retries + 1}/5): ${exception.getMessage}")
+        Thread.sleep(1000)
         retry(retries - 1)
       case Failure(exception) => println(s"Db Service - Could not establish a connection to MongoDB: ${exception.getMessage}")
 

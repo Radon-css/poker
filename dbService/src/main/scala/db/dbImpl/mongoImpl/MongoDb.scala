@@ -26,8 +26,8 @@ object MongoDb:
     override def insertPlayer(playerId: String): Try[Int] = Try {
       val doc = Document(
         "player_id" -> playerId,
-        "balance"   -> 0,
-        "name"      -> ""
+        "balance"   -> 100000,
+        "name"      -> "Guest"
       )
       Await.result(
         playerCollection.replaceOne(equal("player_id", playerId), doc, ReplaceOptions().upsert(true)).toFuture,

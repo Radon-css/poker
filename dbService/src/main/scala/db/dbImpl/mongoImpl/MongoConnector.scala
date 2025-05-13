@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
-import de.htwg.poker.db.dbImpl.ConnectorInterface
+import de.htwg.poker.db.dbImpl.mongoImpl.ConnectorInterface
 
 class MongoConnector extends ConnectorInterface:
   private implicit val system: ActorSystem = ActorSystem(getClass.getSimpleName.init)

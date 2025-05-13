@@ -1,6 +1,6 @@
 package de.htwg.poker.db.dbImpl.slickImpl
 
-import de.htwg.poker.db.dbImpl.ConnectorInterface
+import de.htwg.poker.db.dbImpl.slickImpl.ConnectorInterface
 import de.htwg.poker.db.dbImpl.DAOInterface
 import org.slf4j.LoggerFactory
 import scala.concurrent.Await

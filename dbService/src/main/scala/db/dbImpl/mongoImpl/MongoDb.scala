@@ -6,8 +6,9 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.ReplaceOptions
 import org.mongodb.scala.model.Updates._
 import org.slf4j.LoggerFactory
-import de.htwg.poker.db.dbImpl.ConnectorInterface
+import de.htwg.poker.db.dbImpl.mongoImpl.ConnectorInterface
 import de.htwg.poker.db.dbImpl.DAOInterface
+import de.htwg.poker.db.dbImpl.mongoImpl.DatabaseConfig._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -20,7 +21,7 @@ object MongoDb:
     private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
     dbConnector.connect
-    private val playerCollection: MongoCollection[Document] = dbConnector.db.getCollection(PERSISTENCE_DB_MONGO_COLLECTION_NAME)
+    private val playerCollection: MongoCollection[Document] = dbConnector.db.getCollection(DB_MONGO_COLLECTION_NAME)
 
     override def insertPlayer(playerId: String): Try[Int] = Try {
       val doc = Document(

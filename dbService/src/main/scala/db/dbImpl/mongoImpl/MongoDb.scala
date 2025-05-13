@@ -65,6 +65,7 @@ object MongoDb:
     }
 
     override def fetchName(playerId: String): Try[String] = Try {
+      println(s"Fetching name for player $playerId")
       val doc = Await.result(
         playerCollection.find(equal("player_id", playerId)).first().toFuture,
         5.seconds

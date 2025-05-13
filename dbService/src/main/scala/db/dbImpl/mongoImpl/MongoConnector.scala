@@ -30,16 +30,22 @@ class MongoConnector extends ConnectorInterface:
     println("Db Service - Connecting to MongoDB...")
     retry(5)
 
-  private def retry(retries: Int): Unit =
-    Try {
-      Await.result(db.runCommand(Document("ping" -> 1)).toFuture(), 5.seconds)
-    } match
-      case Success(_) => println("Db Service - MongoDB connection established")
-      case Failure(exception) if retries > 0 =>
-        logger.warn(s"Db Service - MongoDB connection failed - retrying... (${5 - retries + 1}/5): ${exception.getMessage}")
-        Thread.sleep(1000)
-        retry(retries - 1)
-      case Failure(exception) => println(s"Db Service - Could not establish a connection to MongoDB: ${exception.getMessage}")
+  private def retry(retries: Int): Unit = {
+  Try {
+    val result = Await.result(db.runCommand(Document("ping" -> 1)).toFuture(), 5.seconds)
+    logger.info(s"Ping result: $result")
+    result
+  } match {
+    case Success(_) =>
+      logger.info("Db Service - MongoDB connection established")
+    case Failure(exception) if retries > 0 =>
+      logger.warn(s"Db Service - MongoDB connection failed - retrying... (${5 - retries + 1}/5): ${exception.getMessage}")
+      Thread.sleep(1000)
+      retry(retries - 1)
+    case Failure(exception) =>
+      logger.error(s"Db Service - Could not establish a connection to MongoDB: ${exception.getMessage}", exception)
+  }
+}
 
   override def disconnect: Future[Done] =
     println("Db Service - Closing MongoDB connection...")

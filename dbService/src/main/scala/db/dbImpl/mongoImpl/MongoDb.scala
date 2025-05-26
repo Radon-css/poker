@@ -1,16 +1,17 @@
 package de.htwg.poker.db.dbImpl.mongoImpl
 
+import de.htwg.poker.db.dbImpl.DAOInterface
+import de.htwg.poker.db.dbImpl.mongoImpl.ConnectorInterface
+import de.htwg.poker.db.dbImpl.mongoImpl.DatabaseConfig._
 import org.mongodb.scala._
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.ReplaceOptions
 import org.mongodb.scala.model.Updates._
 import org.slf4j.LoggerFactory
-import de.htwg.poker.db.dbImpl.mongoImpl.ConnectorInterface
-import de.htwg.poker.db.dbImpl.DAOInterface
-import de.htwg.poker.db.dbImpl.mongoImpl.DatabaseConfig._
-
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Try
 
@@ -26,8 +27,8 @@ object MongoDb:
     override def insertPlayer(playerId: String): Try[Int] = Try {
       val doc = Document(
         "player_id" -> playerId,
-        "balance"   -> 100000,
-        "name"      -> "Guest"
+        "balance" -> 100000,
+        "name" -> "Guest"
       )
       Await.result(
         playerCollection.replaceOne(equal("player_id", playerId), doc, ReplaceOptions().upsert(true)).toFuture,
@@ -37,31 +38,24 @@ object MongoDb:
     }
 
     override def updateBalance(playerId: String, balance: Int): Try[Int] = Try {
-        Await.result(
-            playerCollection.updateOne(
+      Await.result(
+        playerCollection
+          .updateOne(
             equal("player_id", playerId),
             inc("balance", balance) // <- statt set(...) verwenden wir inc(...)
-            ).toFuture,
-            5.seconds
-        )
-        1
-    }
-
-
-    override def fetchBalance(playerId: String): Try[Int] = Try {
-      val doc = Await.result(
-        playerCollection.find(equal("player_id", playerId)).first().toFuture,
-        5.seconds
-      )
-      doc.getInteger("balance")
-    }
-
-    override def updateName(playerId: String, name: String): Try[Int] = Try {
-      Await.result(
-        playerCollection.updateOne(equal("player_id", playerId), set("name", name)).toFuture,
+          )
+          .toFuture,
         5.seconds
       )
       1
+    }
+
+    override def fetchBalance(playerId: String): Future[Int] = {
+      playerCollection.find(equal("player_id", playerId)).first().toFuture.map(_.getInteger("balance"))
+    }
+
+    override def updateName(playerId: String, name: String): Future[Int] = {
+      playerCollection.updateOne(equal("player_id", playerId), set("name", name)).toFuture.map(_ => 1)
     }
 
     override def fetchName(playerId: String): Try[String] = Try {

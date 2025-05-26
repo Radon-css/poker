@@ -1,9 +1,10 @@
 package de.htwg.poker.db.dbImpl.slickImpl
 
-import de.htwg.poker.db.dbImpl.slickImpl.ConnectorInterface
 import de.htwg.poker.db.dbImpl.DAOInterface
+import de.htwg.poker.db.dbImpl.slickImpl.ConnectorInterface
 import org.slf4j.LoggerFactory
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Try
@@ -16,6 +17,10 @@ object SlickDb:
   private class Slickb(dbConnector: ConnectorInterface) extends DAOInterface:
     private val logger = LoggerFactory.getLogger(getClass.getName.init)
     private def playerTable = TableQuery[PlayerTable](new PlayerTable(_))
+
+    // Define a global ExecutionContext here (you can customize thread pool if you want)
+    // For simple usage, use the global context:
+    private implicit val ec: ExecutionContext = ExecutionContext.global
 
     override def insertPlayer(playerId: String): Try[Int] = Try {
       val action = playerTable += (0, playerId, 100000, "Guest")
@@ -36,17 +41,18 @@ object SlickDb:
       Await.result(dbConnector.db.run(updateAction), 5.seconds)
     }
 
-    override def fetchBalance(playerId: String): Try[Int] = Try {
+    override def fetchBalance(playerId: String): Future[Int] = {
       val action = playerTable.filter(_.playerId === playerId).map(_.balance).result.headOption
-      Await.result(dbConnector.db.run(action), 5.seconds) match
-        case Some(balance) => balance
-        case None          => throw new NoSuchElementException(s"Player $playerId not found")
+      dbConnector.db.run(action).flatMap {
+        case Some(balance) => Future.successful(balance)
+        case None          => Future.failed(new NoSuchElementException(s"Player $playerId not found"))
+      }
     }
 
-    override def updateName(playerId: String, name: String): Try[Int] = Try {
+    override def updateName(playerId: String, name: String): Future[Int] = {
       println(s"Updating name for player $playerId to $name")
       val action = playerTable.filter(_.playerId === playerId).map(_.name).update(name)
-      Await.result(dbConnector.db.run(action), 5.seconds)
+      dbConnector.db.run(action)
     }
 
     override def fetchName(playerId: String): Try[String] = Try {

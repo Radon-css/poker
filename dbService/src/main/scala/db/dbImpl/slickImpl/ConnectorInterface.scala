@@ -1,4 +1,4 @@
-package de.htwg.poker.db.dbImpl
+package de.htwg.poker.db.dbImpl.slickImpl
 
 import slick.dbio.{DBIOAction, Effect, NoStream}
 import slick.jdbc.JdbcBackend.JdbcDatabaseDef

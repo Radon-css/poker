@@ -54,11 +54,11 @@ class DbRoutes {
             entity(as[String]) { body =>
               decode[PlayerIdRequest](body) match {
                 case Right(PlayerIdRequest(playerID)) =>
-                  daoInterface.fetchBalance(playerID) match {
-                    case Success(amount) =>
+                  onComplete(daoInterface.fetchBalance(playerID)) {
+                    case scala.util.Success(amount) =>
                       val json = PlayerBalance(playerID, amount).asJson.noSpaces
                       complete(HttpEntity(ContentTypes.`application/json`, json))
-                    case Failure(e) =>
+                    case scala.util.Failure(e) =>
                       complete(StatusCodes.InternalServerError -> s"""{"error": "${e.getMessage}"}""")
                   }
                 case Left(error) =>
@@ -74,8 +74,12 @@ class DbRoutes {
               println(s"Received body: $body")
               decode[NameUpdateRequest](body) match {
                 case Right(NameUpdateRequest(playerID, name)) =>
-                  daoInterface.updateName(playerID, name)
-                  complete(HttpEntity(ContentTypes.`application/json`, s"""{"status":"Name updated for $playerID"}"""))
+                  onComplete(daoInterface.updateName(playerID, name)) {
+                    case scala.util.Success(_) =>
+                      complete(HttpEntity(ContentTypes.`application/json`, s"""{"status":"Name updated for $playerID"}"""))
+                    case scala.util.Failure(ex) =>
+                      complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Failed to update name: ${ex.getMessage}"))
+                  }
                 case Left(error) =>
                   complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
               }

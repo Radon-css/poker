@@ -212,17 +212,7 @@ object Client {
     }
   }
 
-  def insertGameState(
-      gameId: String,
-      gameState: GameState
-  ): Future[String] = {
-
-    val jsonString = Map(
-      "gameId" -> gameId.asJson,
-      "gameState" -> gameState.asJson,
-      "step" -> System.currentTimeMillis().asJson
-    ).asJson.noSpaces
-
+  def insertGameState(jsonString: String): Future[String] = {
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
     val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/insertGameState", entity = entity)
 

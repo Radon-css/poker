@@ -3,21 +3,12 @@ package de.htwg.poker.controllers
 import concurrent.duration.DurationInt
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
+import scala.concurrent.Await
 import de.htwg.poker.util.Observable
 import de.htwg.poker.util.UpdateBoard
 import scala.collection.immutable.ListMap
-import scala.concurrent.Await
 
 class Controller(var gameState: GameState) extends Observable {
-
-  private var gameHistory: List[GameState] = List(gameState)
-
-  def updateGameHistory(newGameState: GameState): Unit = {
-    gameHistory = gameHistory :+ newGameState
-    println("Game history updated. Current history size: " + gameHistory.size)
-    println("Current game state: " + newGameState)
-    println("Current game history: " + gameHistory.mkString("\n"))
-  }
 
   /* the following methods are structured in this particular way:
     first, check the user input for unallowed inputs and throw an exception if necessary.
@@ -34,13 +25,13 @@ class Controller(var gameState: GameState) extends Observable {
   ): Boolean = {
 
     playerAuthIDsMap match {
-      case Some(authIDs: ListMap[String, String]) =>
+      case Some(authIDs: ListMap[String, String]) => 
         if (authIDs.isEmpty) {
           println("Auth IDs are empty")
         } else {
           println("Auth IDs: " + authIDs.mkString(", "))
         }
-      case None =>
+      case None => 
         println("Auth IDs: No auth IDs available")
     }
 
@@ -65,11 +56,9 @@ class Controller(var gameState: GameState) extends Observable {
       if (bigBlindInt <= smallBlindInt) {
         throw new Exception("Small blind must be smaller than big blind")
       }
-      gameHistory = List(gameState)
 
       gameState = gameState.createGame(playerNameList, playerAuthIDsMap, smallBlindInt, bigBlindInt, 0)
       notifyObservers
-      updateGameHistory(gameState)
       true
     } catch {
       case _: NumberFormatException =>
@@ -104,7 +93,6 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = gameState.bet(amount)
     }
     notifyObservers
-    updateGameHistory(gameState)
     true
   }
 
@@ -115,7 +103,6 @@ class Controller(var gameState: GameState) extends Observable {
 
     gameState = gameState.allIn
     notifyObservers
-    updateGameHistory(gameState)
     true
   }
 
@@ -144,7 +131,6 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     }
     notifyObservers
-    updateGameHistory(gameState)
     true
   }
 //test
@@ -180,7 +166,6 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     }
     notifyObservers
-    updateGameHistory(gameState)
     true
   }
 
@@ -213,14 +198,12 @@ class Controller(var gameState: GameState) extends Observable {
       gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     }
     notifyObservers
-    updateGameHistory(gameState)
     true
   }
 
   def restartGame: Unit = {
     gameState = Await.result(UpdateBoard.startRound(gameState), 10.seconds)
     notifyObservers
-    updateGameHistory(gameState)
   }
 
   // helper methods

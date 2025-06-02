@@ -212,4 +212,28 @@ object Client {
     }
   }
 
+  def insertGameState(
+      gameId: String,
+      gameState: GameState
+  ): Future[String] = {
+
+    val jsonString = Map(
+      "gameId" -> gameId.asJson,
+      "gameState" -> gameState.asJson,
+      "step" -> System.currentTimeMillis().asJson
+    ).asJson.noSpaces
+
+    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
+    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/insertGameState", entity = entity)
+
+    Http().singleRequest(request).flatMap { response =>
+      response.status match {
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String]
+        case _ =>
+          Future.failed(new RuntimeException(s"insertGameState Failed with status ${response.status}"))
+      }
+    }
+  }
+
 }

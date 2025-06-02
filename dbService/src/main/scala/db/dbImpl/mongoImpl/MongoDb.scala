@@ -7,6 +7,7 @@ import org.mongodb.scala._
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.ReplaceOptions
+import org.mongodb.scala.model.Sorts.{ascending, orderBy}
 import org.mongodb.scala.model.Updates._
 import org.slf4j.LoggerFactory
 import scala.concurrent.Await
@@ -65,4 +66,35 @@ object MongoDb:
         5.seconds
       )
       doc.getString("name")
+    }
+
+    override def insertGameState(gameId: String, gameState: String, step: Long): Try[Int] = Try {
+      val doc = Document(
+        "gameId" -> gameId,
+        "step" -> step,
+        "state" -> gameState,
+        "timestamp" -> System.currentTimeMillis()
+      )
+
+      Await.result(
+        dbConnector.db
+          .getCollection(DB_MONGO_COLLECTION_NAME)
+          .insertOne(doc)
+          .toFuture,
+        5.seconds
+      )
+
+      1
+    }
+
+    override def fetchGameHistory(gameId: String): Future[Seq[(Int, String)]] = {
+      val collection = dbConnector.db.getCollection(DB_MONGO_COLLECTION_NAME)
+
+      collection
+        .find(equal("gameId", gameId))
+        .sort(ascending("step"))
+        .toFuture()
+        .map { docs =>
+          docs.map(doc => (doc.getInteger("step"), doc.getString("state")))
+        }
     }

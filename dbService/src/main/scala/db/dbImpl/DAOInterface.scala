@@ -9,3 +9,6 @@ trait DAOInterface:
   def fetchBalance(playerId: String): Future[Int]
   def updateName(playerId: String, name: String): Future[Int]
   def fetchName(playerId: String): Try[String]
+
+  def insertGameState(gameId: String, gameState: String, step: Long): Try[Int]
+  def fetchGameHistory(gameId: String): Future[Seq[(Int, String)]]

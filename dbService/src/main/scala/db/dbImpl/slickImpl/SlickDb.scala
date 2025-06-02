@@ -61,3 +61,11 @@ object SlickDb:
         case Some(name) => name
         case None       => throw new NoSuchElementException(s"Player $playerId not found")
     }
+
+    override def insertGameState(gameId: String, gameState: String, step: Long): Try[Int] = Try {
+      1
+    }
+
+    override def fetchGameHistory(gameId: String): Future[Seq[(Int, String)]] = {
+      Future.successful(Seq.empty)
+    }

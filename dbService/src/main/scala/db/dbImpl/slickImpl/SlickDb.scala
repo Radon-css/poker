@@ -2,6 +2,7 @@ package de.htwg.poker.db.dbImpl.slickImpl
 
 import de.htwg.poker.db.dbImpl.DAOInterface
 import de.htwg.poker.db.dbImpl.slickImpl.ConnectorInterface
+import de.htwg.poker.db.types.DbGameState
 import org.slf4j.LoggerFactory
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
@@ -62,7 +63,7 @@ object SlickDb:
         case None       => throw new NoSuchElementException(s"Player $playerId not found")
     }
 
-    override def insertGameState(gameId: String, gameState: String, step: Long): Try[Int] = Try {
+    override def insertGameState(gameId: String, gameState: DbGameState, step: Long): Try[Int] = Try {
       1
     }
 

@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import de.htwg.poker.db.dbImpl.InjectDbImpl.given_DAOInterface as daoInterface
 import de.htwg.poker.db.dbImpl.slickImpl.SlickDb
+import de.htwg.poker.db.types.DbGameState
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._
@@ -19,7 +20,7 @@ class DbRoutes {
   case class PlayerBalance(playerID: String, balance: Int)
   case class NameUpdateRequest(playerID: String, name: String)
   case class PlayerName(playerID: String, name: String)
-  case class GameStateRequest(gameId: String, gameState: String, step: Long)
+  case class GameStateRequest(gameId: String, gameState: DbGameState, step: Long)
 
   val routes: Route =
     pathPrefix("db") {
@@ -108,6 +109,7 @@ class DbRoutes {
         path("insertGameState") {
           post {
             entity(as[String]) { body =>
+              println(s"Received insertGameState body: $body") // Debug print
               decode[GameStateRequest](body) match {
                 case Right(GameStateRequest(gameId, gameState, step)) =>
                   daoInterface.insertGameState(gameId, gameState, step) match {

@@ -3,6 +3,7 @@ package de.htwg.poker.db.dbImpl.mongoImpl
 import de.htwg.poker.db.dbImpl.DAOInterface
 import de.htwg.poker.db.dbImpl.mongoImpl.ConnectorInterface
 import de.htwg.poker.db.dbImpl.mongoImpl.DatabaseConfig._
+import de.htwg.poker.db.types._
 import org.mongodb.scala._
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters.equal
@@ -10,6 +11,7 @@ import org.mongodb.scala.model.ReplaceOptions
 import org.mongodb.scala.model.Sorts.{ascending, orderBy}
 import org.mongodb.scala.model.Updates._
 import org.slf4j.LoggerFactory
+import play.api.libs.json._
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -68,11 +70,17 @@ object MongoDb:
       doc.getString("name")
     }
 
-    override def insertGameState(gameId: String, gameState: String, step: Long): Try[Int] = Try {
+    implicit val dbSuitFormat: Format[DbSuit] = Json.format[DbSuit]
+    implicit val dbRankFormat: Format[DbRank] = Json.format[DbRank]
+    implicit val dbCardFormat: Format[DbCard] = Json.format[DbCard]
+    implicit val dbPlayerFormat: Format[DbPlayer] = Json.format[DbPlayer]
+    implicit val dbGameStateFormat: Format[DbGameState] = Json.format[DbGameState]
+
+    override def insertGameState(gameId: String, gameState: DbGameState, step: Long): Try[Int] = Try {
       val doc = Document(
         "gameId" -> gameId,
         "step" -> step,
-        "state" -> gameState,
+        "state" -> Json.toJson(gameState).toString(),
         "timestamp" -> System.currentTimeMillis()
       )
 

@@ -19,6 +19,7 @@ class DbRoutes {
   case class PlayerBalance(playerID: String, balance: Int)
   case class NameUpdateRequest(playerID: String, name: String)
   case class PlayerName(playerID: String, name: String)
+  case class GameStateRequest(gameId: String, gameState: String, step: Long)
 
   val routes: Route =
     pathPrefix("db") {
@@ -95,6 +96,23 @@ class DbRoutes {
                     case Success(name) =>
                       val json = PlayerName(playerID, name).asJson.noSpaces
                       complete(HttpEntity(ContentTypes.`application/json`, json))
+                    case Failure(e) =>
+                      complete(StatusCodes.InternalServerError -> s"""{"error": "${e.getMessage}"}""")
+                  }
+                case Left(error) =>
+                  complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"Invalid JSON: ${error.getMessage}"))
+              }
+            }
+          }
+        },
+        path("insertGameState") {
+          post {
+            entity(as[String]) { body =>
+              decode[GameStateRequest](body) match {
+                case Right(GameStateRequest(gameId, gameState, step)) =>
+                  daoInterface.insertGameState(gameId, gameState, step) match {
+                    case Success(inserted) =>
+                      complete(HttpEntity(ContentTypes.`application/json`, s"""{"status": "ok", "rows": $inserted}"""))
                     case Failure(e) =>
                       complete(StatusCodes.InternalServerError -> s"""{"error": "${e.getMessage}"}""")
                   }

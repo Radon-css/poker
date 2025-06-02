@@ -212,16 +212,25 @@ object Client {
     }
   }
 
-  def insertGameState(jsonString: String): Future[String] = {
+  case class InsertGameStateResponse(status: String, message: String)
+
+  def insertGameState(jsonString: String)(implicit system: ActorSystem, mat: Materializer): Future[InsertGameStateResponse] = {
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
     val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/insertGameState", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
         case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
+          Unmarshal(response.entity).to[String].flatMap { responseBody =>
+            decode[InsertGameStateResponse](responseBody) match {
+              case Right(result) => Future.successful(result)
+              case Left(error)   => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
+            }
+          }
         case _ =>
-          Future.failed(new RuntimeException(s"insertGameState Failed with status ${response.status}"))
+          Unmarshal(response.entity).to[String].flatMap { errorBody =>
+            Future.failed(new RuntimeException(s"insertGameState failed with status ${response.status}: $errorBody"))
+          }
       }
     }
   }

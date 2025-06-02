@@ -5,11 +5,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import aview.TUI
-import de.htwg.poker.controllers.Controller
+import controllers.Controller
 import model.GameState
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
+import util.Stream
 
 object CoreServer {
   val controller = new Controller(

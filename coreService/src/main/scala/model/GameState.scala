@@ -7,6 +7,7 @@ import de.htwg.poker.util.UpdateBoard
 import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.collection.immutable.ListMap
+import play.api.libs.json._
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -36,6 +37,8 @@ case class GameState(
     smallBlindPointer: Int = 0,
     newRoundStarted: Boolean = true
 ) {
+
+  
 
   /*def players.getOrElse(List.empty[Player]): List[Player] = players.getOrElse(List.empty[Player])
   def deck.getOrElse(List.empty[Card]): List[Card] = deck.getOrElse(List.empty[Card])
@@ -298,4 +301,16 @@ case class GameState(
       case _ => Future.failed(new IndexOutOfBoundsException("Invalid player index"))
     }
   }
+}
+
+given listMapFormat[K: Format, V: Format]: Format[ListMap[K, V]] =
+  new Format[ListMap[K, V]] {
+    override def reads(json: JsValue): JsResult[ListMap[K, V]] =
+      json.validate[Map[K, V]].map(m => ListMap(m.toSeq: _*))
+    override def writes(o: ListMap[K, V]): JsValue =
+      Json.toJson(o.toMap)
+}
+
+object GameState {
+  implicit val format: OFormat[GameState] = Json.format[GameState]
 }

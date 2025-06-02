@@ -7,6 +7,7 @@ import scala.concurrent.Await
 import de.htwg.poker.util.Observable
 import de.htwg.poker.util.UpdateBoard
 import scala.collection.immutable.ListMap
+import java.util.UUID
 
 class Controller(var gameState: GameState) extends Observable {
 
@@ -17,12 +18,16 @@ class Controller(var gameState: GameState) extends Observable {
     additionally, for some actions like bet, call and fold it first has to be checked wether new community cards need to be revealed.
    */
 
+  var gameId: String = UUID.randomUUID().toString
+
   def createGame(
       playerNameList: List[String],
       playerAuthIDsMap: Option[ListMap[String, String]],
       smallBlind: String,
       bigBlind: String
   ): Boolean = {
+
+    gameId = UUID.randomUUID().toString
 
     playerAuthIDsMap match {
       case Some(authIDs: ListMap[String, String]) => 

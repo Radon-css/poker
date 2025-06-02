@@ -14,6 +14,7 @@ class TUI(controller: Controller) extends Observer {
   controller.add(this)
 
   override def update: Unit = {
+  println("TUI update")
   val tuiViewFuture = Client.getTUIView(controller.gameState)
   val evalHandFuture = Client.evalHand(controller.gameState, controller.gameState.playerAtTurn)
 

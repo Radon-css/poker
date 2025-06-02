@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import de.htwg.poker.controllers.Receiver
+import controllers.Receiver
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._

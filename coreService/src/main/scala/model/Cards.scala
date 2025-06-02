@@ -1,5 +1,6 @@
 package de.htwg.poker.model
 import scala.util.Random
+import play.api.libs.json._
 
 enum Rank:
   case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
@@ -50,6 +51,28 @@ enum Rank:
     case Ace   => 41
   }
 
+object Rank {
+    given rankFormat: Format[Rank] = new Format[Rank] {
+    def reads(json: JsValue): JsResult[Rank] = json match
+      case JsString("2")  => JsSuccess(Rank.Two)
+      case JsString("3")  => JsSuccess(Rank.Three)
+      case JsString("4")  => JsSuccess(Rank.Four)
+      case JsString("5")  => JsSuccess(Rank.Five)
+      case JsString("6")  => JsSuccess(Rank.Six)
+      case JsString("7")  => JsSuccess(Rank.Seven)
+      case JsString("8")  => JsSuccess(Rank.Eight)
+      case JsString("9")  => JsSuccess(Rank.Nine)
+      case JsString("T")  => JsSuccess(Rank.Ten)
+      case JsString("J")  => JsSuccess(Rank.Jack)
+      case JsString("Q")  => JsSuccess(Rank.Queen)
+      case JsString("K")  => JsSuccess(Rank.King)
+      case JsString("A")  => JsSuccess(Rank.Ace)
+      case _ => JsError("Unknown Rank")
+
+    def writes(rank: Rank): JsValue = JsString(rank.toString)
+  }
+}
+
 enum Suit:
   case Clubs, Spades, Diamonds, Hearts
   override def toString: String = this match {
@@ -76,6 +99,24 @@ enum Suit:
       "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"red\" class=\"bi bi-suit-heart-fill\" viewBox=\"0 0 16 16\"><path d=\"M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1\"/></svg>"
   }
 
+object Suit {
+  given Format[Suit] = new Format[Suit] {
+    def reads(json: JsValue): JsResult[Suit] = json match
+      case JsString("Clubs")    => JsSuccess(Suit.Clubs)
+      case JsString("Spades")   => JsSuccess(Suit.Spades)
+      case JsString("Diamonds") => JsSuccess(Suit.Diamonds)
+      case JsString("Hearts")   => JsSuccess(Suit.Hearts)
+      case _                    => JsError("Unknown Suit")
+
+    def writes(suit: Suit): JsValue = JsString(suit.toString match
+      case "♣" => "Clubs"
+      case "♠" => "Spades"
+      case "♢" => "Diamonds"
+      case "♡" => "Hearts"
+    )
+  }
+}
+
 case class Card(val suit: Suit, val rank: Rank) {
   override def toString: String = "[" + rank.toString + suit.toString + "]"
   def toHtml: String = {
@@ -93,4 +134,8 @@ val deck: List[Card] = {
 def shuffleDeck: List[Card] = {
   val random = new Random
   random.shuffle(deck)
+}
+
+object Card {
+  given cardFormat: OFormat[Card] = Json.format[Card]
 }

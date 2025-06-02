@@ -34,6 +34,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
+import de.htwg.poker.util.Stream
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
@@ -53,6 +54,7 @@ class Receiver()(implicit
     new GameState(Nil, None, None, None, 0, 0, Nil, 0, 0, 0, 0)
   )
 
+  val stream = new Stream(gameController)(using system)
   // lobby
 
   // maps names to (cookieID, authID)
@@ -114,7 +116,6 @@ class Receiver()(implicit
     val updatedPokerJson = pokerToJson()
     broadcastUpdate()
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
-
   }
 
   def check() = Route {

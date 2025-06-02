@@ -1,4 +1,5 @@
 package de.htwg.poker.model
+import play.api.libs.json._
 
 case class Player(
     val card1: Card,
@@ -9,6 +10,7 @@ case class Player(
     val folded: Boolean = false,
     val checkedThisRound: Boolean = false
 ) {
+
   def balanceToString = "(" + balance + "$)"
 
   def toHtml = {
@@ -35,3 +37,5 @@ case class Player(
                     """
   }
 }
+
+given playerFormat: OFormat[Player] = Json.format[Player]

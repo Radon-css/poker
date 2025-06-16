@@ -1,4 +1,4 @@
-package.
+package de.htwg.poker.kafka
 
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -21,3 +21,4 @@ object KafkaConfig {
     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG -> "earliest"
   )
 }
+

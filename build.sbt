@@ -38,6 +38,12 @@ ThisBuild / libraryDependencies ++= Seq(
 
   //mongo
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
+
+  //kafka
+  "org.apache.kafka" % "kafka-clients" % "4.0.0",Add commentMore actions,
+  "org.apache.kafka" %% "kafka-streams-scala" % "3.7.0" cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13,
+  "com.github.danielwegener" % "logback-kafka-appender" % "0.2.0-RC2"
 )
 
 /*libraryDependencies ++= {

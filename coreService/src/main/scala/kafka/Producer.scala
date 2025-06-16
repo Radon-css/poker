@@ -5,7 +5,7 @@ import akka.actor.ActorSystem
 import akka.kafka.ProducerSettings
 import akka.kafka.scaladsl.ProducerAdd
 import akka.stream.scaladsl.Source
-import common.config.KafkaConfig.KAFKA_BOOTSTRAP_SERVER_ADDRESS
+import de.htwg.poker.kafka.KafkaConfig.KAFKA_BOOTSTRAP_SERVER_ADDRESS
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import scala.collection.mutable.ListBuffer

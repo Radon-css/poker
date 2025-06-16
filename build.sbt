@@ -6,44 +6,51 @@ ThisBuild / scalacOptions += "-Xmax-inlines:64"
 Compile / mainClass := Some("de.htwg.poker.CoreServer")
 Compile / resourceDirectory := baseDirectory.value / "src" / "main" / "resources"
 
+val akkaVersion = "2.8.5"
+val akkaHttpVersion = "10.5.3"
+
+
+
 
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
   "org.scalatest" %% "scalatest" % "3.2.14" % "test",
-  "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
-  //"org.scalafx" %% "scalafx" % "21.0.0-R32",
+  "org.scala-lang.modules" %% "scala-swing" % "3.0.0" cross CrossVersion.for3Use2_13,
 
-  // Akka - using consistent versions
-  "com.typesafe.akka" %% "akka-actor-typed" % "2.8.5",
-  "com.typesafe.akka" %% "akka-stream" % "2.8.5",
-  "com.typesafe.akka" %% "akka-http" % "10.5.3",
-  // Add explicit dependency to prevent older version being pulled in
-  "com.typesafe.akka" %% "akka-serialization-jackson" % "2.8.5",
+  // Akka dependencies - all with cross version
+  "com.typesafe.akka" %% "akka-actor" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-protobuf-v3" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-stream" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion cross CrossVersion.for3Use2_13,
+  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion cross CrossVersion.for3Use2_13,
+  
+  // Other dependencies that need cross version
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2" cross CrossVersion.for3Use2_13,
+  "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.2" cross CrossVersion.for3Use2_13,
+  "com.typesafe" %% "ssl-config-core" % "0.6.1" cross CrossVersion.for3Use2_13,
 
-  // Circe
-  "io.circe" %% "circe-core" % "0.14.6",
-  "io.circe" %% "circe-generic" % "0.14.6",
-  "io.circe" %% "circe-parser" % "0.14.6",
+  // Rest of your dependencies...
+  "io.circe" %% "circe-core" % "0.14.1",
+  "io.circe" %% "circe-generic" % "0.14.1",
+  "io.circe" %% "circe-parser" % "0.14.1",
 
-  //play
-  "com.typesafe.play" %% "play-json" % "2.10.0-RC5",
-  "com.typesafe.play" %% "play" % "2.9.0",
+  "com.typesafe.play" %% "play-json" % "2.10.0-RC5" cross CrossVersion.for3Use2_13,
+  "com.typesafe.play" %% "play" % "2.9.0" cross CrossVersion.for3Use2_13,
 
-    "org.slf4j" % "slf4j-api" % "2.0.7",
+  "org.slf4j" % "slf4j-api" % "2.0.7",
   "ch.qos.logback" % "logback-classic" % "1.4.7",
 
-  //slick
   "com.typesafe.slick" %% "slick" % "3.6.0" cross CrossVersion.for3Use2_13,
   "org.postgresql" % "postgresql" % "42.7.3",
 
-  //mongo
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
 
-  //kafka
-  "org.apache.kafka" % "kafka-clients" % "4.0.0",Add commentMore actions,
+  "org.apache.kafka" % "kafka-clients" % "4.0.0",
   "org.apache.kafka" %% "kafka-streams-scala" % "3.7.0" cross CrossVersion.for3Use2_13,
   "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13,
-  "com.github.danielwegener" % "logback-kafka-appender" % "0.2.0-RC2"
+  "org.scala-lang.modules" %% "scala-xml" % "2.1.0" cross CrossVersion.for3Use2_13
 )
 
 /*libraryDependencies ++= {

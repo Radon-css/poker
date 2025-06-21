@@ -8,19 +8,50 @@ import de.htwg.poker.db.dbImpl.InjectDbImpl.given_DAOInterface as daoInterface
 import de.htwg.poker.db.dbImpl.slickImpl.SlickDb
 import de.htwg.poker.db.types.DbGameState
 import io.circe._
-import io.circe.generic.auto._
+import io.circe.generic.semiauto._
 import io.circe.parser._
 import io.circe.syntax._
 import scala.util.{Failure, Success}
 
 class DbRoutes {
 
+  import io.circe.{Decoder, Encoder}
+
   case class PlayerIdRequest(playerID: String)
+  object PlayerIdRequest {
+    implicit val encoder: Encoder[PlayerIdRequest] = Encoder.forProduct1("playerID")(p => p.playerID)
+    implicit val decoder: Decoder[PlayerIdRequest] = Decoder.forProduct1("playerID")(PlayerIdRequest.apply)
+  }
+
   case class BalanceUpdateRequest(playerID: String, balance: Int)
+  object BalanceUpdateRequest {
+    implicit val encoder: Encoder[BalanceUpdateRequest] = Encoder.forProduct2("playerID", "balance")(b => (b.playerID, b.balance))
+    implicit val decoder: Decoder[BalanceUpdateRequest] = Decoder.forProduct2("playerID", "balance")(BalanceUpdateRequest.apply)
+  }
+
   case class PlayerBalance(playerID: String, balance: Int)
+  object PlayerBalance {
+    implicit val encoder: Encoder[PlayerBalance] = Encoder.forProduct2("playerID", "balance")(p => (p.playerID, p.balance))
+    implicit val decoder: Decoder[PlayerBalance] = Decoder.forProduct2("playerID", "balance")(PlayerBalance.apply)
+  }
+
   case class NameUpdateRequest(playerID: String, name: String)
+  object NameUpdateRequest {
+    implicit val encoder: Encoder[NameUpdateRequest] = Encoder.forProduct2("playerID", "name")(n => (n.playerID, n.name))
+    implicit val decoder: Decoder[NameUpdateRequest] = Decoder.forProduct2("playerID", "name")(NameUpdateRequest.apply)
+  }
+
   case class PlayerName(playerID: String, name: String)
+  object PlayerName {
+    implicit val encoder: Encoder[PlayerName] = Encoder.forProduct2("playerID", "name")(p => (p.playerID, p.name))
+    implicit val decoder: Decoder[PlayerName] = Decoder.forProduct2("playerID", "name")(PlayerName.apply)
+  }
+
   case class GameStateRequest(gameId: String, gameState: DbGameState, step: Long)
+  object GameStateRequest {
+    implicit val encoder: Encoder[GameStateRequest] = Encoder.forProduct3("gameId", "gameState", "step")(g => (g.gameId, g.gameState, g.step))
+    implicit val decoder: Decoder[GameStateRequest] = Decoder.forProduct3("gameId", "gameState", "step")(GameStateRequest.apply)
+  }
 
   val routes: Route =
     pathPrefix("db") {

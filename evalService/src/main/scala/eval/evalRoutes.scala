@@ -1,10 +1,13 @@
 package de.htwg.poker.eval
 
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
-import de.htwg.poker.eval.types.{EvalGameState, EvalPlayer, EvalCard, EvalHandRequest}
-import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
+import de.htwg.poker.eval.types.{EvalCard, EvalGameState, EvalHandRequest, EvalPlayer}
+import io.circe._
+import io.circe.generic.semiauto._
+import io.circe.parser._
+import io.circe.syntax._
 
 class evalRoutes {
 

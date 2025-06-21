@@ -2,23 +2,22 @@ package de.htwg.poker.kafka
 
 // DbKafkaWorker.scala
 import akka.actor.ActorSystem
-import akka.kafka.{ConsumerSettings, ProducerSettings, Subscriptions}
 import akka.kafka.scaladsl.{Consumer, Producer}
+import akka.kafka.{ConsumerSettings, ProducerSettings, Subscriptions}
 import akka.stream.Materializer
 import akka.stream.scaladsl.{Sink, Source}
-import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
+import de.htwg.poker.db.dbImpl.InjectDbImpl.given_DAOInterface as daoInterface
+import de.htwg.poker.db.types.DbGameState
+import de.htwg.poker.kafka.KafkaMessage
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
-import de.htwg.poker.kafka.KafkaMessage
-import scala.concurrent.Future
+import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 import scala.concurrent.ExecutionContext
-import de.htwg.poker.db.dbImpl.InjectDbImpl.given_DAOInterface as daoInterface
-import de.htwg.poker.db.types.DbGameState
-
+import scala.concurrent.Future
 
 // Datenmodelle
 case class PlayerIdRequest(playerID: String)
@@ -47,7 +46,7 @@ class DbKafkaWorker(
         decode[KafkaMessage](msg.value()) match {
           case Right(req) => handleRequest(req)
           case Left(err) =>
-            system.log.error(s"Failed to parse KafkaMessage: ${err.getMessage}")
+            println(s"Failed to parse KafkaMessage: ${err.getMessage}")
             Future.unit
         }
       }
@@ -57,62 +56,66 @@ class DbKafkaWorker(
   def handleRequest(req: KafkaMessage): Future[Unit] = {
     println(s"Received request: ${req.action} with payload: ${req.payload}")
     req.action match {
-        case "insertPlayer" =>
+      case "insertPlayer" =>
         decode[PlayerIdRequest](req.payload) match {
-            case Right(PlayerIdRequest(playerID)) =>
-            Future.fromTry(daoInterface.insertPlayer(playerID))
-                .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
-                .recoverWith(handleError(req))
-            case Left(err) =>
+          case Right(PlayerIdRequest(playerID)) =>
+            Future
+              .fromTry(daoInterface.insertPlayer(playerID))
+              .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
+              .recoverWith(handleError(req))
+          case Left(err) =>
             Future.failed(new Exception(s"Invalid payload for insertPlayer: $err"))
         }
 
-        case "updateBalance" =>
+      case "updateBalance" =>
         decode[BalanceUpdateRequest](req.payload) match {
-            case Right(BalanceUpdateRequest(playerID, balance)) =>
-            Future.fromTry(daoInterface.updateBalance(playerID, balance))
-                .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
-                .recoverWith(handleError(req))
-            case Left(err) =>
+          case Right(BalanceUpdateRequest(playerID, balance)) =>
+            Future
+              .fromTry(daoInterface.updateBalance(playerID, balance))
+              .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
+              .recoverWith(handleError(req))
+          case Left(err) =>
             Future.failed(new Exception(s"Invalid payload for updateBalance: $err"))
         }
 
-        case "updateName" =>
+      case "updateName" =>
         decode[NameUpdateRequest](req.payload) match {
-            case Right(NameUpdateRequest(playerID, name)) =>
-            daoInterface.updateName(playerID, name)
-                .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
-                .recoverWith(handleError(req))
-            case Left(err) =>
+          case Right(NameUpdateRequest(playerID, name)) =>
+            daoInterface
+              .updateName(playerID, name)
+              .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
+              .recoverWith(handleError(req))
+          case Left(err) =>
             Future.failed(new Exception(s"Invalid payload for updateName: $err"))
         }
 
-        case "fetchName" =>
+      case "fetchName" =>
         decode[PlayerIdRequest](req.payload) match {
-            case Right(PlayerIdRequest(playerID)) =>
-            Future.fromTry(daoInterface.fetchName(playerID))
-                .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
-                .recoverWith(handleError(req))
-            case Left(err) =>
+          case Right(PlayerIdRequest(playerID)) =>
+            Future
+              .fromTry(daoInterface.fetchName(playerID))
+              .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
+              .recoverWith(handleError(req))
+          case Left(err) =>
             Future.failed(new Exception(s"Invalid payload for fetchName: $err"))
         }
 
-        case "insertGameState" =>
+      case "insertGameState" =>
         decode[GameStateRequest](req.payload) match {
-            case Right(GameStateRequest(gameId, gameState, step)) =>
-            Future.fromTry(daoInterface.insertGameState(gameId, gameState, step))
-                .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
-                .recoverWith(handleError(req))
-            case Left(err) =>
+          case Right(GameStateRequest(gameId, gameState, step)) =>
+            Future
+              .fromTry(daoInterface.insertGameState(gameId, gameState, step))
+              .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
+              .recoverWith(handleError(req))
+          case Left(err) =>
             Future.failed(new Exception(s"Invalid payload for insertGameState: $err"))
         }
 
-        case unknown =>
-        system.log.warning(s"Unknown action received: $unknown")
+      case unknown =>
+        println(s"Unknown action received: $unknown")
         Future.unit
-        }
     }
-
+  }
 
   def sendResponse(id: String, payload: String, replyTo: String): Future[Unit] = {
     val response = KafkaMessage(id, action = "", payload = payload, replyTo = "")
@@ -120,11 +123,10 @@ class DbKafkaWorker(
     Source.single(record).runWith(Producer.plainSink(producerSettings)).map(_ => ())
   }
 
-  def handleError(req: KafkaMessage): PartialFunction[Throwable, Future[Unit]] = {
-    case ex =>
-      system.log.error(s"Error processing ${req.action}: ${ex.getMessage}")
-      val errorResponse = KafkaMessage(req.id, "", s"""{"error":"${ex.getMessage}"}""", "")
-      val record = new ProducerRecord[String, String](req.replyTo, errorResponse.asJson.noSpaces)
-      Source.single(record).runWith(Producer.plainSink(producerSettings)).map(_ => ())
+  def handleError(req: KafkaMessage): PartialFunction[Throwable, Future[Unit]] = { case ex =>
+    println(s"Error processing ${req.action}: ${ex.getMessage}")
+    val errorResponse = KafkaMessage(req.id, "", s"""{"error":"${ex.getMessage}"}""", "")
+    val record = new ProducerRecord[String, String](req.replyTo, errorResponse.asJson.noSpaces)
+    Source.single(record).runWith(Producer.plainSink(producerSettings)).map(_ => ())
   }
 }

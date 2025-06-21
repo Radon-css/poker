@@ -20,8 +20,6 @@ ThisBuild / libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
-  "ch.qos.logback" % "logback-classic" % "1.5.2",
-  "net.logstash.logback" % "logstash-logback-encoder" % "7.4",
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion cross CrossVersion.for3Use2_13,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion cross CrossVersion.for3Use2_13,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion cross CrossVersion.for3Use2_13,
@@ -36,8 +34,8 @@ ThisBuild / libraryDependencies ++= Seq(
   "io.gatling" % "gatling-test-framework" % "3.13.5" % Test,
   "org.apache.kafka" % "kafka-clients" % "4.0.0",
   "org.apache.kafka" %% "kafka-streams-scala" % "3.7.0" cross CrossVersion.for3Use2_13,
-  "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13,
-  "com.github.danielwegener" % "logback-kafka-appender" % "0.2.0-RC2"
+  "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13
+
 )
 
 

@@ -7,14 +7,15 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
-import de.htwg.poker.model._
-import de.htwg.poker.model.{Card, GameState, Player}
+import model._
+import model.{Card, GameState, Player}
 import io.circe.generic.semiauto._
 import io.circe.parser._
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import kafka.CoreKafkaClient
 
 object Client {
 
@@ -35,51 +36,27 @@ object Client {
 
   import AppConfig.{materializer, system}
 
+  val kafkaClient = new CoreKafkaClient()(system, materializer)
+
   def calcWinner(
       gameState: GameState
   ): Future[List[Player]] = {
-
-    val jsonString = gameState.asJson.noSpaces
-
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/calcWinner", entity = entity)
-
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String].flatMap { json =>
-            decode[List[Player]](json) match {
-              case Right(players) => Future.successful(players)
-              case Left(err)      => Future.failed(new RuntimeException(s"JSON decoding error: $err"))
-            }
-          }
-        case _ =>
-          Future.failed(new RuntimeException(s"calcWinner Failed with status ${response.status}"))
+    val payload = gameState.asJson.noSpaces
+      kafkaClient.sendAndAwait("calcWinner", payload, "core-eval-requests").flatMap { json =>
+        decode[List[Player]](json) match {
+          case Right(players) => Future.successful(players)
+          case Left(err)      => Future.failed(new RuntimeException(err))
+        }
       }
-    }
   }
 
-  def evalHand(
-      gameState: GameState,
-      player: Int
-  ): Future[String] = {
-
+  def evalHand(gameState: GameState, player: Int): Future[String] = {
     val jsonString = Map(
       "gameState" -> gameState.asJson,
       "player" -> player.asJson
     ).asJson.noSpaces
 
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/evalHand", entity = entity)
-
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
-        case _ =>
-          Future.failed(new RuntimeException(s"evalHand Failed with status ${response.status}"))
-      }
-    }
+    kafkaClient.sendAndAwait("evalHand", jsonString, "core-eval-requests")
   }
 
   def getGUIView(
@@ -124,67 +101,32 @@ object Client {
   }
 
   case class PlayerBalance(playerID: String, balance: Int)
+
   def fetchBalance(playerID: String)(implicit system: ActorSystem, mat: Materializer): Future[PlayerBalance] = {
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/fetchBalance", entity = entity)
 
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String].flatMap { responseBody =>
-            decode[PlayerBalance](responseBody) match {
-              case Right(playerBalance) => Future.successful(playerBalance)
-              case Left(error)          => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
-            }
-          }
-        case _ =>
-          Unmarshal(response.entity).to[String].flatMap { errorBody =>
-            Future.failed(new RuntimeException(s"fetchBalance failed with status ${response.status}: $errorBody"))
-          }
+    kafkaClient.sendAndAwait("fetchBalance", jsonString, "core-db-requests").flatMap { json =>
+      decode[PlayerBalance](json) match {
+        case Right(result) => Future.successful(result)
+        case Left(error)   => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
       }
     }
   }
 
-  def updateBalance(
-      playerID: String,
-      balance: Int
-  ): Future[String] = {
-
+  def updateBalance(playerID: String, balance: Int): Future[String] = {
     val jsonString = Map(
       "playerID" -> playerID.asJson,
       "balance" -> balance.asJson
     ).asJson.noSpaces
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/updateBalance", entity = entity)
 
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
-        case _ =>
-          Future.failed(new RuntimeException(s"updateBalance Failed with status ${response.status}"))
-      }
-    }
+    kafkaClient.sendAndAwait("updateBalance", jsonString, "core-db-requests")
   }
 
-  def insertPlayer(
-      playerID: String
-  ): Future[String] = {
+  def insertPlayer(playerID: String): Future[String] = {
+  val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
 
-    val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/insertPlayer", entity = entity)
-
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
-        case _ =>
-          Future.failed(new RuntimeException(s"insertPlayer Failed with status ${response.status}"))
-      }
-    }
-  }
+  kafkaClient.sendAndAwait("insertPlayer", jsonString, "core-db-requests")
+}
 
   case class PlayerName(playerID: String, name: String)
 
@@ -193,37 +135,17 @@ object Client {
       "playerID" -> playerID.asJson,
       "name" -> name.asJson
     ).asJson.noSpaces
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/updateName", entity = entity)
 
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String]
-        case _ =>
-          Future.failed(new RuntimeException(s"updateName Failed with status ${response.status}"))
-      }
-    }
+    kafkaClient.sendAndAwait("updateName", jsonString, "core-db-requests")
   }
 
   def fetchName(playerID: String)(implicit system: ActorSystem, mat: Materializer): Future[PlayerName] = {
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/fetchName", entity = entity)
 
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String].flatMap { responseBody =>
-            decode[PlayerName](responseBody) match {
-              case Right(playerName) => Future.successful(playerName)
-              case Left(error)       => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
-            }
-          }
-        case _ =>
-          Unmarshal(response.entity).to[String].flatMap { errorBody =>
-            Future.failed(new RuntimeException(s"fetchName failed with status ${response.status}: $errorBody"))
-          }
+    kafkaClient.sendAndAwait("fetchName", jsonString, "core-db-requests").flatMap { json =>
+      decode[PlayerName](json) match {
+        case Right(result) => Future.successful(result)
+        case Left(error)   => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
       }
     }
   }
@@ -231,22 +153,10 @@ object Client {
   case class InsertGameStateResponse(status: String, message: String)
 
   def insertGameState(jsonString: String)(implicit system: ActorSystem, mat: Materializer): Future[InsertGameStateResponse] = {
-    val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/insertGameState", entity = entity)
-
-    Http().singleRequest(request).flatMap { response =>
-      response.status match {
-        case StatusCodes.OK =>
-          Unmarshal(response.entity).to[String].flatMap { responseBody =>
-            decode[InsertGameStateResponse](responseBody) match {
-              case Right(result) => Future.successful(result)
-              case Left(error)   => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
-            }
-          }
-        case _ =>
-          Unmarshal(response.entity).to[String].flatMap { errorBody =>
-            Future.failed(new RuntimeException(s"insertGameState failed with status ${response.status}: $errorBody"))
-          }
+    kafkaClient.sendAndAwait("insertGameState", jsonString, "core-db-requests").flatMap { json =>
+      decode[InsertGameStateResponse](json) match {
+        case Right(result) => Future.successful(result)
+        case Left(error)   => Future.failed(new RuntimeException(s"Invalid JSON response: ${error.getMessage}"))
       }
     }
   }

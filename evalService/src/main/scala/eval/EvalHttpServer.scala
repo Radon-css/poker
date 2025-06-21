@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import de.htwg.poker.kafka.EvalKafkaWorker
 
 object EvalHttpServer {
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
@@ -21,8 +22,11 @@ object EvalHttpServer {
     val routes = new evalRoutes().routes
     val host = "0.0.0.0"
 
+    implicit val actorSystem: ActorSystem = system
     implicit val classicSystem: ClassicActorSystemProvider = system
     implicit val executionContext: ExecutionContext = ec
+
+    val kafkaWorker = new EvalKafkaWorker()
 
     val serverBinding = Http()
       .newServerAt(host, port)

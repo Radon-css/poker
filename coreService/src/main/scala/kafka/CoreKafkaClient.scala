@@ -1,17 +1,18 @@
 package de.htwg.poker.kafka
 
 import akka.actor.ActorSystem
-import akka.kafka.{ConsumerSettings, ProducerSettings, Subscriptions}
 import akka.kafka.scaladsl.{Consumer, Producer}
+import akka.kafka.{ConsumerSettings, ProducerSettings, Subscriptions}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import akka.stream.{Materializer, OverflowStrategy}
+import io.circe.parser._
+import io.circe.syntax._
+import java.util.UUID
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
-import io.circe.parser._
-import java.util.UUID
-import scala.concurrent.{Future, Promise}
 import scala.collection.concurrent.TrieMap
+import scala.concurrent.{Future, Promise}
 
 class CoreKafkaClient(implicit system: ActorSystem, mat: Materializer) {
   import system.dispatcher
@@ -48,7 +49,12 @@ class CoreKafkaClient(implicit system: ActorSystem, mat: Materializer) {
     val promise = Promise[String]()
     promises.put(id, promise)
 
-    val message = KafkaMessage(id, action, payload, responseTopic).asJson.noSpaces
+    val message = Map(
+      "id" -> id.asJson,
+      "action" -> action.asJson,
+      "payload" -> payload.asJson,
+      "responseTopic" -> responseTopic.asJson
+    ).asJson.noSpaces
     val record = new ProducerRecord[String, String](targetTopic, message)
 
     Source

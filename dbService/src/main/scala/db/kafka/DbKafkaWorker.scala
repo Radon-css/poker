@@ -55,6 +55,7 @@ class DbKafkaWorker(
   }
 
   def handleRequest(req: KafkaMessage): Future[Unit] = {
+    println(s"Received request: ${req.action} with payload: ${req.payload}")
     req.action match {
         case "insertPlayer" =>
         decode[PlayerIdRequest](req.payload) match {

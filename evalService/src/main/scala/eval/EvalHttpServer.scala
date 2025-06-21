@@ -27,6 +27,7 @@ object EvalHttpServer {
     implicit val executionContext: ExecutionContext = ec
 
     val kafkaWorker = new EvalKafkaWorker()
+    kafkaWorker.run()
 
     val serverBinding = Http()
       .newServerAt(host, port)

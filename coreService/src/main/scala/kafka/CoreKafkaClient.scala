@@ -45,6 +45,7 @@ class CoreKafkaClient(implicit system: ActorSystem, mat: Materializer) {
     .runWith(Sink.ignore)
 
   def sendAndAwait(action: String, payload: String, targetTopic: String): Future[String] = {
+    println(s"Sending action: $action with payload: $payload to topic: $targetTopic")
     val id = UUID.randomUUID().toString
     val promise = Promise[String]()
     promises.put(id, promise)

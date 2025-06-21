@@ -149,6 +149,7 @@ class Receiver()(implicit
         println(s"authID: $authID")
 
         if (cookieID.isEmpty) {
+          println("Error: playerID is missing")
           broadcastUpdate()
           complete(StatusCodes.BadRequest -> "Error: playerID is missing")
         } else if (players.values.toList.contains(cookieID)) {
@@ -157,9 +158,12 @@ class Receiver()(implicit
           broadcastUpdate()
           complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentTypes.`application/json`, updatedPokerJson.toString)))
         } else if (playersLength >= 6) {
+          println("Error: Player limit reached")
           broadcastUpdate()
           complete(StatusCodes.BadRequest -> "Error: Player limit reached")
         } else {
+          // Fetch player name using authID
+          println(s"Fetching player name for authID: $authID")
           onComplete(Client.fetchName(authID)) {
             case scala.util.Success(playerNameObj) =>
               val playerName = playerNameObj.name

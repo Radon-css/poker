@@ -29,6 +29,7 @@ object DbHttpServer {
     implicit val executionContext: ExecutionContext = ec
 
     val kafkaWorker = new DbKafkaWorker()
+    kafkaWorker.run()
 
     val serverBinding = Http()
       .newServerAt(host, port)

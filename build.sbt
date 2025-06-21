@@ -5,7 +5,7 @@ val akkaHttpVersion = "10.5.3"
 val circeVersion = "0.14.1"
 val jacksonVersion = "2.15.3"
 
-
+scalacOptions ++= Seq("-Xmax-inlines", "50")
 
 ThisBuild / version := "1.0.1"
 ThisBuild / scalaVersion := scala3Version
@@ -39,6 +39,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-stream-kafka" % "4.0.2" cross CrossVersion.for3Use2_13,
   "com.github.danielwegener" % "logback-kafka-appender" % "0.2.0-RC2"
 )
+
 
 /*libraryDependencies ++= {
     // Determine OS version of JavaFX binaries

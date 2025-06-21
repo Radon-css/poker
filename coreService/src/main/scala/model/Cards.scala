@@ -1,10 +1,11 @@
 package de.htwg.poker.model
-import scala.util.Random
+import io.circe.generic.semiauto._
+import io.circe.{Decoder, Encoder}
 import play.api.libs.json._
+import scala.util.Random
 
 enum Rank:
-  case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen,
-    King, Ace
+  case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
   override def toString: String = this match {
     case Two   => "2"
     case Three => "3"
@@ -52,22 +53,22 @@ enum Rank:
   }
 
 object Rank {
-    given rankFormat: Format[Rank] = new Format[Rank] {
+  given rankFormat: Format[Rank] = new Format[Rank] {
     def reads(json: JsValue): JsResult[Rank] = json match
-      case JsString("2")  => JsSuccess(Rank.Two)
-      case JsString("3")  => JsSuccess(Rank.Three)
-      case JsString("4")  => JsSuccess(Rank.Four)
-      case JsString("5")  => JsSuccess(Rank.Five)
-      case JsString("6")  => JsSuccess(Rank.Six)
-      case JsString("7")  => JsSuccess(Rank.Seven)
-      case JsString("8")  => JsSuccess(Rank.Eight)
-      case JsString("9")  => JsSuccess(Rank.Nine)
-      case JsString("T")  => JsSuccess(Rank.Ten)
-      case JsString("J")  => JsSuccess(Rank.Jack)
-      case JsString("Q")  => JsSuccess(Rank.Queen)
-      case JsString("K")  => JsSuccess(Rank.King)
-      case JsString("A")  => JsSuccess(Rank.Ace)
-      case _ => JsError("Unknown Rank")
+      case JsString("2") => JsSuccess(Rank.Two)
+      case JsString("3") => JsSuccess(Rank.Three)
+      case JsString("4") => JsSuccess(Rank.Four)
+      case JsString("5") => JsSuccess(Rank.Five)
+      case JsString("6") => JsSuccess(Rank.Six)
+      case JsString("7") => JsSuccess(Rank.Seven)
+      case JsString("8") => JsSuccess(Rank.Eight)
+      case JsString("9") => JsSuccess(Rank.Nine)
+      case JsString("T") => JsSuccess(Rank.Ten)
+      case JsString("J") => JsSuccess(Rank.Jack)
+      case JsString("Q") => JsSuccess(Rank.Queen)
+      case JsString("K") => JsSuccess(Rank.King)
+      case JsString("A") => JsSuccess(Rank.Ace)
+      case _             => JsError("Unknown Rank")
 
     def writes(rank: Rank): JsValue = JsString(rank.toString)
   }
@@ -137,5 +138,6 @@ def shuffleDeck: List[Card] = {
 }
 
 object Card {
-  given cardFormat: OFormat[Card] = Json.format[Card]
+  implicit val encoder: Encoder[Card] = deriveEncoder
+  implicit val decoder: Decoder[Card] = deriveDecoder
 }

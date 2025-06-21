@@ -9,13 +9,29 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import de.htwg.poker.model._
 import de.htwg.poker.model.{Card, GameState, Player}
-import io.circe.generic.auto._
+import io.circe.generic.semiauto._
 import io.circe.parser._
 import io.circe.syntax._
+import io.circe.{Decoder, Encoder}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object Client {
+
+  implicit val playerEncoder: Encoder[Player] = deriveEncoder
+  implicit val playerDecoder: Decoder[Player] = deriveDecoder
+
+  implicit val gameStateEncoder: Encoder[GameState] = deriveEncoder
+  implicit val gameStateDecoder: Decoder[GameState] = deriveDecoder
+
+  implicit val playerBalanceEncoder: Encoder[PlayerBalance] = deriveEncoder
+  implicit val playerBalanceDecoder: Decoder[PlayerBalance] = deriveDecoder
+
+  implicit val playerNameEncoder: Encoder[PlayerName] = deriveEncoder
+  implicit val playerNameDecoder: Decoder[PlayerName] = deriveDecoder
+
+  implicit val insertGameStateResponseEncoder: Encoder[InsertGameStateResponse] = deriveEncoder
+  implicit val insertGameStateResponseDecoder: Decoder[InsertGameStateResponse] = deriveDecoder
 
   import AppConfig.{materializer, system}
 

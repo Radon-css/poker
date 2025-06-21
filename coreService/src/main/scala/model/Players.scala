@@ -1,4 +1,6 @@
 package de.htwg.poker.model
+import io.circe.generic.semiauto._
+import io.circe.{Decoder, Encoder}
 import play.api.libs.json._
 
 case class Player(
@@ -38,4 +40,7 @@ case class Player(
   }
 }
 
-given playerFormat: OFormat[Player] = Json.format[Player]
+object Player {
+  implicit val encoder: Encoder[Player] = deriveEncoder
+  implicit val decoder: Decoder[Player] = deriveDecoder
+}

@@ -22,9 +22,9 @@ import de.htwg.poker.controllers.Controller
 import de.htwg.poker.model.Card
 import de.htwg.poker.model.GameState
 import de.htwg.poker.model.Player
+import de.htwg.poker.util.Stream
 import io.circe.generic.auto._
 import io.circe.syntax._
-import javax.inject.Singleton
 import play.api.libs.json.{Format, JsValue, Json}
 import scala.collection.immutable.ListMap
 import scala.collection.immutable.VectorMap
@@ -34,7 +34,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.swing.Reactor
 import scala.swing.event.Event
-import de.htwg.poker.util.Stream
 
 /** This controller creates an Action to handle HTTP requests to the application's home page.
   */
@@ -165,7 +164,7 @@ class Receiver()(implicit
             case scala.util.Success(playerNameObj) =>
               val playerName = playerNameObj.name
               if (authID.nonEmpty) {
-              players = players + (playerName -> (cookieID, authID))
+                players = players + (playerName -> (cookieID, authID))
               }
 
               println(s"New Player: $cookieID $playerName")
@@ -229,14 +228,14 @@ class Receiver()(implicit
   }
 
   def renamePlayerByAuthId(newName: String, authId: String): Unit = {
-  players.find { case (_, (_, aId)) => aId == authId } match {
-    case Some((oldName, (cookieId, _))) =>
-      players -= oldName
-      players += (newName -> (cookieId, authId))
-    case None =>
-      println(s"No player found with authId $authId")
+    players.find { case (_, (_, aId)) => aId == authId } match {
+      case Some((oldName, (cookieId, _))) =>
+        players -= oldName
+        players += (newName -> (cookieId, authId))
+      case None =>
+        println(s"No player found with authId $authId")
+    }
   }
-}
 
   case class GameConfig(
       players: List[String],

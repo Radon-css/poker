@@ -4,10 +4,10 @@ import scala.math
 import concurrent.duration.DurationInt
 import de.htwg.poker.Client
 import de.htwg.poker.util.UpdateBoard
+import play.api.libs.json._
+import scala.collection.immutable.ListMap
 import scala.concurrent.Await
 import scala.concurrent.Future
-import scala.collection.immutable.ListMap
-import play.api.libs.json._
 
 /* to depict the state of our game unambiguously, we need 10 different values.
 original Players: players participating in the game
@@ -37,8 +37,6 @@ case class GameState(
     smallBlindPointer: Int = 0,
     newRoundStarted: Boolean = true
 ) {
-
-  
 
   /*def players.getOrElse(List.empty[Player]): List[Player] = players.getOrElse(List.empty[Player])
   def deck.getOrElse(List.empty[Card]): List[Card] = deck.getOrElse(List.empty[Card])
@@ -194,13 +192,13 @@ case class GameState(
   ): GameState = {
 
     playerAuthIDsMap match {
-      case Some(authIDs: ListMap[String, String]) => 
+      case Some(authIDs: ListMap[String, String]) =>
         if (authIDs.isEmpty) {
           println("Auth IDs are empty")
         } else {
           println("Auth IDs: " + authIDs.mkString(", "))
         }
-      case None => 
+      case None =>
         println("Auth IDs: No auth IDs available")
     }
 
@@ -213,7 +211,7 @@ case class GameState(
       new Player(
         shuffledDeck(index * 2),
         shuffledDeck(index * 2 + 1),
-        playerName,
+        playerName
       )
     }
 
@@ -309,8 +307,53 @@ given listMapFormat[K: Format, V: Format]: Format[ListMap[K, V]] =
       json.validate[Map[K, V]].map(m => ListMap(m.toSeq: _*))
     override def writes(o: ListMap[K, V]): JsValue =
       Json.toJson(o.toMap)
-}
+  }
 
 object GameState {
-  implicit val format: OFormat[GameState] = Json.format[GameState]
+  import io.circe.{Decoder, Encoder}
+  implicit val gameStateEncoder: Encoder[GameState] = Encoder.forProduct12(
+    "playersAndBalances",
+    "players",
+    "playersAndAuthIDs",
+    "deck",
+    "playerAtTurn",
+    "currentHighestBetSize",
+    "board",
+    "pot",
+    "smallBlind",
+    "bigBlind",
+    "smallBlindPointer",
+    "newRoundStarted"
+  )(gs =>
+    (
+      gs.playersAndBalances,
+      gs.players,
+      gs.playersAndAuthIDs,
+      gs.deck,
+      gs.playerAtTurn,
+      gs.currentHighestBetSize,
+      gs.board,
+      gs.pot,
+      gs.smallBlind,
+      gs.bigBlind,
+      gs.smallBlindPointer,
+      gs.newRoundStarted
+    )
+  )
+
+  implicit val gameStateDecoder: Decoder[GameState] = Decoder.forProduct12(
+    "playersAndBalances",
+    "players",
+    "playersAndAuthIDs",
+    "deck",
+    "playerAtTurn",
+    "currentHighestBetSize",
+    "board",
+    "pot",
+    "smallBlind",
+    "bigBlind",
+    "smallBlindPointer",
+    "newRoundStarted"
+  )(GameState.apply)
+
 }

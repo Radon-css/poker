@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import de.htwg.poker.kafka.DbKafkaWorker
+import akka.stream.Materializer
 
 object DbHttpServer {
   private val logger = LoggerFactory.getLogger(getClass.getName.init)
@@ -21,8 +23,12 @@ object DbHttpServer {
     val routes = new DbRoutes().routes
     val host = "0.0.0.0"
 
+    implicit val actorSystem: ActorSystem = system
     implicit val classicSystem: ClassicActorSystemProvider = system
+    implicit val materializer: Materializer = Materializer(classicSystem)
     implicit val executionContext: ExecutionContext = ec
+
+    val kafkaWorker = new DbKafkaWorker()
 
     val serverBinding = Http()
       .newServerAt(host, port)

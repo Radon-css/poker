@@ -37,7 +37,9 @@ jobs:
           sudo apt-get install sbt
       - name: Run tests
         run: sbt test
-      - name: Coveralls
-        run: sbt clean coverage test coverageReport
+      - name: Run coverage
+        run: sbt coverage test
+      - name: Aggregate coverage
+        run: sbt coverageAggregate
       - name: Upload coveralls
-        run: sbt coverageReport coveralls
+        run: sbt coveralls

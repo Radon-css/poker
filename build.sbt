@@ -11,6 +11,9 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.14",
   "org.scalatest" %% "scalatest" % "3.2.14" % "test",
   "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
+  "com.typesafe.akka" %% "akka-testkit" % "2.8.0" % "test",
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.5.3" % "test",
+  "com.typesafe.akka" %% "akka-stream-testkit" % "2.8.5" % "test",
   //"org.scalafx" %% "scalafx" % "21.0.0-R32",
 
   // Akka - using consistent versions

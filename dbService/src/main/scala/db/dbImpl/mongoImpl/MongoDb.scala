@@ -12,7 +12,6 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.ReplaceOptions
 import org.mongodb.scala.model.Sorts.{ascending, orderBy}
 import org.mongodb.scala.model.Updates._
-import org.slf4j.LoggerFactory
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -23,7 +22,6 @@ object MongoDb:
   def apply(dbConnector: ConnectorInterface): DAOInterface = new MongoDb(dbConnector)
 
   private class MongoDb(dbConnector: ConnectorInterface) extends DAOInterface:
-    private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
     dbConnector.connect
     private val playerCollection: MongoCollection[Document] = dbConnector.db.getCollection(DB_MONGO_COLLECTION_NAME)

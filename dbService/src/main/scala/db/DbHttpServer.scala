@@ -5,15 +5,13 @@ import akka.actor.{ActorSystem, ClassicActorSystemProvider, CoordinatedShutdown}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.server.Route
-import org.slf4j.LoggerFactory
+import akka.stream.Materializer
+import de.htwg.poker.kafka.DbKafkaWorker
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
-import de.htwg.poker.kafka.DbKafkaWorker
-import akka.stream.Materializer
 
 object DbHttpServer {
-  private val logger = LoggerFactory.getLogger(getClass.getName.init)
 
   def run(
       system: ActorSystem,
@@ -44,9 +42,9 @@ object DbHttpServer {
 
     serverBinding.onComplete {
       case Success(binding) =>
-        logger.info(s"Db Service running at http://${binding.localAddress.getHostString}:${binding.localAddress.getPort}/")
+        println(s"Db Service running at http://${binding.localAddress.getHostString}:${binding.localAddress.getPort}/")
       case Failure(ex) =>
-        logger.error("Db Service failed to start", ex)
+        println("Db Service failed to start + " + ex.getMessage)
         system.terminate()
     }
 
@@ -58,7 +56,7 @@ object DbHttpServer {
   )(implicit system: ActorSystem, ec: ExecutionContext): Future[Done] = {
     serverBinding.flatMap { binding =>
       binding.unbind().map { _ =>
-        logger.info("Shutting down Eval Service...")
+        println("Shutting down Eval Service...")
         system.terminate()
         Done
       }

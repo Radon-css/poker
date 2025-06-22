@@ -39,6 +39,9 @@ class DbKafkaWorker(
   val producerSettings = ProducerSettings(system, new StringSerializer, new StringSerializer)
     .withBootstrapServers(bootstrapServers)
 
+  case class PlayerName(playerID: String, name: String)
+  case class PlayerBalance(playerID: String, balance: Int)
+
   def run(): Unit = {
     Consumer
       .plainSource(consumerSettings, Subscriptions.topics(requestTopic))
@@ -78,6 +81,20 @@ class DbKafkaWorker(
             Future.failed(new Exception(s"Invalid payload for updateBalance: $err"))
         }
 
+      case "fetchBalance" =>
+        decode[PlayerIdRequest](req.payload) match {
+          case Right(PlayerIdRequest(playerID)) =>
+            daoInterface
+              .fetchBalance(playerID)
+              .flatMap { balance =>
+                val result = PlayerBalance(playerID, balance)
+                sendResponse(req.id, result.asJson.noSpaces, req.replyTo)
+              }
+              .recoverWith(handleError(req))
+          case Left(err) =>
+            Future.failed(new Exception(s"Invalid payload for fetchBalance: $err"))
+        }
+
       case "updateName" =>
         decode[NameUpdateRequest](req.payload) match {
           case Right(NameUpdateRequest(playerID, name)) =>
@@ -94,7 +111,10 @@ class DbKafkaWorker(
           case Right(PlayerIdRequest(playerID)) =>
             Future
               .fromTry(daoInterface.fetchName(playerID))
-              .flatMap(response => sendResponse(req.id, response.asJson.noSpaces, req.replyTo))
+              .flatMap(name => {
+                val result = PlayerName(playerID, name)
+                sendResponse(req.id, result.asJson.noSpaces, req.replyTo)
+              })
               .recoverWith(handleError(req))
           case Left(err) =>
             Future.failed(new Exception(s"Invalid payload for fetchName: $err"))

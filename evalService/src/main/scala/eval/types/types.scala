@@ -1,4 +1,6 @@
 package de.htwg.poker.eval.types
+import io.circe._
+import io.circe.syntax._
 import io.circe.{Decoder, Encoder, HCursor, Json}
 
 enum EvalSuit:
@@ -43,19 +45,22 @@ object EvalHandRequest {
 }
 
 object EvalSuit {
-  implicit val encodeEvalSuit: Encoder[EvalSuit] = Encoder.encodeString.contramap[EvalSuit] {
-    case EvalSuit.Clubs    => "Clubs"
-    case EvalSuit.Spades   => "Spades"
-    case EvalSuit.Diamonds => "Diamonds"
-    case EvalSuit.Hearts   => "Hearts"
+  implicit val decodeEvalSuit: Decoder[EvalSuit] = Decoder.instance { cursor =>
+    cursor.keys.flatMap(_.headOption) match {
+      case Some("Clubs")    => Right(EvalSuit.Clubs)
+      case Some("Spades")   => Right(EvalSuit.Spades)
+      case Some("Diamonds") => Right(EvalSuit.Diamonds)
+      case Some("Hearts")   => Right(EvalSuit.Hearts)
+      case Some(other)      => Left(DecodingFailure(s"Unknown EvalSuit: $other", cursor.history))
+      case None             => Left(DecodingFailure("Expected EvalSuit key", cursor.history))
+    }
   }
 
-  implicit val decodeEvalSuit: Decoder[EvalSuit] = Decoder.decodeString.emap {
-    case "Clubs"    => Right(EvalSuit.Clubs)
-    case "Spades"   => Right(EvalSuit.Spades)
-    case "Diamonds" => Right(EvalSuit.Diamonds)
-    case "Hearts"   => Right(EvalSuit.Hearts)
-    case other      => Left(s"Unknown EvalSuit: $other")
+  implicit val encodeEvalSuit: Encoder[EvalSuit] = Encoder.instance {
+    case EvalSuit.Clubs    => Json.obj("Clubs" -> Json.obj())
+    case EvalSuit.Spades   => Json.obj("Spades" -> Json.obj())
+    case EvalSuit.Diamonds => Json.obj("Diamonds" -> Json.obj())
+    case EvalSuit.Hearts   => Json.obj("Hearts" -> Json.obj())
   }
 }
 object EvalCard {
@@ -129,36 +134,39 @@ object EvalGameState {
 }
 
 object EvalRank {
-  implicit val encodeEvalRank: Encoder[EvalRank] = Encoder.encodeString.contramap[EvalRank] {
-    case EvalRank.Two   => "Two"
-    case EvalRank.Three => "Three"
-    case EvalRank.Four  => "Four"
-    case EvalRank.Five  => "Five"
-    case EvalRank.Six   => "Six"
-    case EvalRank.Seven => "Seven"
-    case EvalRank.Eight => "Eight"
-    case EvalRank.Nine  => "Nine"
-    case EvalRank.Ten   => "Ten"
-    case EvalRank.Jack  => "Jack"
-    case EvalRank.Queen => "Queen"
-    case EvalRank.King  => "King"
-    case EvalRank.Ace   => "Ace"
+  implicit val decodeEvalRank: Decoder[EvalRank] = Decoder.instance { cursor =>
+    cursor.keys.flatMap(_.headOption) match {
+      case Some("Two")   => Right(EvalRank.Two)
+      case Some("Three") => Right(EvalRank.Three)
+      case Some("Four")  => Right(EvalRank.Four)
+      case Some("Five")  => Right(EvalRank.Five)
+      case Some("Six")   => Right(EvalRank.Six)
+      case Some("Seven") => Right(EvalRank.Seven)
+      case Some("Eight") => Right(EvalRank.Eight)
+      case Some("Nine")  => Right(EvalRank.Nine)
+      case Some("Ten")   => Right(EvalRank.Ten)
+      case Some("Jack")  => Right(EvalRank.Jack)
+      case Some("Queen") => Right(EvalRank.Queen)
+      case Some("King")  => Right(EvalRank.King)
+      case Some("Ace")   => Right(EvalRank.Ace)
+      case Some(other)   => Left(DecodingFailure(s"Unknown EvalRank: $other", cursor.history))
+      case None          => Left(DecodingFailure("Expected EvalRank key", cursor.history))
+    }
   }
 
-  implicit val decodeEvalRank: Decoder[EvalRank] = Decoder.decodeString.emap {
-    case "Two"   => Right(EvalRank.Two)
-    case "Three" => Right(EvalRank.Three)
-    case "Four"  => Right(EvalRank.Four)
-    case "Five"  => Right(EvalRank.Five)
-    case "Six"   => Right(EvalRank.Six)
-    case "Seven" => Right(EvalRank.Seven)
-    case "Eight" => Right(EvalRank.Eight)
-    case "Nine"  => Right(EvalRank.Nine)
-    case "Ten"   => Right(EvalRank.Ten)
-    case "Jack"  => Right(EvalRank.Jack)
-    case "Queen" => Right(EvalRank.Queen)
-    case "King"  => Right(EvalRank.King)
-    case "Ace"   => Right(EvalRank.Ace)
-    case other   => Left(s"Unknown EvalRank: $other")
+  implicit val encodeEvalRank: Encoder[EvalRank] = Encoder.instance {
+    case EvalRank.Two   => Json.obj("Two" -> Json.obj())
+    case EvalRank.Three => Json.obj("Three" -> Json.obj())
+    case EvalRank.Four  => Json.obj("Four" -> Json.obj())
+    case EvalRank.Five  => Json.obj("Five" -> Json.obj())
+    case EvalRank.Six   => Json.obj("Six" -> Json.obj())
+    case EvalRank.Seven => Json.obj("Seven" -> Json.obj())
+    case EvalRank.Eight => Json.obj("Eight" -> Json.obj())
+    case EvalRank.Nine  => Json.obj("Nine" -> Json.obj())
+    case EvalRank.Ten   => Json.obj("Ten" -> Json.obj())
+    case EvalRank.Jack  => Json.obj("Jack" -> Json.obj())
+    case EvalRank.Queen => Json.obj("Queen" -> Json.obj())
+    case EvalRank.King  => Json.obj("King" -> Json.obj())
+    case EvalRank.Ace   => Json.obj("Ace" -> Json.obj())
   }
 }

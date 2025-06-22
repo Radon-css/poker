@@ -54,7 +54,7 @@ class CoreKafkaClient(implicit system: ActorSystem, mat: Materializer) {
       "id" -> id.asJson,
       "action" -> action.asJson,
       "payload" -> payload.asJson,
-      "responseTopic" -> responseTopic.asJson
+      "replyTo" -> responseTopic.asJson
     ).asJson.noSpaces
     val record = new ProducerRecord[String, String](targetTopic, message)
 

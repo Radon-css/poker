@@ -3,7 +3,6 @@ package de.htwg.poker.db.dbImpl.slickImpl
 import de.htwg.poker.db.dbImpl.DAOInterface
 import de.htwg.poker.db.dbImpl.slickImpl.ConnectorInterface
 import de.htwg.poker.db.types.DbGameState
-import org.slf4j.LoggerFactory
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -16,7 +15,6 @@ object SlickDb:
   def apply(dbConnector: ConnectorInterface): DAOInterface = new Slickb(dbConnector)
 
   private class Slickb(dbConnector: ConnectorInterface) extends DAOInterface:
-    private val logger = LoggerFactory.getLogger(getClass.getName.init)
     private def playerTable = TableQuery[PlayerTable](new PlayerTable(_))
 
     // Define a global ExecutionContext here (you can customize thread pool if you want)

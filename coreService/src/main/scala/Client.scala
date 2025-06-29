@@ -26,7 +26,7 @@ object Client {
     val jsonString = gameState.asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/calcWinner", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://eval:8083/eval/calcWinner", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -54,7 +54,7 @@ object Client {
     ).asJson.noSpaces
 
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8083/eval/evalHand", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://eval:8083/eval/evalHand", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -111,7 +111,7 @@ object Client {
   def fetchBalance(playerID: String)(implicit system: ActorSystem, mat: Materializer): Future[PlayerBalance] = {
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/fetchBalance", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/fetchBalance", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -140,7 +140,7 @@ object Client {
       "balance" -> balance.asJson
     ).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/updateBalance", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/updateBalance", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -158,7 +158,7 @@ object Client {
 
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/insertPlayer", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/insertPlayer", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -178,7 +178,7 @@ object Client {
       "name" -> name.asJson
     ).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/updateName", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/updateName", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {
@@ -193,7 +193,7 @@ object Client {
   def fetchName(playerID: String)(implicit system: ActorSystem, mat: Materializer): Future[PlayerName] = {
     val jsonString = Map("playerID" -> playerID.asJson).asJson.noSpaces
     val entity = HttpEntity(ContentTypes.`application/json`, jsonString)
-    val request = HttpRequest(HttpMethods.POST, "http://127.0.0.1:8084/db/fetchName", entity = entity)
+    val request = HttpRequest(HttpMethods.POST, "http://dbservice:8084/db/fetchName", entity = entity)
 
     Http().singleRequest(request).flatMap { response =>
       response.status match {

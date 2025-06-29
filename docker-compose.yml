@@ -27,18 +27,6 @@ services:
     environment:
       - POKER_EVAL_PORT=8083
 
-  tui:
-    container_name: poker-tui
-    build:
-      context: .
-      dockerfile: tuiService/Dockerfile
-    ports:
-      - "8082:8082"
-    depends_on:
-      - core
-      - eval
-    environment:
-      - POKER_TUI_PORT=8082
 
   dbservice:
     container_name: poker-dbservice

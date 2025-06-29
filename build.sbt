@@ -1,3 +1,4 @@
+import bloop.config.Config.Java
 val scala3Version = "3.6.4"
 
 ThisBuild / version := "1.0.1"
@@ -41,6 +42,7 @@ ThisBuild / libraryDependencies ++= Seq(
 
   //mongo
   "org.mongodb.scala" %% "mongo-scala-driver" % "5.4.0" cross CrossVersion.for3Use2_13,
+  
 )
 
 /*libraryDependencies ++= {
@@ -61,28 +63,20 @@ lazy val root = project
     name := "poker"
   )
   .dependsOn(
-    tuiService,
     coreService,
-    guiService,
     dbService,
     evalService
   )
   .aggregate(
-    tuiService,
     coreService,
-    guiService,
     dbService,
     evalService
   )
 
-lazy val tuiService = project
-  .in(file("tuiService"))
-  .settings(
-    name := "tuiService"
-  )
 
 lazy val evalService = project
   .in(file("evalService"))
+  .enablePlugins(JavaAppPackaging)
   .settings(
     name := "evalService",
      Compile / resourceDirectory := baseDirectory.value / "src" / "main" / "resources"
@@ -90,18 +84,16 @@ lazy val evalService = project
 
 lazy val coreService = project
   .in(file("coreService"))
+  .enablePlugins(JavaAppPackaging)
   .settings(
     name := "coreService"
   )
 
-lazy val guiService = project
-  .in(file("guiService"))
-  .settings(
-    name := "guiService"
-  )
+
 
 lazy val dbService = project
   .in(file("dbService"))
+  .enablePlugins(JavaAppPackaging)
   .settings(
     name := "dbService"
   )

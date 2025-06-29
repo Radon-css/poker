@@ -4,40 +4,28 @@ services:
   core:
     container_name: poker-core
     build:
-      context: .
-      dockerfile: coreService/Dockerfile
-    stdin_open: true
-    env_file:
-      - .env
-    tty: true
+      context: .          # Projekt‑Root
+      dockerfile: Dockerfile
+      target: core        # <-- Runtime‑Stage "core"
     ports:
       - "8080:8080"
-    environment:
-      - POKER_CORE_PORT=8080
 
   eval:
     container_name: poker-eval
     build:
       context: .
-      dockerfile: evalService/Dockerfile
+      dockerfile: Dockerfile
+      target: eval        # <-- Stage "eval"
     ports:
       - "8083:8083"
-    depends_on:
-      - core
-    environment:
-      - POKER_EVAL_PORT=8083
-
+    depends_on: [core]
 
   dbservice:
     container_name: poker-dbservice
     build:
       context: .
-      dockerfile: dbService/Dockerfile
+      dockerfile: Dockerfile
+      target: db          # <-- Stage "db"
     ports:
       - "8084:8084"
-    depends_on:
-      - core
-    environment:
-      - POKER_EVAL_PORT=8084
-      
-
+    depends_on: [core]
